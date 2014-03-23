@@ -1,0 +1,57 @@
+@font-face {
+    font-family: BNazanin;
+    src: url('fonts/BNazanin.ttf');
+}
+
+body {
+    font-family: BNazanin;
+    background-color: teal ;
+    direction: rtl;
+}
+
+.container {
+    margin-top: 10% ;
+    padding-top: 100px;
+    padding-bottom: 20px;
+    border-radius: 5px;
+    margin-left: auto;
+    margin-right: auto ;
+    width: 40% ;
+    background-color: lightgrey;
+}
+.username {
+    margin-right : 5px ;
+    border-radius: 5px;
+    font-family: BNazanin;
+}
+.password {
+}
+
+.login_error {
+    font-family: BNazanin;
+    color:red ;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+label[for=id_username] {
+    margin-right: 10px ;
+    font-size: large;
+    color: teal;
+}
+
+label[for=id_password] {
+    color: teal ;
+}
+
+.submit_button {
+    margin-top: 10% ;
+    border-radius: 5px;
+    margin-right: 30%;
+    margin-left: 30%;
+    width: 40% ;
+    font-family: BNazanin;
+    font-size: large;
+    color:  white ;
+    background-color: teal;
+
+}
