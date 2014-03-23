@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+import datetime
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from Radiology.forms import LoginForm
 from django.contrib.auth import login, logout
+from Radiology.models import *
 
 
 def login_view(request):
@@ -21,7 +23,8 @@ def login_view(request):
 
 @login_required
 def home(request):
-    return render(request, 'home.html')
+    person = Person.objects.get(user__username=request.user.username)
+    return render(request, 'home.html', {'person':person})
 
 @login_required
 def logout_view(request):

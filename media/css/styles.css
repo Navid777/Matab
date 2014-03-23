@@ -5,8 +5,8 @@
 
 body {
     font-family: BNazanin;
-    background-color: teal ;
     direction: rtl;
+    margin: 0;
 }
 
 .container {
@@ -17,14 +17,36 @@ body {
     margin-left: auto;
     margin-right: auto ;
     width: 40% ;
-    background-color: lightgrey;
 }
 .username {
+    border: none;
     margin-right : 5px ;
     border-radius: 5px;
     font-family: BNazanin;
 }
 .password {
+    border:none;
+}
+.date_time {
+    float: left;
+    direction: rtl;
+}
+
+.time_label {
+    border:solid ;
+    border-width: 1px;
+    border-color: teal;
+    margin: 2px;
+    border-radius: 5px;
+    padding: 2px;
+}
+.date_label {
+    border: solid ;
+    border-width: 1px;
+    border-color: teal;
+    border-radius: 5px;
+    margin: 5px ;
+    padding: 2px;
 }
 
 .login_error {
@@ -52,6 +74,39 @@ label[for=id_password] {
     font-family: BNazanin;
     font-size: large;
     color:  white ;
-    background-color: teal;
+    border:none;
+}
 
+#header {
+    width:inherit;
+    padding: 10px ;
+    height: auto;
+}
+
+.exit_button {
+    font-family: BNazanin;
+    border-radius: 5px;
+    border: none;
+    color: white ;
+    padding: 2px ;
+    width: 100px ;
+}
+.user_label {
+    color: teal;
+    border: solid ;
+    border-color: teal;
+    border-width: 1px;
+    border-radius: 4px;
+    padding: 2px ;
+}
+
+.exit_button, .submit_button, body{
+    background-color: teal;
+}
+.container, #header {
+    background-color: #F0F5C2;
+}
+
+.exit_button:hover, .submit_button:hover {
+    background-color: darkcyan;
 }
