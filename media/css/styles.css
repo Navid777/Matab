@@ -4,9 +4,16 @@
 }
 
 body {
-    font-family: BNazanin;
     direction: rtl;
     margin: 0;
+}
+
+body, button, label, div , input{
+    font-family: BNazanin;
+}
+
+a, button, li {
+    cursor: pointer;
 }
 
 .container {
@@ -22,7 +29,6 @@ body {
     border: none;
     margin-right : 5px ;
     border-radius: 5px;
-    font-family: BNazanin;
 }
 .password {
     border:none;
@@ -50,7 +56,6 @@ body {
 }
 
 .login_error {
-    font-family: BNazanin;
     color:red ;
     margin-right: 10px;
     margin-bottom: 10px;
@@ -71,7 +76,6 @@ label[for=id_password] {
     margin-right: 30%;
     margin-left: 30%;
     width: 40% ;
-    font-family: BNazanin;
     font-size: large;
     color:  white ;
     border:none;
@@ -81,10 +85,14 @@ label[for=id_password] {
     width:inherit;
     padding: 10px ;
     height: auto;
+    opacity: 0.5;
+}
+
+#header:hover {
+    opacity: 1;
 }
 
 .exit_button {
-    font-family: BNazanin;
     border-radius: 5px;
     border: none;
     color: white ;
@@ -103,10 +111,49 @@ label[for=id_password] {
 .exit_button, .submit_button, body{
     background-color: teal;
 }
-.container, #header {
+.container, #header, .paziresh_tab, .list_tab, .bedehkaran_tab, .gozareshat_tab, .main_menu, #paziresh {
     background-color: #F0F5C2;
+    color: teal;
 }
 
 .exit_button:hover, .submit_button:hover {
     background-color: darkcyan;
+}
+.paziresh_tab, .list_tab, .bedehkaran_tab, .gozareshat_tab {
+    float: right ;
+    width : 25% ;
+    margin: 0;
+    border: none;
+    display: inline;
+    text-align: center;
+}
+.paziresh_tab {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.bedehkaran_tab {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.paziresh_tab:hover, .list_tab:hover, .bedehkaran_tab:hover, .gozareshat_tab:hover {
+    background-color: #E0E5B2;
+}
+.main_menu, #paziresh {
+    width: 70% ;
+}
+
+#paziresh {
+    margin-left : auto ;
+    margin-right: auto;
+    margin-top: 40% ;
+}
+.main_menu {
+    list-style-type: none;
+    margin-top: 10%;
+    margin-right: auto;
+    margin-left: auto;
+    border: none;
+    border-radius: 5px;
+    padding: 0;
 }
