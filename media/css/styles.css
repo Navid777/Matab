@@ -10,20 +10,22 @@ body {
 
 body, button, label, div , input{
     font-family: BNazanin;
+   	font-weight: normal ;
 }
 
-a, button, li {
+a, button, li, input {
     cursor: pointer;
 }
 
 .container {
-    margin-top: 10% ;
+	margin-top: 20% ;
     padding-top: 100px;
     padding-bottom: 20px;
     border-radius: 5px;
     margin-left: auto;
     margin-right: auto ;
-    width: 40% ;
+    width: 70%;
+    float: none; 
 }
 .username {
     border: none;
@@ -71,10 +73,10 @@ label[for=id_password] {
 }
 
 .submit_button {
-    margin-top: 10% ;
+    margin-top: 5% ;
     border-radius: 5px;
-    margin-right: 30%;
-    margin-left: 30%;
+    margin-left : 30% ;
+    margin-right: 30%; 
     width: 40% ;
     font-size: large;
     color:  white ;
@@ -83,9 +85,10 @@ label[for=id_password] {
 
 #header {
     width:inherit;
-    padding: 10px ;
-    height: auto;
+    padding: 10px;
+    height: auto; 
     opacity: 0.5;
+    overflow: auto;
 }
 
 #header:hover {
@@ -98,6 +101,7 @@ label[for=id_password] {
     color: white ;
     padding: 2px ;
     width: 100px ;
+    float:right ;
 }
 .user_label {
     color: teal;
@@ -106,6 +110,7 @@ label[for=id_password] {
     border-width: 1px;
     border-radius: 4px;
     padding: 2px ;
+    float:right ;
 }
 
 .exit_button, .submit_button, body{
@@ -139,21 +144,62 @@ label[for=id_password] {
 .paziresh_tab:hover, .list_tab:hover, .bedehkaran_tab:hover, .gozareshat_tab:hover {
     background-color: #E0E5B2;
 }
-.main_menu, #paziresh {
-    width: 70% ;
-}
 
-#paziresh {
-    margin-left : auto ;
+.main_menu, #paziresh {
+    width: 100% ;
+    margin-left: auto;
     margin-right: auto;
-    margin-top: 40% ;
+    float:left ;
+}
+#main_content {
+	float:left ;
+	width: 100% ;
+}
+#paziresh {
 }
 .main_menu {
     list-style-type: none;
-    margin-top: 10%;
-    margin-right: auto;
-    margin-left: auto;
     border: none;
     border-radius: 5px;
     padding: 0;
+}
+
+#page_with_tabs {
+    width:70%;
+    margin-right: auto;
+    margin-left: auto;
+    overflow:auto ;
+    position: relative ;
+}
+
+#paziresh_moshakhasat, #paziresh_bime, #paziresh_dastoor, #paziresh_khedmat {
+	float:right ;
+	box-sizing: border-box ;
+	-moz-box-sizing: border-box; 
+	padding: 10px ;
+	width: 50% ;
+}
+.patient_form_error {
+	color: red ;
+}
+
+#paziresh_moshakhasat_box {
+	border-style: solid ;
+	border-radius: 5px; 
+	margin-left: auto ;
+	margin-right: auto;
+	margin-top: 2% ;
+	float: right ;
+	padding: 5% ;
+	min-height: 300px; 
+	min-width: 80% ;
+	max-width: 80%;
+}
+#paziresh_title {
+	float: right;
+	display:block;
+}
+.patient_label {
+	text-align: center;
+	margin:40% ;
 }

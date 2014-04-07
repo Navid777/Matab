@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -11,37 +12,43 @@ class Person(models.Model):
     def __unicode__(self):
         return self.first_name+' '+ self.last_name
 
-class medical_history(models.Model):
+class MedicalHistory(models.Model):
 # todo: complete the fields of this class
     muck = models.BooleanField()
 
-class patient(models.Model):
+class Patient(models.Model):
+    patient_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    medical_history = models.OneToOneField(medical_history)
+    national_code = models.IntegerField(unique=True)
+    medical_history = models.OneToOneField(MedicalHistory, null=True, blank=True)
 
-class doctor(models.Model):
+class Doctor(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    medical_number = models.IntegerField()
+    medical_number = models.IntegerField(unique=True)
 
-class operation(models.Model):
+class Operation(models.Model):
     time = models.DateTimeField()
 
-class appointment(models.Model):
-    patient = models.ForeignKey(patient)
-    doctor = models.ForeignKey(doctor)
-    operation = models.ForeignKey(operation)
+class Appointment(models.Model):
+    patient = models.ForeignKey(Patient)
+    doctor = models.ForeignKey(Doctor)
+    operation = models.ForeignKey(Operation)
+    
+class Insurance(models.Model):
+    name = models.CharField(max_length=100)
+    percentage = models.IntegerField()
 
 class MRI(models.Model) :
-    operation = models.ForeignKey(operation)
+    operation = models.ForeignKey(Operation)
 
-class scan(models.Model) :
-    operation = models.ForeignKey(operation)
+class Scan(models.Model) :
+    operation = models.ForeignKey(Operation)
 
-class radiology(models.Model) :
-    operation = models.ForeignKey(operation)
+class Radiology(models.Model) :
+    operation = models.ForeignKey(Operation)
 
-class sonography(models.Model) :
-    operation = models.ForeignKey(operation)
+class Sonography(models.Model) :
+    operation = models.ForeignKey(Operation)
 
