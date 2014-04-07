@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block title %}
+    خانه
+{% endblock %}
+{%block extrascripts%}
+	<script type="text/javascript" src="{{MEDIA_URL}}javascript/scripts.js" ></script>
+{%endblock%}
+{% block content %}
+
+    <div id="paziresh">
+        <div id="paziresh_moshakhasat">
+        	<label id="paziresh_title">
+        	مشخصاتِ بیمار
+       		</label>
+       		
+       		<div id="paziresh_moshakhasat_box">
+       			{%if patient_form.errors%}
+       				{%for field in patient_form%}
+       					<div class="patient_form_error">
+       						{{field.errors}}
+       					</div>
+       				{%endfor%}
+       					<div class="patient_form_error">
+       						{{patient_form.non_field_errors}}
+       					</div>
+       			{%endif%}
+       			<form action="" method="post">
+       			<table>
+       				<tr>
+       					<th>
+       						<label for="id_patient_id">
+شماره‌ی بیمار:							
+							</label>
+       					</th>
+						<td>
+							{%if has_patient%}
+							<label class="patient_label">{{patient.patient_id}}</label>
+							{%else%}
+							{{patient_form.patient_id}}
+							{%endif%}
+						</td>
+       				</tr>
+       				<tr>
+       					<th>
+       						<label for="id_patient_first_name">
+نامِ بیمار:						
+							</label>
+       					</th>
+						<td>
+							{%if has_patient%}
+							<label class="patient_label">{{patient.first_name}}</label>
+							{%else%}
+							{{patient_form.patient_first_name}}
+							{%endif%}
+						</td>
+       				</tr>
+       				<tr>
+       					<th>
+       						<label for="id_patient_last_name">
+نامِ خانوادگیِ بیمار:				
+							</label>
+       					</th>
+						<td>
+							{%if has_patient%}
+							<label class="patient_label">{{patient.last_name}}</label>
+							{%else%}
+							{{patient_form.patient_last_name}}
+							{%endif%}
+						</td>
+       				</tr>
+       				<tr>
+       					<th>
+       						<label for="id_patient_id">
+شماره‌ی ملیِ بیمار:							
+							</label>
+       					</th>
+						<td>
+							{%if has_patient%}
+							<label class="patient_label">{{patient.national_code}}</label>
+							{%else%}
+							{{patient_form.patient_national_code}}
+							{%endif%}
+						</td>
+       				</tr>
+       			</table>
+               		
+               		{%if has_patient%}
+               		{% csrf_token %}
+               		<input type="submit" class="submit_button" id="new_patient_button" name="jadid" value="بیمارِ جدید" />
+               		{%else%}
+               		{% csrf_token %}
+               		<input type="submit" class="submit_button" name="sabt" value="ثبت به عنوانِ بیمارِ جدید" /> 
+               		<input type="submit" class="submit_button" name="vorood" value="ورودِ بیمار"/>
+               		{%endif%}
+       			</form>
+       		</div>
+        </div>
+        <div id="paziresh_bime">
+        	بیمه
+       		<div id="paziresh_bime_box">
+       		</div>		
+        </div>
+        <div id="paziresh_dastoor">
+        	دستورِ پزشک
+        </div>
+        <div id="paziresh_khedmat">
+        	نوعِ خدمت
+        </div>
+    </div>
+
+{% endblock %}

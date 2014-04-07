@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+    {% load staticfiles %}
+		<!--<link rel="stylesheet" href="{{ MEDIA_URL }}css/semantic.css"/> -->
+		<link rel="stylesheet" href="{{ MEDIA_URL }}css/styles.css"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>{% block title %}{% endblock %}</title>
+		<meta name="author" content="Navid" />
+		<!-- Date: 2014-01-24 -->
+		<script type="text/javascript" src="{{MEDIA_URL}}javascript/jquery.min.js"></script>
+		{% block extrascripts %}{% endblock %}
+	</head>
+	<body>
+        {% block header %}
+                {% if person %}
+                <div id="header">
+                    <label class="user_label">{{ person.first_name }} {{ person.last_name }}</label>
+                   <a href="/logout/"> <button class="exit_button">
+                        خروج
+                    </button></a>
+                <div class="date_time">
+                    <label class="time_label">
+                        {% now 'G:i' %}
+                    </label>
+                    <label class="date_label">
+                        {% now 'j/m/Y'%}
+                    </label>
+                </div>
+                    </div>
+                {% endif %}
+            {% endblock %}
+            <div id="page_with_tabs">
+            {% block navigation_bar %}
+            <div>
+            <ul class="main_menu">
+                <li class="paziresh_tab">
+                    <a >
+            پذیرشِ بیمار
+                    </a>
+                </li>
+                <li class="list_tab">
+                    <a >
+            لیستِ بیماران
+                    </a>
+                </li>
+                <li class="gozareshat_tab">
+                    <a >
+            گزارشاتِ بیمه
+                    </a>
+                </li>
+                <li class="bedehkaran_tab">
+                    <a >
+            لیستِ بدهکاران
+                    </a>
+                </li>
+            </ul>
+            </div>
+            {% endblock %}
+		    <div id="main_content">
+		        {% block content %}{% endblock %}
+		    </div>
+		    </div>
+	</body>
+</html>
+
