@@ -30,37 +30,34 @@ def home(request):
     if request.method == 'POST' and 'sabt' in request.POST:
         patient_form = PatientForm(request.POST)
         if patient_form.is_valid():
-            print patient_form
             cd = patient_form.cleaned_data
             patient= Patient()
             patient.first_name = cd['patient_first_name']
             patient.last_name = cd['patient_last_name']
             patient.national_code = cd['patient_national_code']
             patient.save()
-            global current_patient_id
-            current_patient_id = patient.patient_id
+            request.session['current_patient_id'] = patient.patient_id
             return HttpResponseRedirect('/home/')
     elif request.method == 'POST' and 'vorood' in request.POST:
         patient_form = PatientForm(request.POST)
         if patient_form.is_valid():
             cd = patient_form.cleaned_data
-            current_patient_id = cd['patient_id']
+            request.session['current_patient_id'] = cd['patient_id']
             return HttpResponseRedirect('/home/')
     elif request.method =='POST' and 'jadid' in request.POST:
-        global current_patient_id
-        current_patient_id = 0
+        if 'current_patient_id' in request.session:
+            del request.session['current_patient_id']
         return HttpResponseRedirect('/home/')
     else:
-        if current_patient_id == 0:
+        if not 'current_patient_id' in request.session:
             patient_form= PatientForm() 
         else:
             has_patient = True
             try:
-                patient = Patient.objects.get(patient_id = current_patient_id)
+                patient = Patient.objects.get(patient_id = request.session['current_patient_id'])
                 return render(request, 'home.html', {'has_patient':has_patient, 'person':person, 'patient':patient})
             except Patient.DoesNotExist:
-                global current_patient_id
-                current_patient_id = 0
+                del request.session['current_patient_id']
                 HttpResponseRedirect('/home/')
     return render(request, 'home.html', {'person':person, 'patient_form':patient_form})
 
