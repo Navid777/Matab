@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 from Radiology.forms import LoginForm, PatientForm
-from Radiology.models import Person, Patient
+from Radiology.models import Patient
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 
-current_patient_id = 0
 def login_view(request):
-    print current_patient_id
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -21,45 +19,41 @@ def login_view(request):
         form = LoginForm()
     return render(request, "login.html", {'form': form})
 
+
 @login_required
 def home(request):
-    try:
-        person = Person.objects.get(user__username=request.user.username)
-    except Person.DoesNotExist:
-        return HttpResponseRedirect('/login/')
     if request.method == 'POST' and 'sabt' in request.POST:
         patient_form = PatientForm(request.POST)
         if patient_form.is_valid():
             cd = patient_form.cleaned_data
-            patient= Patient()
+            patient = Patient()
             patient.first_name = cd['patient_first_name']
             patient.last_name = cd['patient_last_name']
             patient.national_code = cd['patient_national_code']
             patient.save()
-            request.session['current_patient_id'] = patient.patient_id
+            request.session['current_patient'] = patient.id
             return HttpResponseRedirect('/home/')
     elif request.method == 'POST' and 'vorood' in request.POST:
         patient_form = PatientForm(request.POST)
         if patient_form.is_valid():
             cd = patient_form.cleaned_data
-            request.session['current_patient_id'] = cd['patient_id']
+            request.session['current_patient'] = cd['patient_id']
             return HttpResponseRedirect('/home/')
-    elif request.method =='POST' and 'jadid' in request.POST:
-        if 'current_patient_id' in request.session:
-            del request.session['current_patient_id']
+    elif request.method == 'POST' and 'jadid' in request.POST:
+        del request.session['current_patient']
         return HttpResponseRedirect('/home/')
     else:
-        if not 'current_patient_id' in request.session:
-            patient_form= PatientForm() 
+        if not 'current_patient' in request.session:
+            patient_form = PatientForm()
         else:
             has_patient = True
             try:
-                patient = Patient.objects.get(patient_id = request.session['current_patient_id'])
-                return render(request, 'home.html', {'has_patient':has_patient, 'person':person, 'patient':patient})
+                patient = Patient.objects.get(id=request.session['current_patient'])
+                return render(request, 'home.html', {'has_patient': has_patient, 'patient': patient})
             except Patient.DoesNotExist:
-                del request.session['current_patient_id']
+                del request.session['current_patient']
                 HttpResponseRedirect('/home/')
-    return render(request, 'home.html', {'person':person, 'patient_form':patient_form})
+    return render(request, 'home.html', {'patient_form': patient_form})
 
 
 @login_required
