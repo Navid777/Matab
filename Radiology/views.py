@@ -26,6 +26,7 @@ def login_view(request):
 def home(request):
     if request.method == 'POST' and 'sabt' in request.POST:
         patient_form = PatientForm(request.POST)
+        insurance_form = InsuranceForm()
         if patient_form.is_valid():
             cd = patient_form.cleaned_data
             patient = Patient()
@@ -37,6 +38,7 @@ def home(request):
             return HttpResponseRedirect('/home/')
     elif request.method == 'POST' and 'vorood' in request.POST:
         patient_form = PatientForm(request.POST)
+        insurance_form = InsuranceForm()
         if patient_form.is_valid():
             cd = patient_form.cleaned_data
             request.session['current_patient'] = cd['patient_id']
