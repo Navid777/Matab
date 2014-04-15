@@ -42,8 +42,12 @@ class Visit(models.Model):
 
 
 class Insurance(models.Model):
-    name = models.CharField(max_length=100)
+    insurance_type = models.CharField(max_length=100)
+    insurance_category = models.CharField(max_length=100)
+    complementary_insurance = models.BooleanField()
     percentage = models.IntegerField()
+    def __unicode__(self):
+        return self.insurance_type+" "+self.insurance_category
 
 
 class MRI(models.Model):

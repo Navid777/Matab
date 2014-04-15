@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 from Radiology.forms import LoginForm, PatientForm, InsuranceForm, AppointmentForm
 from Radiology.models import Patient, Appointment, Doctor
+from Radiology.models import Insurance
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.core import serializers
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
+
+
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -16,6 +20,8 @@ def login_view(request):
     else:
         form = LoginForm()
     return render(request, "login.html", {'form': form})
+
+
 @login_required
 def home(request):
     if request.method == 'POST' and 'sabt' in request.POST:
@@ -46,11 +52,12 @@ def home(request):
             has_patient = True
             try:
                 patient = Patient.objects.get(id=request.session['current_patient'])
-                return render(request, 'home.html', {'has_patient': has_patient, 'patient': patient, 'insurance_form':insurance_form})
+                return render(request, 'home.html',
+                              {'has_patient': has_patient, 'patient': patient, 'insurance_form': insurance_form})
             except Patient.DoesNotExist:
                 del request.session['current_patient']
                 HttpResponseRedirect('/home/')
-    return render(request, 'home.html', {'patient_form': patient_form, 'insurance_form':insurance_form})
+    return render(request, 'home.html', {'patient_form': patient_form, 'insurance_form': insurance_form})
 
 
 @login_required
@@ -67,6 +74,7 @@ def appointment(request):
             doctor = Doctor.objects.all()[0]
             print form.cleaned_data
             import datetime
+
             app = Appointment.objects.create(
                 patient=Patient.objects.get(id=request.session['current_patient']),
                 doctor=doctor,
@@ -81,3 +89,12 @@ def appointment(request):
         'form': form,
         'apps': Appointment.objects.all()
     })
+
+
+def insurance_categories(request):
+    if request.method == 'GET':
+        if 'insurance_type' in request.GET:
+            return HttpResponse(
+                serializers.serialize("xml", Insurance.objects.filter(insurance_type=request.GET['insurance_type'])))
+        else:
+            pass
