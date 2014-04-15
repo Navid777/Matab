@@ -1,0 +1,12 @@
+{% extends 'base.html'%}
+
+{% block content %}
+    <form action="" method="post">
+    {% csrf_token %}
+{{ form.as_p }}
+    <input type="submit" value="اضافه" />
+    </form>
+{% for a in apps %}
+    <div>{{ a.patient.get_full_name }}: {{ a.start_time }} - {{ a.end_time }}</div>
+{% endfor %}
+{% endblock %}

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from Radiology.models import Patient
+from django.db.models.query_utils import Q
+from Radiology.models import Patient, Appointment
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -14,6 +15,7 @@ national_code_error = "لطفا کدِ ملیِ بیمار را وارد کنی�
 national_code_duplicate_error = "این کدِ ملی قبلا استفاده شده است. "
 invalid_patient_error = "اطلاعاتِ واردشده صحیح نیست."
 not_complete_error = "اطلاعاتِ واردشده کامل نیست."
+overlapping_appointments_error = "وقت مشخص شده خالی نیست."
 
 
 class LoginForm(forms.Form):
@@ -100,7 +102,6 @@ class PatientForm(forms.Form):
             return cd
         return cd
 
-
     def clean_patient_id(self):
         patient_id = self.cleaned_data['patient_id']
         return patient_id
@@ -128,6 +129,7 @@ class PatientForm(forms.Form):
                 raise forms.ValidationError(national_code_duplicate_error)
         return patient_national_code
 
+
 class InsuranceForm(forms.Form):
     insurance_type = forms.ChoiceField()
     insurance_category = forms.ChoiceField()
@@ -136,4 +138,16 @@ class InsuranceForm(forms.Form):
     insurance_page_num = forms.IntegerField()
 
 
+class AppointmentForm(forms.Form):
+    start_time = forms.TimeField()
+    end_time = forms.TimeField()
 
+    def clean(self):
+        cd = super(AppointmentForm, self).clean()
+        st = cd['start_time']
+        et = cd['end_time']
+        if Appointment.objects.filter(Q(start_time__lt=st, end_time__gt=st)
+                                      | Q(start_time__lt=et, end_time__gt=et)).count() > 0:
+            raise forms.ValidationError(overlapping_appointments_error)
+        print cd
+        return cd

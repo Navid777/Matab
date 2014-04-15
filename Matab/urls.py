@@ -20,7 +20,8 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^login/$' , views.login_view),
     url(r'^home/$', views.home),
-    url(r'logout/$', views.logout_view)
+    url(r'logout/$', views.logout_view),
+    url(r'appointment/$', views.appointment)
 )
 
 if settings.DEBUG:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from Radiology.forms import LoginForm, PatientForm, InsuranceForm
-from Radiology.models import Patient
+from Radiology.forms import LoginForm, PatientForm, InsuranceForm, AppointmentForm
+from Radiology.models import Patient, Appointment, Doctor
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -57,3 +57,27 @@ def home(request):
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect('/login/')
+
+
+@login_required
+def appointment(request):
+    if request.method == "POST":
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            doctor = Doctor.objects.all()[0]
+            print form.cleaned_data
+            import datetime
+            app = Appointment.objects.create(
+                patient=Patient.objects.get(id=request.session['current_patient']),
+                doctor=doctor,
+                day=datetime.datetime.now(),
+                start_time=form.cleaned_data['start_time'],
+                end_time=form.cleaned_data['end_time'],
+            )
+            return HttpResponseRedirect('/appointment/')
+    else:
+        form = AppointmentForm()
+    return render(request, 'appointment.html', {
+        'form': form,
+        'apps': Appointment.objects.all()
+    })

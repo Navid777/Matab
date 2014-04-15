@@ -16,21 +16,29 @@ class Patient(models.Model):
     national_code = models.IntegerField(unique=True)
     medical_history = models.OneToOneField(MedicalHistory, null=True, blank=True)
 
+    def get_full_name(self):
+        return self.first_name + " " + self.last_name
+
 
 class Doctor(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     medical_number = models.IntegerField(unique=True)
 
-
-class Operation(models.Model):
-    time = models.DateTimeField()
+    def get_full_name(self):
+        return self.first_name + " " + self.last_name
 
 
 class Appointment(models.Model):
     patient = models.ForeignKey(Patient)
     doctor = models.ForeignKey(Doctor)
-    operation = models.ForeignKey(Operation)
+    day = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+
+class Visit(models.Model):
+    appointment = models.OneToOneField(Appointment)
 
 
 class Insurance(models.Model):
@@ -39,17 +47,16 @@ class Insurance(models.Model):
 
 
 class MRI(models.Model):
-    operation = models.ForeignKey(Operation)
+    appointment = models.OneToOneField(Appointment)
 
 
 class Scan(models.Model):
-    operation = models.ForeignKey(Operation)
+    appointment = models.OneToOneField(Appointment)
 
 
 class Radiology(models.Model):
-    operation = models.ForeignKey(Operation)
+    appointment = models.OneToOneField(Appointment)
 
 
 class Sonography(models.Model):
-    operation = models.ForeignKey(Operation)
-
+    appointment = models.OneToOneField(Appointment)
