@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-from Radiology.forms import LoginForm, PatientForm
+from Radiology.forms import LoginForm, PatientForm, InsuranceForm
 from Radiology.models import Patient
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-
-
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -18,14 +16,11 @@ def login_view(request):
     else:
         form = LoginForm()
     return render(request, "login.html", {'form': form})
-
-
 @login_required
 def home(request):
     if request.method == 'POST' and 'sabt' in request.POST:
         patient_form = PatientForm(request.POST)
         if patient_form.is_valid():
-            print patient_form
             cd = patient_form.cleaned_data
             patient = Patient()
             patient.first_name = cd['patient_first_name']
@@ -44,17 +39,18 @@ def home(request):
         del request.session['current_patient']
         return HttpResponseRedirect('/home/')
     else:
+        insurance_form = InsuranceForm()
         if not 'current_patient' in request.session:
             patient_form = PatientForm()
         else:
             has_patient = True
             try:
                 patient = Patient.objects.get(id=request.session['current_patient'])
-                return render(request, 'home.html', {'has_patient': has_patient, 'patient': patient})
+                return render(request, 'home.html', {'has_patient': has_patient, 'patient': patient, 'insurance_form':insurance_form})
             except Patient.DoesNotExist:
                 del request.session['current_patient']
                 HttpResponseRedirect('/home/')
-    return render(request, 'home.html', {'patient_form': patient_form})
+    return render(request, 'home.html', {'patient_form': patient_form, 'insurance_form':insurance_form})
 
 
 @login_required

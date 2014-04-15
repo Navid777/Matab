@@ -127,7 +127,13 @@ class PatientForm(forms.Form):
             if Patient.objects.filter(national_code=patient_national_code):
                 raise forms.ValidationError(national_code_duplicate_error)
         return patient_national_code
-    
+
+class InsuranceForm(forms.Form):
+    insurance_type = forms.ChoiceField()
+    insurance_category = forms.ChoiceField()
+    complementary_insurance = forms.ChoiceField()
+    insurance_serial = forms.IntegerField()
+    insurance_page_num = forms.IntegerField()
 
 
 
