@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from Radiology.forms import LoginForm, PatientForm, InsuranceForm
-from Radiology.models import Patient
+from Radiology.models import Patient, Insurance
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.core import serializers
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 def login_view(request):
     if request.method == 'POST':
@@ -55,5 +56,12 @@ def home(request):
 
 @login_required
 def logout_view(request):
-    logout(request)
+    logout(request) 
     return HttpResponseRedirect('/login/')
+
+def insurance_categories(request):
+    if request.method == 'GET':
+        if 'insurance_type' in request.GET:
+            return HttpResponse(serializers.serialize("xml",Insurance.objects.filter(insurance_type=request.GET['insurance_type'])))
+        else:
+            pass
