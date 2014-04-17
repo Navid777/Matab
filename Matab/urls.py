@@ -21,7 +21,8 @@ urlpatterns = patterns('',
     url(r'^login/$' , views.login_view),
     url(r'^home/$', views.home),
     url(r'logout/$', views.logout_view),
-    url(r'appointment/$', views.appointment),
+    url(r'appointment/$', views.appointment_day),
+    url(r'appointment/([^/]+)/$', views.appointment),
     url(r'insurance_categories/$', views.insurance_categories),
 )
 

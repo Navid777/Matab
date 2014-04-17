@@ -142,11 +142,18 @@ class AppointmentForm(forms.Form):
     start_time = forms.TimeField()
     end_time = forms.TimeField()
 
+    def __init__(self, *args, **kwargs):
+        super(AppointmentForm, self).__init__(*args, **kwargs)
+        self.day = None
+
+    def set_day(self, day):
+        self.day = day
+
     def clean(self):
         cd = super(AppointmentForm, self).clean()
         st = cd['start_time']
         et = cd['end_time']
-        if Appointment.objects.filter(Q(start_time__lt=st, end_time__gt=st)
+        if Appointment.objects.filter(day=self.day).filter(Q(start_time__lt=st, end_time__gt=st)
                                       | Q(start_time__lt=et, end_time__gt=et)).count() > 0:
             raise forms.ValidationError(overlapping_appointments_error)
         print cd

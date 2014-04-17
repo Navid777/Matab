@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
-
+from datetime import datetime
 
 def login_view(request):
     if request.method == 'POST':
@@ -80,18 +80,20 @@ def logout_view(request):
 
 
 @login_required
-def appointment(request):
+def appointment_day(request):
+    return render(request, 'appointment_day.html', {})
+
+@login_required
+def appointment(request, day):
     if request.method == "POST":
         form = AppointmentForm(request.POST)
+        form.set_day(datetime.strptime(day, '%Y-%m-%d'))
         if form.is_valid():
             doctor = Doctor.objects.all()[0]
-            print form.cleaned_data
-            import datetime
-
             app = Appointment.objects.create(
                 patient=Patient.objects.get(id=request.session['current_patient']),
                 doctor=doctor,
-                day=datetime.datetime.now(),
+                day=datetime.strptime(day, '%Y-%m-%d'),
                 start_time=form.cleaned_data['start_time'],
                 end_time=form.cleaned_data['end_time'],
             )
@@ -99,8 +101,9 @@ def appointment(request):
     else:
         form = AppointmentForm()
     return render(request, 'appointment.html', {
+        'day': day,
         'form': form,
-        'apps': Appointment.objects.all()
+        'apps': Appointment.objects.filter(day=datetime.strptime(day, '%Y-%m-%d'))
     })
 
 
