@@ -151,3 +151,20 @@ class AppointmentForm(forms.Form):
             raise forms.ValidationError(overlapping_appointments_error)
         print cd
         return cd
+    
+
+class TherapistForm(forms.Form):
+    therapist_medical_number = forms.IntegerField()
+    therapist_first_name = forms.CharField()
+    therapist_last_name = forms.CharField()
+    therapist_visit_date = forms.DateField(widget=forms.DateTimeInput) 
+    
+class OperationForm(forms.Form):
+    operation_type = forms.ChoiceField()
+    operation_codegraphy = forms.ChoiceField()
+    operation_need_cloth = forms.BooleanField()
+    
+    
+    
+    
+    

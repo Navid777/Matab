@@ -183,7 +183,7 @@ label[for=id_password] {
 	color: red ;
 }
 
-#paziresh_moshakhasat_box , #paziresh_bime_box{
+#paziresh_moshakhasat_box , #paziresh_bime_box, #paziresh_moalej_box, #paziresh_khedmat_box{
 	border-style: solid ;
 	border-radius: 5px; 
 	margin-left: auto ;
@@ -191,7 +191,7 @@ label[for=id_password] {
 	margin-top: 2% ;
 	float: right ;
 	padding: 5% ;
-	min-height: 300px; 
+	min-height: 400px; 
 	min-width: 80% ;
 	max-width: 80%;
 }

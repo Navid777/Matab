@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from Radiology.forms import LoginForm, PatientForm, InsuranceForm, AppointmentForm
+from Radiology.forms import LoginForm, PatientForm, InsuranceForm, AppointmentForm,\
+    TherapistForm, OperationForm
 from Radiology.models import Patient, Appointment, Doctor
 from Radiology.models import Insurance
 from django.contrib.auth import authenticate, login, logout
@@ -26,7 +27,9 @@ def login_view(request):
 def home(request):
     if request.method == 'POST' and 'sabt' in request.POST:
         patient_form = PatientForm(request.POST)
+        therapist_form = TherapistForm()
         insurance_form = InsuranceForm()
+        operation_form = OperationForm()
         if patient_form.is_valid():
             cd = patient_form.cleaned_data
             patient = Patient()
@@ -39,6 +42,8 @@ def home(request):
     elif request.method == 'POST' and 'vorood' in request.POST:
         patient_form = PatientForm(request.POST)
         insurance_form = InsuranceForm()
+        therapist_form = TherapistForm()
+        operation_form = OperationForm()
         if patient_form.is_valid():
             cd = patient_form.cleaned_data
             request.session['current_patient'] = cd['patient_id']
@@ -48,18 +53,24 @@ def home(request):
         return HttpResponseRedirect('/home/')
     else:
         insurance_form = InsuranceForm()
+        therapist_form = TherapistForm()
+        operation_form = OperationForm()
+        patient_form = PatientForm()
         if not 'current_patient' in request.session:
-            patient_form = PatientForm()
+            has_patient = False
+            patient = Patient()
         else:
             has_patient = True
             try:
                 patient = Patient.objects.get(id=request.session['current_patient'])
-                return render(request, 'home.html',
-                              {'has_patient': has_patient, 'patient': patient, 'insurance_form': insurance_form})
             except Patient.DoesNotExist:
                 del request.session['current_patient']
                 HttpResponseRedirect('/home/')
-    return render(request, 'home.html', {'patient_form': patient_form, 'insurance_form': insurance_form})
+    return render(request, 'home.html', {'has_patient':has_patient,'patient_form': patient_form, 
+                                         'patient':patient,
+                                         'insurance_form': insurance_form, 
+                                         'therapist_form':therapist_form,
+                                         'operation_form':operation_form})
 
 
 @login_required

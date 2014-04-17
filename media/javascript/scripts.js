@@ -8,8 +8,8 @@ $(document).ready(function() {
 			url:"/insurance_categories/?insurance_type=آزاد",
 			dataType:"xml",
 			success:function(xml) {
-				$x = $xml.find("django-objects");
-				alert($x.text());
+				alert("hello") ;
+				alert(xml.find('insurance_type').first().text());
 			}		
 		});
 	});

@@ -98,6 +98,7 @@
         	<label class="paziresh_title">
         	بیمه
        		</label>
+       		<br>
        		<div id="paziresh_bime_box">
        			{%if insurance_form.errors%}
        				{%for field in insurance_form%}
@@ -166,11 +167,127 @@
        		</div>		
         </div>
         <div id="paziresh_dastoor">
-        	دستورِ پزشک
+        	<label class="paziresh_title">
+        	 پزشک معالج
+       		</label>
+       		<div id="paziresh_moalej_box">
+       			{%if therapist_form.errors%}
+       				{%for field in therapist_form%}
+       					<div class="form_error">
+       						{{field.errors}}
+       					</div>
+       				{%endfor%}
+       					<div class="form_error">
+       						{{therapist_form.non_field_errors}}
+       					</div>
+       			{%endif%}
+       			<form action="" method="post">
+       			<table>
+       				<tr>
+       					<th>
+       						<label for="id_therapist_medical_number">
+شماره نظام پزشکی:
+							</label>
+       					</th>
+						<td>
+							{{therapist_form.therapist_medical_number}}
+						</td>
+       				</tr>
+       				<tr>
+       					<th>
+       						<label for="id_therapist_first_name">
+نام پزشک معالج:
+							</label>
+       					</th>
+						<td>
+							{{therapist_form.therapist_first_name}}
+						</td>
+       				</tr>
+       				<tr>
+       					<th>
+       						<label for="id_therapist_last_name">
+نام خانوادگی پزشک معالج:	
+						</label>
+       					</th>
+						<td>
+							{{therapist_form.therapist_last_name}}
+						</td>
+       				</tr>
+       				<tr>
+       					<th>
+       						<label for="id_therapist_visit_date">
+تاریخ ویزیت:
+							</label>
+       					</th>
+						<td>
+							{{therapist_form.therapist_visit_date}}
+						</td>
+       				</tr>
+       			</table>
+               		
+               		{%if has_therapist%}
+               		{% csrf_token %}
+               		<input type="submit" class="submit_button" id="new_therapist_button" name="new_therapist" value="پزشک معالج جدید" />
+               		{%else%}
+               		{% csrf_token %}
+               		<input type="submit" class="submit_button" name="new_therapist_signup" value="ثبت به عنوانِ پزشک معالج جدید" /> 
+               		<input type="submit" class="submit_button" name="new_therapist_login" value="ورودِ پزشک معالج"/>
+               		{%endif%}
+       			</form>
+       		</div>
         </div>
-        <div id="paziresh_khedmat">
+		<div id="paziresh_khedmat">
+        	<label class="paziresh_title">
         	نوعِ خدمت
+       	 	</label>
+       		<div id="paziresh_khedmat_box">
+       			{%if operation_form.errors%}
+       				{%for field in operation_form%}
+       					<div class="form_error">
+       						{{field.errors}}
+       					</div>
+       				{%endfor%}
+       					<div class="form_error">
+       						{{operation_form.non_field_errors}}
+       					</div>
+       			{%endif%}
+       			<form action="" method="post">
+       			<table>
+       				<tr>
+       					<th>
+       						<label for="id_operation_type">
+نوع خدمت:
+							</label>
+       					</th>
+						<td>
+							{{operation_form.operation_type}}
+						</td>
+       				</tr>
+       				<tr>
+       					<th>
+       						<label for="id_operation_codegraphy">
+کدگرافی خدمت:
+							</label>
+       					</th>
+						<td>
+							{{operation_form.operation_codegraphy}}
+						</td>
+       				</tr>
+       				<tr>
+       					<th>
+       						<label for="id_operatoin_need_cloth">
+لباس نیاز دارد
+							</label>
+       					</th>
+						<td>
+							{{operation_form.operation_need_cloth}}
+						</td>
+       				</tr>
+       			</table>
+       			</form>
+       		</div>
+
         </div>
-    </div>
+	</div>
 
 {% endblock %}

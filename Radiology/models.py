@@ -27,6 +27,14 @@ class Doctor(models.Model):
 
     def get_full_name(self):
         return self.first_name + " " + self.last_name
+    
+class Therapist(models.Model):
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    medical_number = models.IntegerField(unique=True)
+    
+    def __unicode__(self):
+        return self.first_name + " " + self.last_name
 
 
 class Appointment(models.Model):
@@ -35,7 +43,14 @@ class Appointment(models.Model):
     day = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
-
+    
+    
+class Operation(models.Model):
+    operation_type = models.CharField(max_length=30)
+    operation_codegraphy = models.CharField(max_length=30)
+    need_cloth = models.BooleanField()
+    def __unicode__(self):
+        return self.operation_type
 
 class Visit(models.Model):
     appointment = models.OneToOneField(Appointment)
@@ -48,19 +63,3 @@ class Insurance(models.Model):
     percentage = models.IntegerField()
     def __unicode__(self):
         return self.insurance_type+" "+self.insurance_category
-
-
-class MRI(models.Model):
-    appointment = models.OneToOneField(Appointment)
-
-
-class Scan(models.Model):
-    appointment = models.OneToOneField(Appointment)
-
-
-class Radiology(models.Model):
-    appointment = models.OneToOneField(Appointment)
-
-
-class Sonography(models.Model):
-    appointment = models.OneToOneField(Appointment)
