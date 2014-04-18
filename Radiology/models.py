@@ -48,7 +48,6 @@ class Appointment(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
     
-    
 class Operation(models.Model):
     operation_type = models.CharField(max_length=30)
     operation_codegraphy = models.CharField(max_length=30)
@@ -66,6 +65,7 @@ class Insurance(models.Model):
     complementary_insurance = models.CharField(max_length=100)
     ACCOUNT_SERIES = 3000
     account_id = models.IntegerField()
-    percentage = models.IntegerField()
+    insurance_portion = models.IntegerField()
+    complementary_insurance_portion = models.IntegerField
     def __unicode__(self):
         return self.insurance_type+" "+self.insurance_category
