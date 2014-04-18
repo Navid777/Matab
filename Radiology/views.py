@@ -25,11 +25,14 @@ def login_view(request):
 
 @login_required
 def home(request):
+    patient = Patient()
+    patient_form = PatientForm()
+    therapist_form = TherapistForm()
+    operation_form = OperationForm()
+    insurance_form = InsuranceForm()
+    has_patient = False
     if request.method == 'POST' and 'sabt' in request.POST:
         patient_form = PatientForm(request.POST)
-        therapist_form = TherapistForm()
-        insurance_form = InsuranceForm()
-        operation_form = OperationForm()
         if patient_form.is_valid():
             cd = patient_form.cleaned_data
             patient = Patient()
@@ -41,9 +44,6 @@ def home(request):
             return HttpResponseRedirect('/home/')
     elif request.method == 'POST' and 'vorood' in request.POST:
         patient_form = PatientForm(request.POST)
-        insurance_form = InsuranceForm()
-        therapist_form = TherapistForm()
-        operation_form = OperationForm()
         if patient_form.is_valid():
             cd = patient_form.cleaned_data
             request.session['current_patient'] = cd['patient_id']
@@ -52,20 +52,15 @@ def home(request):
         del request.session['current_patient']
         return HttpResponseRedirect('/home/')
     else:
-        insurance_form = InsuranceForm()
-        therapist_form = TherapistForm()
-        operation_form = OperationForm()
-        patient_form = PatientForm()
         if not 'current_patient' in request.session:
             has_patient = False
-            patient = Patient()
         else:
             has_patient = True
             try:
                 patient = Patient.objects.get(id=request.session['current_patient'])
             except Patient.DoesNotExist:
                 del request.session['current_patient']
-                HttpResponseRedirect('/home/')
+                return HttpResponseRedirect('/home/')
     return render(request, 'home.html', {'has_patient':has_patient,'patient_form': patient_form, 
                                          'patient':patient,
                                          'insurance_form': insurance_form, 
