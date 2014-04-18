@@ -9,6 +9,7 @@ from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from datetime import datetime
+from accounting import interface as accounting
 
 def login_view(request):
     if request.method == 'POST':
@@ -51,11 +52,13 @@ def home(request):
         patient_form = PatientForm(request.POST)
         if patient_form.is_valid():
             cd = patient_form.cleaned_data
-            new_patient = Patient()
-            new_patient.first_name = cd['patient_first_name']
-            new_patient.last_name = cd['patient_last_name']
-            new_patient.national_code = cd['patient_national_code']
-            new_patient.save()
+            account_id = accounting.create_account(Patient.ACCOUNT_SERIES)
+            new_patient = Patient.objects.create(
+                first_name=cd['patient_first_name'],
+                last_name=cd['patinet_last_name'],
+                national_code=cd['patient_national_code'],
+                account_id=account_id
+            )
             request.session['current_patient'] = new_patient.id
             return HttpResponseRedirect('/home/')
     elif request.method == 'POST' and 'patient_login' in request.POST:
@@ -74,11 +77,11 @@ def home(request):
         therapist_form = TherapistForm(request.POST)
         if therapist_form.is_valid():
             cd = therapist_form.cleaned_data
-            new_therapist = Therapist()
-            new_therapist.medical_number = cd['therapist_medical_number']
-            new_therapist.first_name = cd['therapist_first_name']
-            new_therapist.last_name = cd['therapist_last_name']
-            new_therapist.save()
+            new_therapist = Therapist.objects.create(
+                medical_number=cd['therapist_medical_number'],
+                first_name=cd['therapist_first_name'],
+                last_name=cd['therapist_last_name']
+            )
             request.session['current_therapist'] = new_therapist.id
             return HttpResponseRedirect('/home/')
     elif request.method == 'POST' and 'therapist_login' in request.POST:

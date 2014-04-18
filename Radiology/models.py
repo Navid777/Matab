@@ -14,6 +14,8 @@ class Patient(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     national_code = models.IntegerField(unique=True)
+    ACCOUNT_SERIES = 1000
+    account_id = models.IntegerField()
     medical_history = models.OneToOneField(MedicalHistory, null=True, blank=True)
 
     def get_full_name(self):
@@ -23,6 +25,8 @@ class Patient(models.Model):
 class Doctor(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
+    ACCOUNT_SERIES = 2000
+    account_id = models.IntegerField()
     medical_number = models.IntegerField(unique=True)
 
     def get_full_name(self):
@@ -59,7 +63,9 @@ class Visit(models.Model):
 class Insurance(models.Model):
     insurance_type = models.CharField(max_length=100)
     insurance_category = models.CharField(max_length=100)
-    complementary_insurance = models.BooleanField()
+    complementary_insurance = models.CharField(max_length=100)
+    ACCOUNT_SERIES = 3000
+    account_id = models.IntegerField()
     percentage = models.IntegerField()
     def __unicode__(self):
         return self.insurance_type+" "+self.insurance_category

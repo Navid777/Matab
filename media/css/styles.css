@@ -73,11 +73,11 @@ label[for=id_password] {
 }
 
 .submit_button {
-    margin-top: 5% ;
+    margin-top: 2% ;
     border-radius: 5px;
     margin-left : 30% ;
     margin-right: 30%; 
-    margin-bottom:5% ;
+    margin-bottom:2% ;
     width: 40% ;
     font-size: large;
     color:  white ;
@@ -192,7 +192,7 @@ label[for=id_password] {
 	margin-top: 2% ;
 	float: right ;
 	padding: 5% ;
-	min-height: 300px; 
+	min-height: 350px; 
 	min-width: 80% ;
 	max-width: 80%;
 }
