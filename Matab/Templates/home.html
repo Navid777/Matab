@@ -32,7 +32,7 @@
 							</label>
        					</th>
 						<td>
-							{%if has_patient%}
+							{%if patient%}
 							<label class="patient_label">{{patient.patient_id}}</label>
 							{%else%}
 							{{patient_form.patient_id}}
@@ -46,7 +46,7 @@
 							</label>
        					</th>
 						<td>
-							{%if has_patient%}
+							{%if patient%}
 							<label class="patient_label">{{patient.first_name}}</label>
 							{%else%}
 							{{patient_form.patient_first_name}}
@@ -60,7 +60,7 @@
 							</label>
        					</th>
 						<td>
-							{%if has_patient%}
+							{%if patient%}
 							<label class="patient_label">{{patient.last_name}}</label>
 							{%else%}
 							{{patient_form.patient_last_name}}
@@ -74,7 +74,7 @@
 							</label>
        					</th>
 						<td>
-							{%if has_patient%}
+							{%if patient%}
 							<label class="patient_label">{{patient.national_code}}</label>
 							{%else%}
 							{{patient_form.patient_national_code}}
@@ -83,13 +83,13 @@
        				</tr>
        			</table>
                		
-               		{%if has_patient%}
+               		{%if patient%}
                		{% csrf_token %}
-               		<input type="submit" class="submit_button" id="new_patient_button" name="jadid" value="بیمارِ جدید" />
+               		<input type="submit" class="submit_button" id="new_patient_button" name="new_patient" value="بیمارِ جدید" />
                		{%else%}
                		{% csrf_token %}
-               		<input type="submit" class="submit_button" name="sabt" value="ثبت به عنوانِ بیمارِ جدید" /> 
-               		<input type="submit" class="submit_button" name="vorood" value="ورودِ بیمار"/>
+               		<input type="submit" class="submit_button" name="patient_signup" value="ثبت به عنوانِ بیمارِ جدید" /> 
+               		<input type="submit" class="submit_button" name="patient_login" value="ورودِ بیمار"/>
                		{%endif%}
        			</form>
        		</div>
@@ -190,7 +190,11 @@
 							</label>
        					</th>
 						<td>
+							{%if therapist%}
+							<label class="therapist_label">{{therapist.medical_number}}</label>
+							{%else%}							
 							{{therapist_form.therapist_medical_number}}
+							{%endif%}
 						</td>
        				</tr>
        				<tr>
@@ -200,7 +204,11 @@
 							</label>
        					</th>
 						<td>
+							{%if therapist%}
+							<label class="therapist_label">{{therapist.first_name}}</label>
+							{%else%}
 							{{therapist_form.therapist_first_name}}
+							{%endif%}
 						</td>
        				</tr>
        				<tr>
@@ -210,7 +218,11 @@
 						</label>
        					</th>
 						<td>
+							{%if therapist%}
+							<label class="therapist_label">{{therapist.last_name}}</label>
+							{%else%}
 							{{therapist_form.therapist_last_name}}
+							{%endif%}
 						</td>
        				</tr>
        				<tr>
@@ -220,18 +232,21 @@
 							</label>
        					</th>
 						<td>
+							{%if therapist%}
+							{%else%}
 							{{therapist_form.therapist_visit_date}}
+							{%endif%}
 						</td>
        				</tr>
        			</table>
                		
-               		{%if has_therapist%}
+               		{%if therapist%}
                		{% csrf_token %}
                		<input type="submit" class="submit_button" id="new_therapist_button" name="new_therapist" value="پزشک معالج جدید" />
                		{%else%}
                		{% csrf_token %}
-               		<input type="submit" class="submit_button" name="new_therapist_signup" value="ثبت به عنوانِ پزشک معالج جدید" /> 
-               		<input type="submit" class="submit_button" name="new_therapist_login" value="ورودِ پزشک معالج"/>
+               		<input type="submit" class="submit_button" name="therapist_signup" value="ثبت به عنوانِ پزشک معالج جدید" /> 
+               		<input type="submit" class="submit_button" name="therapist_login" value="ورودِ پزشک معالج"/>
                		{%endif%}
        			</form>
        		</div>
@@ -288,6 +303,11 @@
        		</div>
 
         </div>
+		<div id="soorathesab">
+			<button class="submit_button" name="print_bill" onclick="window.location.href='/home/'">
+				چاپ صورتحساب
+			</button>
+		</div>
 	</div>
 
 {% endblock %}

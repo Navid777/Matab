@@ -1,4 +1,5 @@
-from Radiology.models import Patient, Doctor, MedicalHistory, Insurance
+from Radiology.models import Patient, Doctor, MedicalHistory, Insurance, \
+    Operation, Therapist
 from django.contrib import admin
 
 __author__ = 'Navid'
@@ -15,7 +16,16 @@ class MedicalHistoryAdmin(admin.ModelAdmin):
 class InsuranceAdmin(admin.ModelAdmin):
     list_display=('insurance_type','insurance_category','complementary_insurance')
 
+class OperationAdmin(admin.ModelAdmin):
+    list_display=('operation_type', 'operation_codegraphy')
+
+class TherapistAdmin(admin.ModelAdmin):
+    list_display=('first_name', 'last_name', 'medical_number')
+
 admin.site.register(Patient, PatientAdmin)
 admin.site.register(Doctor, DoctorAdmin)
 admin.site.register(MedicalHistory, MedicalHistoryAdmin)
 admin.site.register(Insurance, InsuranceAdmin)
+admin.site.register(Operation, OperationAdmin)
+admin.site.register(Therapist, TherapistAdmin)
+
