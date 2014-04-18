@@ -125,7 +125,7 @@ INSTALLED_APPS = (
     'accounting',
 )
 
-LOGIN_URL='/login/'
+LOGIN_URL = '/login/'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
