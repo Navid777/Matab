@@ -66,6 +66,6 @@ class Insurance(models.Model):
     ACCOUNT_SERIES = 3000
     account_id = models.IntegerField()
     insurance_portion = models.IntegerField()
-    complementary_insurance_portion = models.IntegerField
+    complementary_insurance_portion = models.IntegerField()
     def __unicode__(self):
         return self.insurance_type+" "+self.insurance_category
