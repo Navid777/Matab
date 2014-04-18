@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from Radiology.forms import LoginForm, PatientForm, InsuranceForm, \
     AppointmentForm, TherapistForm, OperationForm
-from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist
+from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist,\
+    Operation
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
@@ -28,6 +29,8 @@ def home(request):
     therapist_form = TherapistForm()
     operation_form = OperationForm()
     insurance_form = InsuranceForm()
+    operations = Operation.objects.all()
+    insurances = Insurance.objects.all()
     if 'current_patient' in request.session:
         try :
             patient = Patient.objects.get(id=request.session['current_patient'])
@@ -89,7 +92,9 @@ def home(request):
                                          'insurance_form': insurance_form, 
                                          'therapist_form':therapist_form,
                                          'operation_form':operation_form,
-                                         'therapist':therapist})
+                                         'therapist':therapist,
+                                         'insurances':insurances,
+                                         'operations':operations})
 
 
 @login_required

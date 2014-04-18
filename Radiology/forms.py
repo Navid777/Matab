@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from Radiology.models import Patient, Appointment, Therapist
+from Radiology.models import Patient, Appointment, Therapist, Insurance, \
+    Operation
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -133,9 +134,13 @@ class PatientForm(forms.Form):
 
 
 class InsuranceForm(forms.Form):
-    insurance_type = forms.ChoiceField()
-    insurance_category = forms.ChoiceField()
-    complementary_insurance = forms.ChoiceField()
+    BOOLEAN_CHOICES = (
+            ('False', 'ندارد'),
+            ('True', 'دارد')
+    )
+    insurance_type = forms.ModelChoiceField(queryset=Insurance.objects.all(), to_field_name="insurance_type")
+    insurance_category = forms.ModelChoiceField(queryset=Insurance.objects.all(),to_field_name="insurance_category")
+    complementary_insurance = forms.ChoiceField(choices=BOOLEAN_CHOICES)
     insurance_serial = forms.IntegerField()
     insurance_page_num = forms.IntegerField()
 
@@ -218,8 +223,8 @@ class TherapistForm(forms.Form):
 
     
 class OperationForm(forms.Form):
-    operation_type = forms.ChoiceField()
-    operation_codegraphy = forms.ChoiceField()
+    operation_type = forms.ModelChoiceField(queryset=Operation.objects.all())
+    operation_codegraphy = forms.ModelChoiceField(queryset=Operation.objects.all())
     operation_need_cloth = forms.BooleanField()
     
     
