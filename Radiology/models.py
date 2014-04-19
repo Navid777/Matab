@@ -51,25 +51,25 @@ class Appointment(models.Model):
 
 
 class Operation(models.Model):
-    operation_type = models.CharField(max_length=30)
-    operation_codegraphy = models.CharField(max_length=30)
+    type = models.CharField(max_length=30)
+    codegraphy = models.CharField(max_length=30)
     need_cloth = models.BooleanField()
 
     def __unicode__(self):
-        return self.operation_type
+        return self.type
 
 
 class Visit(models.Model):
     appointment = models.OneToOneField(Appointment)
 
 class Insurance(models.Model):
-    insurance_type = models.CharField(max_length=100)
-    insurance_category = models.CharField(max_length=100)
-    complementary_insurance = models.CharField(max_length=100)
+    type = models.CharField(max_length=100)
+    category = models.CharField(max_length=100)
+    complementary = models.CharField(max_length=100)
     ACCOUNT_SERIES = 3000
     account_id = models.IntegerField()
-    insurance_portion = models.IntegerField()
-    complementary_insurance_portion = models.IntegerField()
+    portion = models.IntegerField()
+    complementary_portion = models.IntegerField()
 
     def __unicode__(self):
-        return self.insurance_type+" "+self.insurance_category
+        return self.type+" "+self.category

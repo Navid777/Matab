@@ -14,10 +14,10 @@ class MedicalHistoryAdmin(admin.ModelAdmin):
     list_display = ('muck',)
 
 class InsuranceAdmin(admin.ModelAdmin):
-    list_display=('insurance_type','insurance_category','complementary_insurance')
+    pass
 
 class OperationAdmin(admin.ModelAdmin):
-    list_display=('operation_type', 'operation_codegraphy')
+    list_display=('type', 'codegraphy')
 
 class TherapistAdmin(admin.ModelAdmin):
     list_display=('first_name', 'last_name', 'medical_number')
