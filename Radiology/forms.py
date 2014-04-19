@@ -228,6 +228,10 @@ class TherapistForm(forms.Form):
 
     
 class OperationForm(forms.Form):
-    operation_type = forms.ModelChoiceField(queryset=Operation.objects.all())
-    operation_codegraphy = forms.ModelChoiceField(queryset=Operation.objects.all())
-    operation_need_cloth = forms.BooleanField()
+
+    def __init__(self, *args, **kwargs):
+        super(OperationForm, self).__init__(*args, **kwargs)
+        ids = Operation.objects.values_list('id', flat=True).distinct()
+        self.fields['operation_id'].choices=zip(ids, map(unicode, ids))
+
+    operation_id = forms.IntegerField()
