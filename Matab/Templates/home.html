@@ -114,55 +114,24 @@
        			<table>
        				<tr>
        					<th>
-       						<label for="id_insurance_type">
-نوعِ بیمه:
-							</label>
+       						<label for="id_insurance_id">
+آی‌دی بیمه
+                          </label>
        					</th>
 						<td>
-							{{insurance_form.insurance_type}}
+							{{insurance_form.insurance_id}}
 						</td>
        				</tr>
-       				<tr>
-       					<th>
-       						<label for="id_insurance_category">
-دسته بیمه:
-							</label>
-       					</th>
-						<td>
-							{{insurance_form.insurance_category}}
-						</td>
-       				</tr>
-       				<tr>
-       					<th>
-       						<label for="id_complementary_insurance">
-بیمه تکمیلی:
-							</label>
-       					</th>
-						<td>
-							{{insurance_form.complementary_insurance}}
-						</td>
-       				</tr>
-       				<tr>
-       					<th>
-       						<label for="id_insurance_serial">
-سریالِ دفترچه:
-							</label>
-       					</th>
-						<td>
-							{{insurance_form.insurance_serial}}
-						</td>
-       				</tr>
-       				<tr>
-       					<th>
-       						<label for="id_insurance_page_num">
-شماره برگه دفترچه:
-       						</label>
-       						<td>
-       							{{insurance_form.insurance_page_num}}
-       						</td>
-       					</th>
-       				</tr>
-       			</table>               		
+
+       			</table>
+                    {%if insurance%}
+               		{% csrf_token %}
+               		<input type="submit" class="submit_button" id="new_insurance_button" name="new_insurance" value="بیمه‌ی جدید" />
+               		{%else%}
+               		{% csrf_token %}
+               		<input type="submit" class="submit_button" name="insurance_signup" value="ثبت به عنوان بیمه‌ی جدید" />
+               		<input type="submit" class="submit_button" name="insurance_login" value="ورود ِ بیمه"/>
+               		{%endif%}
        			</form>
        		</div>		
         </div>

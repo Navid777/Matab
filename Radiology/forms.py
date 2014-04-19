@@ -134,15 +134,13 @@ class PatientForm(forms.Form):
 
 
 class InsuranceForm(forms.Form):
-    BOOLEAN_CHOICES = (
-            ('False', 'ندارد'),
-            ('True', 'دارد')
-    )
-    insurance_type = forms.ModelChoiceField(queryset=Insurance.objects.all(), to_field_name="insurance_type")
-    insurance_category = forms.ModelChoiceField(queryset=Insurance.objects.all(),to_field_name="insurance_category")
-    complementary_insurance = forms.ChoiceField(choices=BOOLEAN_CHOICES)
-    insurance_serial = forms.IntegerField()
-    insurance_page_num = forms.IntegerField()
+
+    def __init__(self, *args, **kwargs):
+        super(InsuranceForm, self).__init__(*args, **kwargs)
+        ids = Insurance.objects.values_list('id', flat=True).distinct()
+        self.fields['insurance_id'].choices = zip(ids, map(unicode, ids))
+
+    insurance_id = forms.ChoiceField()
 
 
 class AppointmentForm(forms.Form):
@@ -171,7 +169,7 @@ class TherapistForm(forms.Form):
     therapist_medical_number = forms.IntegerField(required=False)
     therapist_first_name = forms.CharField(required=False)
     therapist_last_name = forms.CharField(required=False)
-    therapist_visit_date = forms.DateField(required=False,widget=forms.DateTimeInput) 
+    therapist_visit_date = forms.DateField(required=False,widget=forms.DateTimeInput)
 
     def clean_therapist_first_name(self):
         therapist_first_name = self.cleaned_data['therapist_first_name']
@@ -233,8 +231,3 @@ class OperationForm(forms.Form):
     operation_type = forms.ModelChoiceField(queryset=Operation.objects.all())
     operation_codegraphy = forms.ModelChoiceField(queryset=Operation.objects.all())
     operation_need_cloth = forms.BooleanField()
-    
-    
-    
-    
-    

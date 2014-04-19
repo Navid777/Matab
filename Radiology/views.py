@@ -48,6 +48,14 @@ def home(request):
             therapist = None
     else:
         therapist = None
+    if 'current_insurance' in request.session:
+        try:
+            insurance = Insurance.objects.get(id=request.session['current_insurance'])
+        except Insurance.DoesNotExist:
+            del request.session['current_insurance']
+            insurance = None
+    else:
+        insurance = None
     if request.method == 'POST' and 'patient_signup' in request.POST:
         patient_form = PatientForm(request.POST)
         if patient_form.is_valid():
@@ -90,6 +98,19 @@ def home(request):
             cd = therapist_form.cleaned_data
             request.session['current_therapist'] = cd['therapist_id']
             return HttpResponseRedirect('/home/')
+    if request.method == 'POST' and 'insurance_signup' in request.POST:
+        #TODO:
+        aadad = 1/0
+    elif request.method == 'POST' and 'insurance_login' in request.POST:
+        insurance_form = InsuranceForm(request.POST)
+        if insurance_form.is_valid():
+            cd = insurance_form.cleaned_data
+            request.session['current_insurance'] = cd['insurance_id']
+            return HttpResponseRedirect('/home/')
+    elif request.method == 'POST' and 'new_insurance' in request.POST:
+        del request.session['current_insurance']
+        return HttpResponseRedirect('/home/')
+
     return render(request, 'home.html', {'patient_form': patient_form, 
                                          'patient':patient,
                                          'insurance_form': insurance_form, 
