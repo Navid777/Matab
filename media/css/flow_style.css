@@ -1,0 +1,14 @@
+#mainContainer{
+	padding: 20px;
+	width: 50%;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+#taskbar{
+	height: 70px;
+	
+}
+#tabs-container,#pageContainer{
+	background-color: white;
+}
