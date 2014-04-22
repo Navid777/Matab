@@ -78,7 +78,7 @@ def home(request):
             account_id = accounting.create_account(Patient.ACCOUNT_SERIES)
             new_patient = Patient.objects.create(
                 first_name=cd['patient_first_name'],
-                last_name=cd['patinet_last_name'],
+                last_name=cd['patient_last_name'],
                 national_code=cd['patient_national_code'],
                 account_id=account_id
             )
