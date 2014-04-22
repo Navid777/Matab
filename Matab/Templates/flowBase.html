@@ -11,33 +11,43 @@
     <title>ورود دستیار</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ MEDIA_URL }}css/bootstrap.css" rel="stylesheet">
+    <link href="./css/bootstrap.css" rel="stylesheet">
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ MEDIA_URL }}css/bootstrap-rtl.css" rel="stylesheet">
+    <link href="./css/bootstrap-rtl.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="{{ MEDIA_URL }}css/monshi_signin.css" rel="stylesheet">
+    <link href="./css/flow_style.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-      <script src="{{ MEDIA_URL }}js/html5shiv.js"></script>
-      <script src="{{ MEDIA_URL }}js/respond.min.js"></script>
+      <script src="../../dist/js/html5shiv.js"></script>
+      <script src="../../dist/js/respond.min.js"></script>
     <![endif]-->
   </head>
 
   <body>
 
-    <div class="container">
+    <div class="container bg-primary" id='mainContainer'>
 
-      <form class="form-signin" role="form" method="post" action="">
-        <h2 class="form-signin-heading">لطفا وارد شوید</h2>
-        <input type="text" class="form-control" placeholder="نام کاربری" required autofocus>
-        <input type="password" class="form-control" placeholder="رمز عبور" required>
-        
-        <button class="btn btn-lg btn-primary btn-block" type="submit">ورود</button>
-      </form>
-
+		<div class='' id='taskbar'>
+			<div class='pull-left'>
+				<div ></div>
+			</div>
+      	</div>
+      	
+      	<div id='tabs-container'>
+      		<ul class='nav nav-tabs'>
+      			<li><a>پذیرش بیمار</a></li>
+      			<li><a>لیست بیماران</a></li>
+      			<li><a>گزارشات بیمه</a></li>
+      			<li><a>لیست بدهکاران</a></li>
+      			<li><a>پرسنل</a></li>
+      		</ul>
+      	</div>
+		<div id='pageContainer'>
+			
+		</div>
     </div> <!-- /container -->
 
 

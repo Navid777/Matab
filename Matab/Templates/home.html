@@ -1,282 +1,103 @@
-{% extends 'base.html' %}
-{% block title %}
-    خانه
-{% endblock %}
-{%block extrascripts%}
-	<script type="text/javascript" src="{{MEDIA_URL}}javascript/scripts.js" ></script>
-{%endblock%}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
 
-    <div id="paziresh">
-        <div id="paziresh_moshakhasat">
-        	<label class="paziresh_title">
-        	مشخصاتِ بیمار
-       		</label>   		
-       		<div id="paziresh_moshakhasat_box">
-       			{%if patient_form.errors%}
-       				{%for field in patient_form%}
-       					<div class="form_error">
-       						{{field.errors}}
-       					</div>
-       				{%endfor%}
-       					<div class="form_error">
-       						{{patient_form.non_field_errors}}
-       					</div>
-       			{%endif%}
-       			<form action="" method="post">
-       			<table>
-       				<tr>
-       					<th>
-       						<label for="id_patient_id">
-شماره‌ی بیمار:							
-							</label>
-       					</th>
-						<td>
-							{%if patient%}
-							<label class="patient_label">{{patient.patient_id}}</label>
-							{%else%}
-							{{patient_form.patient_id}}
-							{%endif%}
-						</td>
-       				</tr>
-       				<tr>
-       					<th>
-       						<label for="id_patient_first_name">
-نامِ بیمار:						
-							</label>
-       					</th>
-						<td>
-							{%if patient%}
-							<label class="patient_label">{{patient.first_name}}</label>
-							{%else%}
-							{{patient_form.patient_first_name}}
-							{%endif%}
-						</td>
-       				</tr>
-       				<tr>
-       					<th>
-       						<label for="id_patient_last_name">
-نامِ خانوادگیِ بیمار:				
-							</label>
-       					</th>
-						<td>
-							{%if patient%}
-							<label class="patient_label">{{patient.last_name}}</label>
-							{%else%}
-							{{patient_form.patient_last_name}}
-							{%endif%}
-						</td>
-       				</tr>
-       				<tr>
-       					<th>
-       						<label for="id_patient_id">
-شماره‌ی ملیِ بیمار:							
-							</label>
-       					</th>
-						<td>
-							{%if patient%}
-							<label class="patient_label">{{patient.national_code}}</label>
-							{%else%}
-							{{patient_form.patient_national_code}}
-							{%endif%}
-						</td>
-       				</tr>
-       			</table>
-               		
-               		{%if patient%}
-               		{% csrf_token %}
-               		<input type="submit" class="submit_button" id="new_patient_button" name="new_patient" value="بیمارِ جدید" />
-               		{%else%}
-               		{% csrf_token %}
-               		<input type="submit" class="submit_button" name="patient_signup" value="ثبت به عنوانِ بیمارِ جدید" /> 
-               		<input type="submit" class="submit_button" name="patient_login" value="ورودِ بیمار"/>
-               		{%endif%}
-       			</form>
-       		</div>
-        </div>
-        <div id="paziresh_bime">
-        	<label class="paziresh_title">
-        	بیمه
-       		</label>
-       		<br>
-       		<div id="paziresh_bime_box">
-       			{%if insurance_form.errors%}
-       				{%for field in insurance_form%}
-       					<div class="form_error">
-       						{{field.errors}}
-       					</div>
-       				{%endfor%}
-       					<div class="form_error">
-       						{{patient_form.non_field_errors}}
-       					</div>
-       			{%endif%}
-       			<form action="" method="post">
-       			<table>
-       				<tr>
-       					<th>
-       						<label for="id_insurance_id">
-آی‌دی بیمه
-                          </label>
-       					</th>
-						<td>
-							{{insurance_form.insurance_id}}
-						</td>
-       				</tr>
+    <title>ثبت بیمار</title>
 
-       			</table>
-                    {%if insurance%}
-               		{% csrf_token %}
-               		<input type="submit" class="submit_button" id="new_insurance_button" name="new_insurance" value="بیمه‌ی جدید" />
-               		{%else%}
-               		{% csrf_token %}
-               		<input type="submit" class="submit_button" name="insurance_signup" value="ثبت به عنوان بیمه‌ی جدید" />
-               		<input type="submit" class="submit_button" name="insurance_login" value="ورود ِ بیمه"/>
-               		{%endif%}
-       			</form>
-       		</div>		
-        </div>
-        <div id="paziresh_dastoor">
-        	<label class="paziresh_title">
-        	 پزشک معالج
-       		</label>
-       		<div id="paziresh_moalej_box">
-       			{%if therapist_form.errors%}
-       				{%for field in therapist_form%}
-       					<div class="form_error">
-       						{{field.errors}}
-       					</div>
-       				{%endfor%}
-       					<div class="form_error">
-       						{{therapist_form.non_field_errors}}
-       					</div>
-       			{%endif%}
-       			<form action="" method="post">
-       			<table>
-       				<tr>
-       					<th>
-       						<label for="id_therapist_medical_number">
-شماره نظام پزشکی:
-							</label>
-       					</th>
-						<td>
-							{%if therapist%}
-							<label class="therapist_label">{{therapist.medical_number}}</label>
-							{%else%}							
-							{{therapist_form.therapist_medical_number}}
-							{%endif%}
-						</td>
-       				</tr>
-       				<tr>
-       					<th>
-       						<label for="id_therapist_first_name">
-نام پزشک معالج:
-							</label>
-       					</th>
-						<td>
-							{%if therapist%}
-							<label class="therapist_label">{{therapist.first_name}}</label>
-							{%else%}
-							{{therapist_form.therapist_first_name}}
-							{%endif%}
-						</td>
-       				</tr>
-       				<tr>
-       					<th>
-       						<label for="id_therapist_last_name">
-نام خانوادگی پزشک معالج:	
-						</label>
-       					</th>
-						<td>
-							{%if therapist%}
-							<label class="therapist_label">{{therapist.last_name}}</label>
-							{%else%}
-							{{therapist_form.therapist_last_name}}
-							{%endif%}
-						</td>
-       				</tr>
-       				<tr>
-       					<th>
-       						<label for="id_therapist_visit_date">
-تاریخ ویزیت:
-							</label>
-       					</th>
-						<td>
-							{%if therapist%}
-							{%else%}
-							{{therapist_form.therapist_visit_date}}
-							{%endif%}
-						</td>
-       				</tr>
-       			</table>
-               		
-               		{%if therapist%}
-               		{% csrf_token %}
-               		<input type="submit" class="submit_button" id="new_therapist_button" name="new_therapist" value="پزشک معالج جدید" />
-               		{%else%}
-               		{% csrf_token %}
-               		<input type="submit" class="submit_button" name="therapist_signup" value="ثبت به عنوانِ پزشک معالج جدید" /> 
-               		<input type="submit" class="submit_button" name="therapist_login" value="ورودِ پزشک معالج"/>
-               		{%endif%}
-       			</form>
-       		</div>
-        </div>
-		<div id="paziresh_khedmat">
-        	<label class="paziresh_title">
-        	نوعِ خدمت
-       	 	</label>
-       		<div id="paziresh_khedmat_box">
-       			{%if operation_form.errors%}
-       				{%for field in operation_form%}
-       					<div class="form_error">
-       						{{field.errors}}
-       					</div>
-       				{%endfor%}
-       					<div class="form_error">
-       						{{operation_form.non_field_errors}}
-       					</div>
-       			{%endif%}
-       			<form action="" method="post">
-       			<table>
-       				<tr>
-       					<th>
-       						<label for="id_operation_type">
-نوع خدمت:
-							</label>
-       					</th>
-						<td>
-							{{operation_form.operation_type}}
-						</td>
-       				</tr>
-       				<tr>
-       					<th>
-       						<label for="id_operation_codegraphy">
-کدگرافی خدمت:
-							</label>
-       					</th>
-						<td>
-							{{operation_form.operation_codegraphy}}
-						</td>
-       				</tr>
-       				<tr>
-       					<th>
-       						<label for="id_operatoin_need_cloth">
-لباس نیاز دارد
-							</label>
-       					</th>
-						<td>
-							{{operation_form.operation_need_cloth}}
-						</td>
-       				</tr>
-       			</table>
-       			</form>
-       		</div>
+    <!-- Bootstrap core CSS -->
+    <link href="{{ MEDIA_URL }}css/bootstrap.css" rel="stylesheet">
 
-        </div>
-		<div id="soorathesab">
-			<button class="submit_button" name="print_bill" onclick="window.location.href='/home/'">
-				چاپ صورتحساب
-			</button>
-		</div>
-	</div>
+    <!-- Bootstrap core CSS -->
+    <link href="{{ MEDIA_URL }}css/bootstrap-rtl.css" rel="stylesheet">
 
-{% endblock %}
+    <!-- Custom styles for this template -->
+    <link href="{{ MEDIA_URL }}css/patient_entry.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="{{ MEDIA_URL }}js/html5shiv.js"></script>
+      <script src="{{ MEDIA_URL }}js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="container" id='mainContainer'>
+    	<h2>اطلاعات بیمار را وارد نمایید</h2>
+    	<form role='form'>
+    		<div class='row'>
+    			<div class='panel panel-info col-md-5 form-part'>
+    				<div class='panel-heading'>
+    					<h3 class='panel-title'>
+	    					مشخصات بیمار
+    					</h3>
+    				</div>
+	    			<div class='panel-body'>
+	    				<div class='form-group'>
+	    					<label for='firstNameInput'> نام کاربر </label>
+	    					<input type='text' class='form-control' id='firstNameInput'/>
+	    				</div>
+	    				<div class='form-group'>
+	    					<label for='lastNameInput'> نام خانوادگی</label>
+	    					<input type='text' class='form-control' id='lastNameInput'/>
+	    				</div>	
+    				</div>
+    				
+    			</div>
+    			<div class='col-md-5 form-part panel panel-success'>
+    				<div class="panel-heading">
+    					<h3 class='panel-title'>
+    						مشخصات بیمه
+    					</h3>
+    				</div>
+    				<div class='panel-body'>
+    					<div class='form-group'>
+	    					<label for='insuranceTypeSelect'>نوع بیمه</label>
+	    					<select id='insuranceTypeSelect' class='form-control'>
+	    						
+	    					</select>
+	    				</div>
+	    				<div class='form-group'>
+	    					<label for='insuranceNumber'>شماره بیمه</label>
+	    					<input type='number' id='insuranceNumber' class='form-control'>
+	    				</div>
+    				</div>
+	    				
+    			</div>
+    		</div>
+    		<div class='row'>
+    			<div class='col-md-5 form-part panel panel-danger'>
+    				<div class='panel-heading'>
+    					<h3 class='panel-title'>
+    						مشخصات پزشک معالج
+    					</h3>
+    				</div>
+    				<div class='panel-body'>
+   		    			<div class='form-group'>
+	    					<label for='doctorName'> نام دکتر</label>
+	    					<select id='doctorName' class='form-control'> </select>
+	    				</div>
+
+    				</div>
+    			</div>
+    			<!--<div class='col-md-6 form-part'>
+    				
+    			</div>-->
+    		</div>
+    		<input type='button' class='btn btn-primary btn-lg center-block' value="ثبت اطلاعات">
+    	</form>
+    	<div class='row'>
+    	</div>
+
+
+    </div> <!-- /container -->
+
+
+  </body>
+</html>

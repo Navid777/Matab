@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+from django.http.response import Http404
 from Radiology.forms import LoginForm, PatientForm, InsuranceForm, \
-    AppointmentForm, TherapistForm, OperationForm
+    AppointmentForm, TherapistForm, OperationForm, PatientPartialForm
 from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist,\
     Operation
 from django.contrib.auth import authenticate, login, logout
@@ -25,6 +26,20 @@ def login_view(request):
 
 
 @login_required
+def ajax_find_patients_by_name(request):
+    if request.method != "POST":
+        raise Http404()
+    form = PatientPartialForm(request.POST)
+    if form.is_valid():
+        cd = form.cleaned_data
+        patients = Patient.objects.filter(first_name=cd['first_name'], last_name=cd['last_name'])
+        return render(request, 'json/find_patients.json', {
+            'patients': patients
+        })
+    return render(request, 'json/error.json', {})
+
+
+@login_required
 def home(request):
     patient_form = PatientForm()
     therapist_form = TherapistForm()
@@ -33,7 +48,7 @@ def home(request):
     operations = Operation.objects.all()
     insurances = Insurance.objects.all()
     if 'current_patient' in request.session:
-        try :
+        try:
             patient = Patient.objects.get(id=request.session['current_patient'])
         except Patient.DoesNotExist:
             del request.session['current_patient']

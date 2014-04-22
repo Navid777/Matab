@@ -1,0 +1,13 @@
+{
+    success: true,
+    count: {{ patients.count }},
+    patients: [
+        {% for p in patients %}
+            {
+                first_name: {{ p.first_name }},
+                last_name: {{ p.last_name }},
+                national_code: {{ p.national_code }}
+            }
+        {% endfor %}
+    ]
+}
