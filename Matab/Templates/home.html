@@ -7,6 +7,9 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/ajax_csrf_fix.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/home.js"></script>
 
     <title>ثبت بیمار</title>
 
@@ -29,6 +32,7 @@
   <body>
 
     <div class="container" id='mainContainer'>
+        {% csrf_token %}
     	<h2>اطلاعات بیمار را وارد نمایید</h2>
     	<form role='form'>
     		<div class='row'>
@@ -59,13 +63,17 @@
     				<div class='panel-body'>
     					<div class='form-group'>
 	    					<label for='insuranceTypeSelect'>نوع بیمه</label>
-	    					<select id='insuranceTypeSelect' class='form-control'>
-	    						
+	    					<select name="type" id='insuranceTypeSelect' class='form-control'>
+                                <option value="" selected></option>
+	    						{% for t in insurance_types %}
+                                <option value="{{ t }}">{{ t }}</option>
+                                {% endfor %}
 	    					</select>
 	    				</div>
 	    				<div class='form-group'>
-	    					<label for='insuranceNumber'>شماره بیمه</label>
-	    					<input type='number' id='insuranceNumber' class='form-control'>
+	    					<label for='insuranceCategorySelect'>گونه‌ی بیمه</label>
+	    					<select name="category" id="insuranceCategorySelect" class="form-control" disabled>
+                            </select>
 	    				</div>
     				</div>
 	    				

@@ -1,0 +1,1 @@
+{"success": true,"count":{{ categories|length }},"categories":[{% for c in categories %}"{{ c }}"{% if not forloop.last %},{% endif %}{% endfor %}]}

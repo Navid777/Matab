@@ -24,6 +24,8 @@ urlpatterns = patterns('',
     url(r'appointment/$', views.appointment_day),
     url(r'appointment/([^/]+)/$', views.appointment),
     url(r'insurance_categories/$', views.insurance_categories),
+
+    url(r'^ajax/find_insurance_categories_by_type/$', views.ajax_find_insurance_categories_by_type),
 )
 
 if settings.DEBUG:

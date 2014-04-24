@@ -31,9 +31,10 @@
     <div class="container">
 
       <form class="form-signin" role="form" method="post" action="">
+          {% csrf_token %}
         <h2 class="form-signin-heading">لطفا وارد شوید</h2>
-        <input type="text" class="form-control" placeholder="نام کاربری" required autofocus>
-        <input type="password" class="form-control" placeholder="رمز عبور" required>
+        <input name="username" type="text" class="form-control" placeholder="نام کاربری" required autofocus>
+        <input name="password" type="password" class="form-control" placeholder="رمز عبور" required>
         
         <button class="btn btn-lg btn-primary btn-block" type="submit">ورود</button>
       </form>
