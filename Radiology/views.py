@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.http.response import Http404
 from Radiology.forms import LoginForm, PatientForm, InsuranceForm, \
-    AppointmentForm, TherapistForm, OperationForm, PatientPartialForm
+    AppointmentForm, TherapistForm, OperationForm
 from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist,\
     Operation
 from django.contrib.auth import authenticate, login, logout
@@ -11,6 +11,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from datetime import datetime
 from accounting import interface as accounting
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -27,9 +28,14 @@ def login_view(request):
 
 @login_required
 def home(request):
-    insurance_types = Insurance.objects.values_list('type', flat=True).distinct()
+    insurances = Insurance.objects.all()
+    insurance_types = insurances.values_list('type', flat=True).distinct()
+    insurance_categories = insurances.values_list('category', flat=True).distinct()
+    insurance_complementaries = insurances.values_list('complementary', flat=True).distinct()
     return render(request, 'home.html', {
         "insurance_types": insurance_types,
+        "insurance_categories": insurance_categories,
+        "insurance_complementaries": insurance_complementaries,
     })
 
 
@@ -77,25 +83,50 @@ def insurance_categories(request):
 
 
 @login_required
-def ajax_find_patients_by_name(request):
+def ajax_find_patients(request):
     if request.method != "POST":
         raise Http404()
-    form = PatientPartialForm(request.POST)
-    if form.is_valid():
-        cd = form.cleaned_data
-        patients = Patient.objects.filter(first_name=cd['first_name'], last_name=cd['last_name'])
-        return render(request, 'json/find_patients.json', {
-            'patients': patients
-        })
-    return render(request, 'json/error.json', {})
+    filters = {}
+    if 'first_name' in request.POST:
+        filters['first_name'] = request.POST['first_name']
+    if 'last_name' in request.POST:
+        filters['last_name'] = request.POST['last_name']
+    if 'national_code' in request.POST:
+        filters['national_code'] = request.POST['national_code']
+    patients = Patient.objects.filter(**filters)
+    print filters
+    print patients
+    return render(request, 'json/patients.json', {
+        'patients': patients
+    })
 
 
 @login_required
-def ajax_find_insurance_categories_by_type(request):
+def ajax_find_insurances(request):
     if request.method != "POST":
         raise Http404()
-    type = request.POST['type']
-    categories = Insurance.objects.filter(type=type).values_list('category', flat=True).distinct()
-    return render(request, 'json/insurance_categories.json', {
+    filters = {}
+    if 'type' in request.POST:
+        filters['type'] = request.POST['type']
+    if 'category' in request.POST:
+        filters['category'] = request.POST['category']
+    if 'complementary' in request.POST:
+        filters['complementary'] = request.POST['complementary']
+    insurances = Insurance.objects.filter(**filters)
+    if 'type' in filters:
+        types = None
+    else:
+        types = insurances.values_list('type', flat=True).distinct()
+    if 'category' in filters:
+        categories = None
+    else:
+        categories = insurances.values_list('category', flat=True).distinct()
+    if 'complementary' in filters:
+        complementaries = None
+    else:
+        complementaries = insurances.values_list('complementary', flat=True).distinct()
+    return render(request, 'json/insurances.json', {
+        'types': types,
         'categories': categories,
+        'complementaries': complementaries,
     })
