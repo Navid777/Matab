@@ -12,6 +12,14 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render
 
 
+#TODO: alan dar majmoo 4 ta naghsh hast, yeki monshi, yeki operatore MRI, yeki AmadeSaz, yeki ham Pezeshk! ke ina
+# har kodoom faghat ye esmo family daran
+#Monshi ke bimaro paziresh mikone
+#AmadeSaz forme pishineye pezeshkie bimaraye paziresh shode ro por mikone, zemnan operatore MRI e feli ro ham vared mikone
+#operatore MRI hich gohi nemikhore, faghat inke alan ki sare dastgah vaisade mohemme
+#Pezeshk ham hich gohi nemikhore ,faghat mibine ke kia barash paziresh shodan be tartib seda mizane bian too
+
+
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)

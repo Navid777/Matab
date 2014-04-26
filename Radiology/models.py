@@ -7,8 +7,26 @@ from django.db import models
 
 class MedicalHistory(models.Model):
 # todo: complete the fields of this class
-    muck = models.BooleanField()
-
+    diabet = models.BooleanField()
+    blood_pressure = models.BooleanField()
+    heart_battery = models.BooleanField()
+    artificial_organ = models.BooleanField()
+    external_metal = models.BooleanField()
+    metal_gire = models.BooleanField()
+    protez = models.BooleanField()
+    organ_disability = models.BooleanField()
+    uncontrolable_tension = models.BooleanField()
+    pregnancy = models.BooleanField()
+    surgery = models.BooleanField()
+    trauma = models.BooleanField()
+    malt_fever = models.BooleanField()
+    anemia = models.BooleanField()
+    thyroid = models.BooleanField()
+    #TODO: tarjomeye ina peida beshe!
+    sharhe_hal = models.CharField(max_length=300)
+    tozihat = models.CharField(max_length = 300)
+    bimarie_khas = models.CharField(max_length = 300)
+    
 
 class Patient(models.Model):
     first_name = models.CharField(max_length=30)
