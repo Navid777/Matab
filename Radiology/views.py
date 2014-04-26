@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
-from django.http.response import Http404
 from Radiology.forms import LoginForm, PatientForm, InsuranceForm, \
     AppointmentForm, TherapistForm, OperationForm, PatientPartialForm
-from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist,\
+from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist, \
     Operation
+from accounting import interface as accounting
+from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render
-from datetime import datetime
-from accounting import interface as accounting
 
 def login_view(request):
     if request.method == 'POST':
