@@ -24,3 +24,11 @@ form{
 .row div{
 	padding: 5px;
 }
+
+/* FIXME: temporary */
+.error {
+    background: red;
+}
+.success {
+    background: green;
+}

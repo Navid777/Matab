@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from Radiology.forms import LoginForm, PatientForm, InsuranceForm, \
-    AppointmentForm, TherapistForm, OperationForm, PatientPartialForm
+    AppointmentForm, TherapistForm, OperationForm
 from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist, \
     Operation
 from accounting import interface as accounting
@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -25,114 +26,16 @@ def login_view(request):
 
 
 @login_required
-def ajax_find_patients_by_name(request):
-    if request.method != "POST":
-        raise Http404()
-    form = PatientPartialForm(request.POST)
-    if form.is_valid():
-        cd = form.cleaned_data
-        patients = Patient.objects.filter(first_name=cd['first_name'], last_name=cd['last_name'])
-        return render(request, 'json/find_patients.json', {
-            'patients': patients
-        })
-    return render(request, 'json/error.json', {})
-
-
-@login_required
 def home(request):
-    patient_form = PatientForm()
-    therapist_form = TherapistForm()
-    operation_form = OperationForm()
-    insurance_form = InsuranceForm()
-    operations = Operation.objects.all()
     insurances = Insurance.objects.all()
-    if 'current_patient' in request.session:
-        try:
-            patient = Patient.objects.get(id=request.session['current_patient'])
-        except Patient.DoesNotExist:
-            del request.session['current_patient']
-            patient = None
-    else:
-        patient = None
-    if 'current_therapist' in request.session:
-        try :
-            therapist = Therapist.objects.get(id=request.session['current_therapist'])
-        except Therapist.DoesNotExist:
-            del request.session['current_therapist']
-            therapist = None
-    else:
-        therapist = None
-    if 'current_insurance' in request.session:
-        try:
-            insurance = Insurance.objects.get(id=request.session['current_insurance'])
-        except Insurance.DoesNotExist:
-            del request.session['current_insurance']
-            insurance = None
-    else:
-        insurance = None
-    if request.method == 'POST' and 'patient_signup' in request.POST:
-        patient_form = PatientForm(request.POST)
-        if patient_form.is_valid():
-            cd = patient_form.cleaned_data
-            account_id = accounting.create_account(Patient.ACCOUNT_SERIES)
-            new_patient = Patient.objects.create(
-                first_name=cd['patient_first_name'],
-                last_name=cd['patient_last_name'],
-                national_code=cd['patient_national_code'],
-                account_id=account_id
-            )
-            request.session['current_patient'] = new_patient.id
-            return HttpResponseRedirect('/home/')
-    elif request.method == 'POST' and 'patient_login' in request.POST:
-        patient_form = PatientForm(request.POST)
-        if patient_form.is_valid():
-            cd = patient_form.cleaned_data
-            request.session['current_patient'] = cd['patient_id']
-            return HttpResponseRedirect('/home/')
-    elif request.method == 'POST' and 'new_patient' in request.POST:
-        del request.session['current_patient']
-        return HttpResponseRedirect('/home/')
-    elif request.method == 'POST' and 'new_therapist' in request.POST:
-        del request.session['current_therapist']
-        return HttpResponseRedirect('/home/')
-    elif request.method == 'POST' and 'therapist_signup' in request.POST:
-        therapist_form = TherapistForm(request.POST)
-        if therapist_form.is_valid():
-            cd = therapist_form.cleaned_data
-            new_therapist = Therapist.objects.create(
-                medical_number=cd['therapist_medical_number'],
-                first_name=cd['therapist_first_name'],
-                last_name=cd['therapist_last_name']
-            )
-            request.session['current_therapist'] = new_therapist.id
-            return HttpResponseRedirect('/home/')
-    elif request.method == 'POST' and 'therapist_login' in request.POST:
-        therapist_form = TherapistForm(request.POST)
-        if therapist_form.is_valid():
-            cd = therapist_form.cleaned_data
-            request.session['current_therapist'] = cd['therapist_id']
-            return HttpResponseRedirect('/home/')
-    if request.method == 'POST' and 'insurance_signup' in request.POST:
-        #TODO:
-        aadad = 1/0
-    elif request.method == 'POST' and 'insurance_login' in request.POST:
-        insurance_form = InsuranceForm(request.POST)
-        if insurance_form.is_valid():
-            cd = insurance_form.cleaned_data
-            request.session['current_insurance'] = cd['insurance_id']
-            return HttpResponseRedirect('/home/')
-    elif request.method == 'POST' and 'new_insurance' in request.POST:
-        del request.session['current_insurance']
-        return HttpResponseRedirect('/home/')
-
-    return render(request, 'home.html', {'patient_form': patient_form, 
-                                         'patient':patient,
-                                         'insurance_form': insurance_form, 
-                                         'therapist_form':therapist_form,
-                                         'operation_form':operation_form,
-                                         'therapist':therapist,
-                                         'insurances':insurances,
-                                         'operations':operations})
+    insurance_types = insurances.values_list('type', flat=True).distinct()
+    insurance_categories = insurances.values_list('category', flat=True).distinct()
+    insurance_complementaries = insurances.values_list('complementary', flat=True).distinct()
+    return render(request, 'home.html', {
+        "insurance_types": insurance_types,
+        "insurance_categories": insurance_categories,
+        "insurance_complementaries": insurance_complementaries,
+    })
 
 
 @login_required
@@ -176,3 +79,53 @@ def insurance_categories(request):
                 serializers.serialize("xml", Insurance.objects.filter(insurance_type=request.GET['insurance_type'])))
         else:
             pass
+
+
+@login_required
+def ajax_find_patients(request):
+    if request.method != "POST":
+        raise Http404()
+    filters = {}
+    if 'first_name' in request.POST:
+        filters['first_name'] = request.POST['first_name']
+    if 'last_name' in request.POST:
+        filters['last_name'] = request.POST['last_name']
+    if 'national_code' in request.POST:
+        filters['national_code'] = request.POST['national_code']
+    patients = Patient.objects.filter(**filters)
+    print filters
+    print patients
+    return render(request, 'json/patients.json', {
+        'patients': patients
+    })
+
+
+@login_required
+def ajax_find_insurances(request):
+    if request.method != "POST":
+        raise Http404()
+    filters = {}
+    if 'type' in request.POST:
+        filters['type'] = request.POST['type']
+    if 'category' in request.POST:
+        filters['category'] = request.POST['category']
+    if 'complementary' in request.POST:
+        filters['complementary'] = request.POST['complementary']
+    insurances = Insurance.objects.filter(**filters)
+    if 'type' in filters:
+        types = None
+    else:
+        types = insurances.values_list('type', flat=True).distinct()
+    if 'category' in filters:
+        categories = None
+    else:
+        categories = insurances.values_list('category', flat=True).distinct()
+    if 'complementary' in filters:
+        complementaries = None
+    else:
+        complementaries = insurances.values_list('complementary', flat=True).distinct()
+    return render(request, 'json/insurances.json', {
+        'types': types,
+        'categories': categories,
+        'complementaries': complementaries,
+    })

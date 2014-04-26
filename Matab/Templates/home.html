@@ -7,6 +7,10 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/ajax_csrf_fix.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/chosen.jquery.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/home.js"></script>
 
     <title>ثبت بیمار</title>
 
@@ -15,6 +19,9 @@
 
     <!-- Bootstrap core CSS -->
     <link href="{{ MEDIA_URL }}css/bootstrap-rtl.css" rel="stylesheet">
+
+    <!-- Chosen core CSS -->
+    <link href="{{ MEDIA_URL }}css/chosen.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="{{ MEDIA_URL }}css/patient_entry.css" rel="stylesheet">
@@ -29,6 +36,7 @@
   <body>
 
     <div class="container" id='mainContainer'>
+        {% csrf_token %}
     	<h2>اطلاعات بیمار را وارد نمایید</h2>
     	<form role='form'>
     		<div class='row'>
@@ -41,12 +49,16 @@
 	    			<div class='panel-body'>
 	    				<div class='form-group'>
 	    					<label for='firstNameInput'> نام کاربر </label>
-	    					<input type='text' class='form-control' id='firstNameInput'/>
+	    					<input name="first_name" type='text' class='form-control' id='firstNameInput'/>
 	    				</div>
 	    				<div class='form-group'>
 	    					<label for='lastNameInput'> نام خانوادگی</label>
-	    					<input type='text' class='form-control' id='lastNameInput'/>
-	    				</div>	
+	    					<input name="last_name" type='text' class='form-control' id='lastNameInput'/>
+	    				</div>
+                        <div class="form-group">
+                            <label for="nationalCodeInput">شماره‌ی ملی</label>
+                            <input name="national_code" type="number" class="form-control" id="nationalCodeInput"/>
+                        </div>
     				</div>
     				
     			</div>
@@ -59,14 +71,25 @@
     				<div class='panel-body'>
     					<div class='form-group'>
 	    					<label for='insuranceTypeSelect'>نوع بیمه</label>
-	    					<select id='insuranceTypeSelect' class='form-control'>
-	    						
+	    					<select name="type" id='insuranceTypeSelect' class='form-control chosen-select'>
+                                <option value="" selected></option>
+	    						{% for t in insurance_types %}
+                                <option value="{{ t }}">{{ t }}</option>
+                                {% endfor %}
 	    					</select>
 	    				</div>
 	    				<div class='form-group'>
-	    					<label for='insuranceNumber'>شماره بیمه</label>
-	    					<input type='number' id='insuranceNumber' class='form-control'>
+	    					<label for='insuranceCategorySelect'>گونه‌ی بیمه</label>
+	    					<select name="category" id="insuranceCategorySelect" class="form-control chosen-select">
+                                <option value="" selected></option>
+                            </select>
 	    				</div>
+                        <div class="form-group">
+                            <label for="insuranceComplementarySelect">بیمه‌ی تکمیلی</label>
+                            <select name="complementary" id="insuranceComplementarySelect" class="form-control chosen-select">
+                                <option value="" selected></option>
+                            </select>
+                        </div>
     				</div>
 	    				
     			</div>

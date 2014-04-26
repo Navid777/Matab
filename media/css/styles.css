@@ -200,7 +200,7 @@ label[for=id_password] {
 	float: right;
 	display:block;
 }
-.patient_label , therapist_label{
+.patient_label , .therapist_label{
 	text-align: center;
 	margin:40% ;
 }

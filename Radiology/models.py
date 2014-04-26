@@ -62,6 +62,7 @@ class Operation(models.Model):
 class Visit(models.Model):
     appointment = models.OneToOneField(Appointment)
 
+
 class Insurance(models.Model):
     type = models.CharField(max_length=100)
     category = models.CharField(max_length=100)

@@ -57,11 +57,6 @@ class LoginForm(forms.Form):
         return cd
 
 
-class PatientPartialForm(forms.Form):
-    first_name = forms.CharField(max_length=30)
-    last_name = forms.CharField(max_length=50)
-
-
 class PatientForm(forms.Form):
     patient_id = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'patient_id'}))
     patient_first_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'patient_first_name'}))
