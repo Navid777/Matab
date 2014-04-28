@@ -62,6 +62,7 @@ $(document).ready(function() {
     var $type = $("#insuranceTypeSelect");
     var $category = $("#insuranceCategorySelect");
     var $complementary = $("#insuranceComplementarySelect");
+
     $type.on('change', function() {
         $category.html("<option value='' selected></option>");
         $complementary.html("<option value='' selected></option>");
@@ -158,6 +159,29 @@ $(document).ready(function() {
                     }
                 } else {
                     //TODO
+                }
+            }
+        });
+    });
+
+    var $operationType = $("#operationTypeSelect");
+    var $operationCodeography = $("#operationCodeographySelect");
+
+    $operationType.on('change', function() {
+        $operationCodeography.html("<option value='' selected></option>");
+        $.ajax({
+            type: "POST",
+            url: "/ajax/find_insurances/",
+            data: {type: $operationType.val()},
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    for (var i in data.codeographies) {
+                        $operationCodeography.append(
+                            '<option value="' + data.codeographies[i] + '">'
+                                + data.codeohraphies[i] + '</option>'
+                        );
+                    }
                 }
             }
         });

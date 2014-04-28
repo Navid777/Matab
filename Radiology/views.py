@@ -35,14 +35,11 @@ def login_view(request):
 
 @login_required
 def home(request):
-    insurances = Insurance.objects.all()
-    insurance_types = insurances.values_list('type', flat=True).distinct()
-    insurance_categories = insurances.values_list('category', flat=True).distinct()
-    insurance_complementaries = insurances.values_list('complementary', flat=True).distinct()
+    insurance_types = Insurance.objects.values_list('type', flat=True).distinct()
+    operation_types = Operation.objects.values_list('type', flat=True).distinct()
     return render(request, 'home.html', {
         "insurance_types": insurance_types,
-        "insurance_categories": insurance_categories,
-        "insurance_complementaries": insurance_complementaries,
+        "operation_types": operation_types,
     })
 
 

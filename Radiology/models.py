@@ -71,7 +71,7 @@ class Appointment(models.Model):
 class Operation(models.Model):
     type = models.CharField(max_length=30)
     codegraphy = models.CharField(max_length=30)
-    need_cloth = models.BooleanField()
+    fee = models.FloatField()
 
     def __unicode__(self):
         return self.type

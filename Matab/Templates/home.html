@@ -119,9 +119,31 @@
 	    				</div>
     				</div>
     			</div>
-    			<!--<div class='col-md-6 form-part'>
-    				
-    			</div>-->
+                <div class='col-md-5 form-part panel panel-success'>
+    				<div class="panel-heading">
+    					<h3 class='panel-title'>
+    						خدمت
+    					</h3>
+    				</div>
+    				<div class='panel-body'>
+    					<div class='form-group'>
+	    					<label for='operationTypeSelect'>نوع خدمت</label>
+	    					<select name="operation_type" id='operationTypeSelect' class='form-control chosen-select'>
+                                <option value="" selected></option>
+	    						{% for t in operation_types %}
+                                <option value="{{ t }}">{{ t }}</option>
+                                {% endfor %}
+	    					</select>
+	    				</div>
+	    				<div class='form-group'>
+	    					<label for='operationCodeographySelect'>گونه‌ی بیمه</label>
+	    					<select name="category" id="operationCodeographySelect" class="form-control chosen-select">
+                                <option value="" selected></option>
+                            </select>
+	    				</div>
+    				</div>
+
+    			</div>
     		</div>
     		<input type='button' class='btn btn-primary btn-lg center-block' value="ثبت اطلاعات">
     	</form>
