@@ -173,3 +173,9 @@ def ajax_find_operations(request):
         'types': types,
         'codegraphies': codegraphies
     })
+
+#TODO: inja bayad monshie tuye daftare pezeshk esme pezeshko login karde bashe
+@login_required
+def ajax_find_patients_list(request):
+    pass
+    
