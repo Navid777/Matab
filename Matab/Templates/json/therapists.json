@@ -1,7 +1,7 @@
 {
     "success": true,
     "count": {{ therapists.count }},
-    "patients": [
+    "therapists": [
         {% for t in therapists %}
             {
                 "first_name": "{{ t.first_name }}",

@@ -48,7 +48,7 @@
     				</div>
 	    			<div class='panel-body'>
 	    				<div class='form-group'>
-	    					<label for='firstNameInput'> نام کاربر </label>
+	    					<label for='firstNameInput'>نام</label>
 	    					<input name="first_name" type='text' class='form-control' id='firstNameInput'/>
 	    				</div>
 	    				<div class='form-group'>
@@ -98,15 +98,25 @@
     			<div class='col-md-5 form-part panel panel-danger'>
     				<div class='panel-heading'>
     					<h3 class='panel-title'>
-    						مشخصات پزشک معالج
+	    					پزشک معالج
     					</h3>
     				</div>
-    				<div class='panel-body'>
-   		    			<div class='form-group'>
-	    					<label for='doctorName'> نام دکتر</label>
-	    					<select id='doctorName' class='form-control'> </select>
+	    			<div class='panel-body'>
+                        <div class="form-group">
+                            <label for="medicalNumberInput">شماره‌ی نظام‌پزشکی</label>
+                            <input name="medical_number" type="number" class="form-control"
+                                   id="medicalNumberInput"/>
+                        </div>
+	    				<div class='form-group'>
+	    					<label for='therapistFirstNameInput'>نام</label>
+	    					<input name="therapist_first_name" type='text' class='form-control'
+                                   id='therapistFirstNameInput'/>
 	    				</div>
-
+	    				<div class='form-group'>
+	    					<label for='therapistLastNameInput'>نام خانوادگی</label>
+	    					<input name="therapist_last_name" type='text' class='form-control'
+                                   id='therapistLastNameInput'/>
+	    				</div>
     				</div>
     			</div>
     			<!--<div class='col-md-6 form-part'>
