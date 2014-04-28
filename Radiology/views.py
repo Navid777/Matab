@@ -107,6 +107,19 @@ def ajax_find_patients(request):
         'patients': patients
     })
 
+@login_required
+def ajax_find_therapists(request):
+    if request.method != "POST":
+        raise Http404()
+    filters = {}
+    if 'first_name' in request.POST:
+        filters['first_name'] = request.POST['first_name']
+    if 'last_name' in request.POST:
+        filters['last_name'] = request.POST['last_name']
+    if 'medical_number' in request.POST:
+        filters['medical_number'] = request.POST['medical_number']
+    therapists = Therapist.objects.filter(**filters)
+    return render(request, 'json/therapists.json', {'therapists':therapists})
 
 @login_required
 def ajax_find_insurances(request):

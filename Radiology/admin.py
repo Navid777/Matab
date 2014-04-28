@@ -11,7 +11,7 @@ class DoctorAdmin(admin.ModelAdmin):
     list_display = ('first_name', 'last_name',)
     
 class MedicalHistoryAdmin(admin.ModelAdmin):
-    list_display = ('muck',)
+    list_display = ('diabet',)
 
 class InsuranceAdmin(admin.ModelAdmin):
     pass
