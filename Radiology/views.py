@@ -158,7 +158,6 @@ def ajax_find_operations(request):
     if 'codeography' in request.POST:
         filters['codeography'] = request.POST['codeography']
     operations = Operation.objects.filter(**filters)
-    print operations
     if 'type' in filters:
         types = None
     else:
@@ -167,7 +166,6 @@ def ajax_find_operations(request):
         codeographies = None
     else:
         codeographies = operations.values_list('codeography', flat=True).distinct()
-    print codeographies
     return render(request, 'json/operations.json', {
         'types': types,
         'codeographies': codeographies,
