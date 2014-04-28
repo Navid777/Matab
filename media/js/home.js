@@ -32,6 +32,65 @@ $(document).ready(function() {
         });
     });
 
+    var $therapistFirstName = $("#therapistFirstName");
+    var $therapistLastName = $("#therapistLastName");
+    var $medicalNumber = $("#medicalNumber");
+
+    $medicalNumber.on('blur', function() {
+        if (!$medicalNumber.val()) return;
+        $.ajax({
+            type: "POST",
+            url: "/ajax/find_therapists/",
+            data: {medical_number: $medicalNumber.val()},
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    if(data.count === 0) {
+                        $therapistFirstName.removeClass('success');
+                        $therapistLastName.removeClass('success');
+                        $medicalNumber.removeClass('success').addClass('error');
+                        $firstName.val("");
+                        $lastName.val("");
+                    } else {
+                        $therapistFirstName.removeClass('error');
+                        $therapistLastName.removeClass('error');
+                        $nationalCode.removeClass('error').addClass('success');
+                        $therapistFirstName.val(data.therapists[0].first_name);
+                        $therapistLastName.val(data.therapists[0].last_name);
+                    }
+                } else {
+                    //TODO
+                }
+            }
+        })
+    });
+
+    $("#therapistFirstNameInput, #therapistLastNameInput").on('blur', function() {
+        if (!$therapistFirstName.val() || !$therapistLastName.val()) return;
+        $.ajax({
+            type: "POST",
+            url: "/ajax/find_therapists/",
+            data: {first_name: $therapistFirstName.val(), last_name: $therapistLastName.val()},
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    if (data.count === 0) {
+                        $therapistFirstName.removeClass('success').addClass('error');
+                        $therapistLastName.removeClass('success').addClass('error');
+                    } else if(data.count === 1) {
+                        $therapistFirstName.removeClass('error').addClass('success');
+                        $therapistLastName.removeClass('error').addClass('success');
+                        $medicalNumber.val(data.therapists[0].medical_number);
+                    } else {
+                        //TODO: modal
+                    }
+                } else {
+                    //TODO
+                }
+            }
+        });
+    });
+
     $("#firstNameInput, #lastNameInput").on('blur', function() {
         if (!$firstName.val() || !$lastName.val()) return;
         $.ajax({
