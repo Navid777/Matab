@@ -49,6 +49,11 @@ class Doctor(models.Model):
 
     def get_full_name(self):
         return self.first_name + " " + self.last_name
+    
+class PatientTurn(models.Model):
+    doctor = models.ForeignKey(Doctor)
+    patient = models.ForeignKey(Patient)
+    turn = models.DateTimeField()
 
 
 class Therapist(models.Model):

@@ -177,5 +177,13 @@ def ajax_find_operations(request):
 #TODO: inja bayad monshie tuye daftare pezeshk esme pezeshko login karde bashe
 @login_required
 def ajax_find_patients_list(request):
-    pass
+    if request.method != "POST":
+        raise Http404()
+    if 'doctor' in request.POST:
+        doctor_id = request.POST['doctor']
+        patients = Patient.objects.filter(patient_turn__doctor__id=doctor_id).order_by("patient_turn__turn")
+    else:
+        patients = None
+    return render(request, 'json/patient_turn.json', {'patients':patients})
+        
     
