@@ -1,5 +1,5 @@
 from Radiology.models import Patient, Doctor, MedicalHistory, Insurance, \
-    Operation, Therapist
+    Operation, Therapist, PatientTurn
 from django.contrib import admin
 
 __author__ = 'Navid'
@@ -22,10 +22,13 @@ class OperationAdmin(admin.ModelAdmin):
 class TherapistAdmin(admin.ModelAdmin):
     list_display=('first_name', 'last_name', 'medical_number')
 
+class PatientTurnAdmin(admin.ModelAdmin):
+    pass
+
 admin.site.register(Patient, PatientAdmin)
 admin.site.register(Doctor, DoctorAdmin)
 admin.site.register(MedicalHistory, MedicalHistoryAdmin)
 admin.site.register(Insurance, InsuranceAdmin)
 admin.site.register(Operation, OperationAdmin)
 admin.site.register(Therapist, TherapistAdmin)
-
+admin.site.register(PatientTurn, PatientTurnAdmin)

@@ -178,7 +178,7 @@ def ajax_find_patients_list(request):
         raise Http404()
     if 'doctor' in request.POST:
         doctor_id = request.POST['doctor']
-        patients = Patient.objects.filter(patient_turn__doctor__id=doctor_id).order_by("patient_turn__turn")
+        patients = Patient.objects.filter(patientturn__doctor__id=doctor_id).order_by("patientturn__turn")
     else:
         patients = None
     return render(request, 'json/patient_turn.json', {'patients':patients})
