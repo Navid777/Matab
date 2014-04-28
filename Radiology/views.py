@@ -150,3 +150,26 @@ def ajax_find_insurances(request):
         'categories': categories,
         'complementaries': complementaries,
     })
+    
+@login_required
+def ajax_find_operations(request):
+    if request.method != "POST":
+        raise Http404()
+    filters = {}
+    if 'type' in request.POST:
+        filters['type'] = request.POST['type']
+    if 'codegraphy' in request.POST:
+        filters['codegpraphy'] = request.POST['codegraphy']
+    operations = Operation.objects.filter(**filters)
+    if 'type' in filters:
+        types = None
+    else:
+        types = operations.values_list('type', flat=True).distinct()
+    if 'codegraphy' in request.POST:
+        codegraphies = None
+    else:
+        codegraphies = operations.values_list('codegraphy', flat=True).distinct()
+    return render(request, 'json/operations.json', {
+        'types': types,
+        'codegraphies': codegraphies
+    })

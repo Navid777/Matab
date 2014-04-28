@@ -1,0 +1,9 @@
+{
+    "success":true,
+    "types":[{% if types %}{% for t in types %}
+        "{{ t }}"{% if not forloop.last %},{% endif %}
+    {% endfor %}{% endif %}],
+    "codegraphies":[{% if codegraphies %}{% for c in codegraphies %}
+        "{{ c }}"{% if not forloop.last %},{% endif %}
+    {% endfor %}{% endif %}]
+}
