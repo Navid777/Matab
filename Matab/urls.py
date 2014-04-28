@@ -28,6 +28,7 @@ urlpatterns = patterns('',
     url(r'^ajax/find_patients/$', views.ajax_find_patients),
     url(r'^ajax/find_insurances/$', views.ajax_find_insurances),
     url(r'^ajax/find_therapists/$', views.ajax_find_therapists),
+    url(r'^ajax/find_operations/$', views.ajax_find_operations),
 )
 
 if settings.DEBUG:

@@ -155,20 +155,22 @@ def ajax_find_operations(request):
     filters = {}
     if 'type' in request.POST:
         filters['type'] = request.POST['type']
-    if 'codegraphy' in request.POST:
-        filters['codegpraphy'] = request.POST['codegraphy']
+    if 'codeography' in request.POST:
+        filters['codeography'] = request.POST['codeography']
     operations = Operation.objects.filter(**filters)
+    print operations
     if 'type' in filters:
         types = None
     else:
         types = operations.values_list('type', flat=True).distinct()
-    if 'codegraphy' in request.POST:
-        codegraphies = None
+    if 'codeography' in request.POST:
+        codeographies = None
     else:
-        codegraphies = operations.values_list('codegraphy', flat=True).distinct()
+        codeographies = operations.values_list('codeography', flat=True).distinct()
+    print codeographies
     return render(request, 'json/operations.json', {
         'types': types,
-        'codegraphies': codegraphies
+        'codeographies': codeographies,
     })
 
 #TODO: inja bayad monshie tuye daftare pezeshk esme pezeshko login karde bashe

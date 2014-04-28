@@ -3,7 +3,7 @@
     "types":[{% if types %}{% for t in types %}
         "{{ t }}"{% if not forloop.last %},{% endif %}
     {% endfor %}{% endif %}],
-    "codegraphies":[{% if codegraphies %}{% for c in codegraphies %}
+    "codeographies":[{% if codeographies %}{% for c in codeographies %}
         "{{ c }}"{% if not forloop.last %},{% endif %}
     {% endfor %}{% endif %}]
 }

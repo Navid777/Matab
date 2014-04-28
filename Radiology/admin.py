@@ -17,7 +17,7 @@ class InsuranceAdmin(admin.ModelAdmin):
     pass
 
 class OperationAdmin(admin.ModelAdmin):
-    list_display=('type', 'codegraphy')
+    list_display=('type', 'codeography')
 
 class TherapistAdmin(admin.ModelAdmin):
     list_display=('first_name', 'last_name', 'medical_number')

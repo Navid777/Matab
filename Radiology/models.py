@@ -75,7 +75,7 @@ class Appointment(models.Model):
 
 class Operation(models.Model):
     type = models.CharField(max_length=30)
-    codegraphy = models.CharField(max_length=30)
+    codeography = models.CharField(max_length=30)
     fee = models.FloatField()
 
     def __unicode__(self):

@@ -171,7 +171,7 @@ $(document).ready(function() {
         $operationCodeography.html("<option value='' selected></option>");
         $.ajax({
             type: "POST",
-            url: "/ajax/find_insurances/",
+            url: "/ajax/find_operations/",
             data: {type: $operationType.val()},
             dataType: 'json',
             success: function(data) {
@@ -179,7 +179,7 @@ $(document).ready(function() {
                     for (var i in data.codeographies) {
                         $operationCodeography.append(
                             '<option value="' + data.codeographies[i] + '">'
-                                + data.codeohraphies[i] + '</option>'
+                                + data.codeographies[i] + '</option>'
                         );
                     }
                 } else {
