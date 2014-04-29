@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-from Radiology.forms import LoginForm, PatientForm, InsuranceForm, \
-    AppointmentForm, TherapistForm, OperationForm
+from django.core.urlresolvers import reverse
+from Radiology.forms import LoginForm, AppointmentForm,  FactorForm
 from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist, \
-    Operation
+    Operation, Factor
 from accounting import interface as accounting
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse, Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 
 
 #TODO: alan dar majmoo 4 ta naghsh hast, yeki monshi, yeki operatore MRI, yeki AmadeSaz, yeki ham Pezeshk! ke ina
@@ -34,7 +34,28 @@ def login_view(request):
 
 
 @login_required
+def show_factor(request, id):
+    factor = get_object_or_404(Factor, id=id)
+    return HttpResponse('salam')
+
+
+@login_required
 def home(request):
+    if request.method == "POST":
+        form = FactorForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            #TODO: READ FROM SESSIOn
+            print cd
+            doctor = Doctor.objects.all()[0]
+            cd['doctor_first_name'] = doctor.first_name
+            cd['doctor_last_name'] = doctor.last_name
+            cd['doctor_medical_number'] = doctor.medical_number
+            cd['doctor_account_id'] = doctor.account_id
+            factor = Factor.objects.create(**cd)
+            return redirect(reverse(show_factor, args=(factor.id,)))
+        else:
+            print form.errors
     insurance_types = Insurance.objects.values_list('type', flat=True).distinct()
     operation_types = Operation.objects.values_list('type', flat=True).distinct()
     return render(request, 'home.html', {

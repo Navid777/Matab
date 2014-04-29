@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.core.exceptions import ValidationError
 from Radiology.models import Patient, Appointment, Therapist, Insurance, \
-    Operation
+    Operation, Doctor
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -57,92 +58,6 @@ class LoginForm(forms.Form):
         return cd
 
 
-class PatientForm(forms.Form):
-    patient_id = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'patient_id'}))
-    patient_first_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'patient_first_name'}))
-    patient_last_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'patient_last_name'}))
-    patient_national_code = forms.IntegerField(required=False,
-                                               widget=forms.TextInput(attrs={'class': 'patient_national_code'}))
-
-    def clean(self):
-        cd = super(PatientForm, self).clean()
-        if 'patient_login' in self.data:
-            patient_id = cd.get('patient_id')
-            first_name = cd.get('patient_first_name')
-            last_name = cd.get('patient_last_name')
-            national_code = cd.get('patient_national_code')
-            if patient_id is not None:
-                patients = Patient.objects.filter(id=patient_id)
-                if not patients:
-                    raise forms.ValidationError(invalid_patient_error)
-            elif national_code is not None:
-                patients = Patient.objects.filter(national_code=national_code)
-                if patients.count() == 1:
-                    cd['patient_id'] = patients[0].id
-                else:
-                    raise forms.ValidationError(invalid_patient_error)
-            elif last_name:
-                if first_name:
-                    patients = Patient.objects.filter(first_name=first_name, last_name=last_name)
-                    print patients
-                    if patients.count() == 1:
-                        cd['patient_id'] = patients[0].id
-                    else:
-                        raise forms.ValidationError(not_complete_error)
-                else:
-                    patients = Patient.objects.filter(last_name=last_name)
-                    if patients.count() == 1:
-                        cd['patient_id'] = patients[0].id
-                    else:
-                        raise forms.ValidationError(not_complete_error)
-            elif first_name:
-                patients = Patient.objects.filter(first_name=first_name)
-                if patients.count() == 1:
-                    cd['patient_id'] = patients[0].id
-                else:
-                    raise forms.ValidationError(not_complete_error)
-            else:
-                raise forms.ValidationError(not_complete_error)
-        return cd
-
-    def clean_patient_id(self):
-        patient_id = self.cleaned_data['patient_id']
-        return patient_id
-
-    def clean_patient_first_name(self):
-        patient_first_name = self.cleaned_data['patient_first_name']
-        if 'patient_signup' in self.data:
-            if not patient_first_name:
-                raise forms.ValidationError(first_name_error)
-        return patient_first_name
-
-    def clean_patient_last_name(self):
-        patient_last_name = self.cleaned_data['patient_last_name']
-        if 'patient_signup' in self.data:
-            if not patient_last_name:
-                raise forms.ValidationError(last_name_error)
-        return patient_last_name
-
-    def clean_patient_national_code(self):
-        patient_national_code = self.cleaned_data['patient_national_code']
-        if 'patient_signup' in self.data:
-            if not patient_national_code:
-                raise forms.ValidationError(national_code_error)
-            if Patient.objects.filter(national_code=patient_national_code):
-                raise forms.ValidationError(national_code_duplicate_error)
-        return patient_national_code
-
-
-class InsuranceForm(forms.Form):
-
-    def __init__(self, *args, **kwargs):
-        super(InsuranceForm, self).__init__(*args, **kwargs)
-        ids = Insurance.objects.values_list('id', flat=True).distinct()
-        self.fields['insurance_id'].choices = zip(ids, map(unicode, ids))
-
-    insurance_id = forms.ChoiceField()
-
-
 class AppointmentForm(forms.Form):
     start_time = forms.TimeField()
     end_time = forms.TimeField()
@@ -159,79 +74,67 @@ class AppointmentForm(forms.Form):
         st = cd['start_time']
         et = cd['end_time']
         if Appointment.objects.filter(day=self.day).filter(Q(start_time__lt=st, end_time__gt=st)
-                                      | Q(start_time__lt=et, end_time__gt=et)).count() > 0:
+                | Q(start_time__lt=et, end_time__gt=et)).count() > 0:
             raise forms.ValidationError(overlapping_appointments_error)
         print cd
         return cd
-    
 
-class TherapistForm(forms.Form):
-    therapist_medical_number = forms.IntegerField(required=False)
-    therapist_first_name = forms.CharField(required=False)
-    therapist_last_name = forms.CharField(required=False)
-    therapist_visit_date = forms.DateField(required=False,widget=forms.DateTimeInput)
 
-    def clean_therapist_first_name(self):
-        therapist_first_name = self.cleaned_data['therapist_first_name']
-        if 'therapist_signup' in self.data:
-            if not therapist_first_name:
-                raise forms.ValidationError(therapist_first_name_error)
-        return therapist_first_name
-    
-    def clean_therapist_last_name(self):
-        therapist_last_name = self.cleaned_data['therapist_last_name']
-        if 'therapist_signup' in self.data:
-            if not therapist_last_name:
-                raise forms.ValidationError(therapist_last_name_error)
-        return therapist_last_name
-    def clean_therapist_medical_number(self):
-        therapist_medical_number = self.cleaned_data['therapist_medical_number']
-        if 'therapist_signup' in self.data:
-            if Therapist.objects.filter(medical_number=therapist_medical_number):
-                raise forms.ValidationError(therapist_medical_duplicate_error)
-        return therapist_medical_number
-    
+class FactorForm(forms.Form):
+    patient_first_name = forms.CharField(max_length=30)
+    patient_last_name = forms.CharField(max_length=50)
+    patient_national_code = forms.CharField(max_length=30)
+    #patient_account_id = forms.IntegerField()
+    #doctor_first_name = forms.CharField(max_length=30)
+    #doctor_last_name = forms.CharField(max_length=50)
+    #doctor_medical_number = forms.CharField(max_length=20)
+    #doctor_account_id = forms.IntegerField()
+    therapist_first_name = forms.CharField(max_length=30)
+    therapist_last_name = forms.CharField(max_length=50)
+    therapist_medical_number = forms.CharField(max_length=20)
+    operation_type = forms.CharField(max_length=30)
+    operation_codeography = forms.CharField(max_length=30)
+    operation_cloth = forms.BooleanField()
+    #operation_fee = forms.FloatField()
+    insurance_type = forms.CharField(max_length=100)
+    insurance_category = forms.CharField(max_length=100)
+    insurance_complementary = forms.CharField(max_length=100)
+    #insurance_portion = forms.IntegerField()
+    #insurance_complementary_portion = forms.IntegerField()
+    insurance_serial = forms.CharField(max_length=20)
+    insurance_page = forms.CharField(max_length=20)
+    #insurance_account_id = forms.IntegerField()
+    #total_fee = forms.FloatField()
+    #patient_share = forms.FloatField()
+
     def clean(self):
-        cd = super(TherapistForm, self).clean()
-        if 'therapist_login' in self.data:
-            first_name = cd.get('therapist_first_name')
-            last_name = cd.get('therapist_last_name')
-            medical_number = cd.get('therapist_medical_number')
-            if medical_number is not None:
-                therapists = Therapist.objects.filter(medical_number=medical_number)
-                if therapists.count() == 1:
-                    cd['therapist_id'] = therapists[0].id
-                else:
-                    raise forms.ValidationError(invalid_patient_error)
-            elif last_name:
-                if first_name:
-                    therapists = Therapist.objects.filter(first_name=first_name, last_name=last_name)
-                    if therapists.count() == 1:
-                        cd['therapist_id'] = therapists[0].id
-                    else:
-                        raise forms.ValidationError(not_complete_error)
-                else:
-                    therapists = Therapist.objects.filter(last_name=last_name)
-                    if therapists.count() == 1:
-                        cd['therapist_id'] = therapists[0].id
-                    else:
-                        raise forms.ValidationError(not_complete_error)
-            elif first_name:
-                therapists = Therapist.objects.filter(first_name=first_name)
-                if therapists.count() == 1:
-                    cd['therapist_id'] = therapists[0].id
-                else:
-                    raise forms.ValidationError(not_complete_error)
-            else:
-                raise forms.ValidationError(not_complete_error)
+        super(FactorForm, self).clean()
+        cd = self.cleaned_data
+        try:
+            cd['patient_account_id'] = Patient.objects.get(
+                first_name=cd['patient_first_name'],
+                last_name=cd['patient_last_name'],
+                national_code=cd['patient_national_code']).account_id
+        except Patient.DoesNotExist:
+            raise ValidationError('اطلاعات بیمار نادرست است')
+        try:
+            cd['operation_fee'] = Operation.objects.get(
+                type=cd['operation_type'],
+                codeography=cd['operation_codeography'],
+            ).fee
+        except Operation.DoesNotExist:
+            raise ValidationError('خدمت نادرست است')
+        try:
+            insurance = Insurance.objects.get(
+                type=cd['insurance_type'],
+                category=cd['insurance_category'],
+                complementary=cd['insurance_complementary']
+            )
+            cd['insurance_portion'] = insurance.portion
+            cd['insurance_complementary_portion'] = insurance.complementary_portion
+            cd['insurance_account_id'] = insurance.account_id
+        except Insurance.DoesNotExist:
+            raise ValidationError('بیمه نادرست است')
+        cd['total_fee'] = 1000
+        cd['patient_share'] = 973
         return cd
-
-    
-class OperationForm(forms.Form):
-
-    def __init__(self, *args, **kwargs):
-        super(OperationForm, self).__init__(*args, **kwargs)
-        ids = Operation.objects.values_list('id', flat=True).distinct()
-        self.fields['operation_id'].choices=zip(ids, map(unicode, ids))
-
-    operation_id = forms.IntegerField()

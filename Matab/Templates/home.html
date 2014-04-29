@@ -38,7 +38,8 @@
     <div class="container" id='mainContainer'>
         {% csrf_token %}
     	<h2>اطلاعات بیمار را وارد نمایید</h2>
-    	<form role='form'>
+    	<form role='form' action="" method="post">
+        {% csrf_token %}
     		<div class='row'>
     			<div class='panel panel-info col-md-5 form-part'>
     				<div class='panel-heading'>
@@ -48,16 +49,19 @@
     				</div>
 	    			<div class='panel-body'>
 	    				<div class='form-group'>
-	    					<label for='firstNameInput'>نام</label>
-	    					<input name="first_name" type='text' class='form-control' id='firstNameInput'/>
+	    					<label for='patientFirstNameInput'>نام</label>
+	    					<input name="patient_first_name" type='text' class='form-control'
+                                   id='patientFirstNameInput'/>
 	    				</div>
 	    				<div class='form-group'>
-	    					<label for='lastNameInput'> نام خانوادگی</label>
-	    					<input name="last_name" type='text' class='form-control' id='lastNameInput'/>
+	    					<label for='patientLastNameInput'> نام خانوادگی</label>
+	    					<input name="patient_last_name" type='text' class='form-control'
+                                   id='patientLastNameInput'/>
 	    				</div>
                         <div class="form-group">
-                            <label for="nationalCodeInput">شماره‌ی ملی</label>
-                            <input name="national_code" type="number" class="form-control" id="nationalCodeInput"/>
+                            <label for="patientNationalCodeInput">شماره‌ی ملی</label>
+                            <input name="patient_national_code" type="number" class="form-control"
+                                   id="patientNationalCodeInput"/>
                         </div>
     				</div>
     				
@@ -71,7 +75,7 @@
     				<div class='panel-body'>
     					<div class='form-group'>
 	    					<label for='insuranceTypeSelect'>نوع بیمه</label>
-	    					<select name="type" id='insuranceTypeSelect' class='form-control chosen-select'>
+	    					<select name="insurance_type" id='insuranceTypeSelect' class='form-control chosen-select'>
                                 <option value="" selected></option>
 	    						{% for t in insurance_types %}
                                 <option value="{{ t }}">{{ t }}</option>
@@ -80,15 +84,26 @@
 	    				</div>
 	    				<div class='form-group'>
 	    					<label for='insuranceCategorySelect'>گونه‌ی بیمه</label>
-	    					<select name="category" id="insuranceCategorySelect" class="form-control chosen-select">
+	    					<select name="insurance_category" id="insuranceCategorySelect" class="form-control chosen-select">
                                 <option value="" selected></option>
                             </select>
 	    				</div>
                         <div class="form-group">
                             <label for="insuranceComplementarySelect">بیمه‌ی تکمیلی</label>
-                            <select name="complementary" id="insuranceComplementarySelect" class="form-control chosen-select">
+                            <select name="insurance_complementary" id="insuranceComplementarySelect"
+                                    class="form-control chosen-select">
                                 <option value="" selected></option>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="insuranceSerialInput">سریال دفترچه</label>
+                            <input type="text" name="insurance_serial" class="form-control"
+                                   id="insuranceSerialInput"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="insurancePageInput">شماره‌ی صفحه</label>
+                            <input type="text" name="insurance_page" class="form-control"
+                                   id="insurancePageInput" />
                         </div>
     				</div>
 	    				
@@ -103,9 +118,9 @@
     				</div>
 	    			<div class='panel-body'>
                         <div class="form-group">
-                            <label for="medicalNumberInput">شماره‌ی نظام‌پزشکی</label>
-                            <input name="medical_number" type="number" class="form-control"
-                                   id="medicalNumberInput"/>
+                            <label for="therapistMedicalNumberInput">شماره‌ی نظام‌پزشکی</label>
+                            <input name="therapist_medical_number" type="number" class="form-control"
+                                   id="therapistMedicalNumberInput"/>
                         </div>
 	    				<div class='form-group'>
 	    					<label for='therapistFirstNameInput'>نام</label>
@@ -137,15 +152,21 @@
 	    				</div>
 	    				<div class='form-group'>
 	    					<label for='operationCodeographySelect'>گونه‌ی بیمه</label>
-	    					<select name="category" id="operationCodeographySelect" class="form-control chosen-select">
+	    					<select name="operation_codeography" class="form-control chosen-select"
+                                    id="operationCodeographySelect">
                                 <option value="" selected></option>
                             </select>
 	    				</div>
+                        <div class="form-group">
+                            <label for="operationClothCheckbox">نیاز به لباس</label>
+                            <input type="checkbox" name="operation_cloth"
+                                   id="operationClothCheckbox"/>
+                        </div>
     				</div>
 
     			</div>
     		</div>
-    		<input type='button' class='btn btn-primary btn-lg center-block' value="ثبت اطلاعات">
+    		<input type='submit' class='btn btn-primary btn-lg center-block' value="ثبت اطلاعات">
     	</form>
     	<div class='row'>
     	</div>

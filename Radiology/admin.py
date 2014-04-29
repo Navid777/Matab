@@ -1,28 +1,29 @@
 from Radiology.models import Patient, Doctor, MedicalHistory, Insurance, \
-    Operation, Therapist, PatientTurn
+    Operation, Therapist, PatientTurn, Factor
 from django.contrib import admin
 
-__author__ = 'Navid'
-
 class PatientAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name',)
+    pass
 
 class DoctorAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name',)
+    pass
     
 class MedicalHistoryAdmin(admin.ModelAdmin):
-    list_display = ('diabet',)
+    pass
 
 class InsuranceAdmin(admin.ModelAdmin):
     pass
 
 class OperationAdmin(admin.ModelAdmin):
-    list_display=('type', 'codeography')
+    pass
 
 class TherapistAdmin(admin.ModelAdmin):
-    list_display=('first_name', 'last_name', 'medical_number')
+    pass
 
 class PatientTurnAdmin(admin.ModelAdmin):
+    pass
+
+class FactorAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Patient, PatientAdmin)
@@ -32,3 +33,4 @@ admin.site.register(Insurance, InsuranceAdmin)
 admin.site.register(Operation, OperationAdmin)
 admin.site.register(Therapist, TherapistAdmin)
 admin.site.register(PatientTurn, PatientTurnAdmin)
+admin.site.register(Factor, FactorAdmin)

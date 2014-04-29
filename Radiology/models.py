@@ -31,7 +31,7 @@ class MedicalHistory(models.Model):
 class Patient(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    national_code = models.IntegerField(unique=True)
+    national_code = models.CharField(max_length=20, unique=True)
     ACCOUNT_SERIES = 1000
     account_id = models.IntegerField()
     medical_history = models.OneToOneField(MedicalHistory, null=True, blank=True)
@@ -45,11 +45,12 @@ class Doctor(models.Model):
     last_name = models.CharField(max_length=30)
     ACCOUNT_SERIES = 2000
     account_id = models.IntegerField()
-    medical_number = models.IntegerField(unique=True)
+    medical_number = models.CharField(max_length=20, unique=True)
 
     def get_full_name(self):
         return self.first_name + " " + self.last_name
-    
+
+
 class PatientTurn(models.Model):
     doctor = models.ForeignKey(Doctor)
     patient = models.ForeignKey(Patient)
@@ -59,7 +60,7 @@ class PatientTurn(models.Model):
 class Therapist(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    medical_number = models.IntegerField(unique=True)
+    medical_number = models.CharField(max_length=20, unique=True)
     
     def __unicode__(self):
         return self.first_name + " " + self.last_name
@@ -89,11 +90,39 @@ class Visit(models.Model):
 class Insurance(models.Model):
     type = models.CharField(max_length=100)
     category = models.CharField(max_length=100)
-    complementary = models.CharField(max_length=100)
     ACCOUNT_SERIES = 3000
     account_id = models.IntegerField()
     portion = models.IntegerField()
+    complementary = models.CharField(max_length=100)
     complementary_portion = models.IntegerField()
 
     def __unicode__(self):
         return self.type+" "+self.category
+
+
+class Factor(models.Model):
+    patient_first_name = models.CharField(max_length=30)
+    patient_last_name = models.CharField(max_length=50)
+    patient_national_code = models.CharField(max_length=30)
+    patient_account_id = models.IntegerField()
+    doctor_first_name = models.CharField(max_length=30)
+    doctor_last_name = models.CharField(max_length=50)
+    doctor_medical_number = models.CharField(max_length=20)
+    doctor_account_id = models.IntegerField()
+    therapist_first_name = models.CharField(max_length=30)
+    therapist_last_name = models.CharField(max_length=50)
+    therapist_medical_number = models.CharField(max_length=20)
+    operation_type = models.CharField(max_length=30)
+    operation_codeography = models.CharField(max_length=30)
+    operation_cloth = models.BooleanField()
+    operation_fee = models.FloatField()
+    insurance_type = models.CharField(max_length=100)
+    insurance_category = models.CharField(max_length=100)
+    insurance_complementary = models.CharField(max_length=100)
+    insurance_portion = models.IntegerField()
+    insurance_complementary_portion = models.IntegerField()
+    insurance_serial = models.CharField(max_length=20)
+    insurance_page = models.CharField(max_length=20)
+    insurance_account_id = models.IntegerField()
+    total_fee = models.FloatField()
+    patient_share = models.FloatField()
