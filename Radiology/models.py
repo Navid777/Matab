@@ -12,7 +12,7 @@ class MedicalHistory(models.Model):
     heart_battery = models.BooleanField()
     artificial_organ = models.BooleanField()
     external_metal = models.BooleanField()
-    metal_gire = models.BooleanField()
+    metal_clamp = models.BooleanField()
     protez = models.BooleanField()
     organ_disability = models.BooleanField()
     uncontrolable_tension = models.BooleanField()
@@ -23,10 +23,9 @@ class MedicalHistory(models.Model):
     anemia = models.BooleanField()
     thyroid = models.BooleanField()
     #TODO: tarjomeye ina peida beshe!
-    sharhe_hal = models.CharField(max_length=300)
-    tozihat = models.CharField(max_length = 300)
-    bimarie_khas = models.CharField(max_length = 300)
-    
+    history = models.CharField(null=True, blank=True,max_length=300)
+    comment = models.CharField(null=True, blank=True,max_length = 300)
+    special_disease = models.CharField(null=True, blank=True,max_length = 300)
 
 class Patient(models.Model):
     first_name = models.CharField(max_length=30)

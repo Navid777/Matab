@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from django.core.urlresolvers import reverse
-from Radiology.forms import LoginForm, AppointmentForm,  FactorForm
+from Radiology.forms import LoginForm, AppointmentForm, FactorForm, \
+    MedicalHistoryForm
 from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist, \
     Operation, Factor
 from accounting import interface as accounting
@@ -8,6 +8,7 @@ from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -197,11 +198,36 @@ def ajax_find_operations(request):
 def ajax_find_patients_list(request):
     if request.method != "POST":
         raise Http404()
-    if 'doctor' in request.POST:
-        doctor_id = request.POST['doctor']
+    if 'doctor' in request.session:
+        doctor_id = request.session['doctor']
         patients = Patient.objects.filter(patientturn__doctor__id=doctor_id).order_by("patientturn__turn")
     else:
         patients = None
     return render(request, 'json/patient_turn.json', {'patients':patients})
         
-    
+
+@login_required
+def doctor_enroll(request):
+    if request.method =="POST":
+        if 'doctor_id' in request.POST:
+            request.session['doctor'] = request.POST['doctor_id']
+            return HttpResponseRedirect('/home/')
+        else:
+            return HttpResponseRedirect('/doctor_enroll/')
+    return render(request, 'doctorEnroll.html', {'doctors':Doctor.objects.all()})
+
+@login_required
+def fill_medical_history(request):
+    medical_history_form = None
+    #FIXME:
+    request.session['patient'] = 1
+    if 'patient' in request.session:
+        try:
+            patient = Patient.objects.get(id=request.session['patient'])
+            if patient.medical_history:
+                medical_history_form = MedicalHistoryForm(instance=patient.medical_history)
+        except Patient.DoesNotExist:
+            del request.session['patient']
+            #FIXME:
+            return HttpResponseRedirect('/home/')
+    return render(request,"medicalHistory.html", {'form':medical_history_form})

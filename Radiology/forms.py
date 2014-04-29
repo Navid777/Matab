@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.core.exceptions import ValidationError
 from Radiology.models import Patient, Appointment, Therapist, Insurance, \
-    Operation, Doctor
+    Operation, Doctor, MedicalHistory
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db.models.query_utils import Q
 
 
@@ -138,3 +138,8 @@ class FactorForm(forms.Form):
         cd['total_fee'] = 1000
         cd['patient_share'] = 973
         return cd
+
+
+class MedicalHistoryForm(forms.ModelForm):
+    class Meta:
+        model = MedicalHistory
