@@ -223,20 +223,26 @@ def doctor_enroll(request):
             return HttpResponseRedirect('/home/')
         else:
             return HttpResponseRedirect('/doctor_enroll/')
-    return render(request, 'doctorEnroll.html', {'doctors':Doctor.objects.all()})
+    return render(request, 'doctorEnroll.html', {
+        'doctors': Doctor.objects.all(),
+    })
 
 @login_required
 def fill_medical_history(request):
     medical_history_form = None
     #FIXME:
-    request.session['patient'] = 1
+    request.session['patient'] = 4
     if 'patient' in request.session:
         try:
             patient = Patient.objects.get(id=request.session['patient'])
             if patient.medical_history:
                 medical_history_form = MedicalHistoryForm(instance=patient.medical_history)
+            else:
+                medical_history_form = MedicalHistoryForm()
         except Patient.DoesNotExist:
             del request.session['patient']
             #FIXME:
             return HttpResponseRedirect('/home/')
-    return render(request,"medicalHistory.html", {'form':medical_history_form})
+    return render(request,"medicalHistory.html", {
+        'form': medical_history_form,
+    })
