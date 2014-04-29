@@ -112,23 +112,23 @@ class FactorForm(forms.Form):
         cd = self.cleaned_data
         try:
             cd['patient_account_id'] = Patient.objects.get(
-                first_name=cd['patient_first_name'],
-                last_name=cd['patient_last_name'],
-                national_code=cd['patient_national_code']).account_id
+                first_name=cd.get('patient_first_name'),
+                last_name=cd.get('patient_last_name'),
+                national_code=cd.get('patient_national_code')).account_id
         except Patient.DoesNotExist:
             raise ValidationError('اطلاعات بیمار نادرست است')
         try:
             cd['operation_fee'] = Operation.objects.get(
-                type=cd['operation_type'],
-                codeography=cd['operation_codeography'],
+                type=cd.get('operation_type'),
+                codeography=cd.get('operation_codeography'),
             ).fee
         except Operation.DoesNotExist:
             raise ValidationError('خدمت نادرست است')
         try:
             insurance = Insurance.objects.get(
-                type=cd['insurance_type'],
-                category=cd['insurance_category'],
-                complementary=cd['insurance_complementary']
+                type=cd.get('insurance_type'),
+                category=cd.get('insurance_category'),
+                complementary=cd.get('insurance_complementary')
             )
             cd['insurance_portion'] = insurance.portion
             cd['insurance_complementary_portion'] = insurance.complementary_portion
