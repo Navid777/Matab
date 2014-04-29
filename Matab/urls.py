@@ -21,15 +21,17 @@ urlpatterns = patterns('',
     url(r'^login/$' , views.login_view),
     url(r'^home/$', views.home),
     url(r'^home/factors/(\d+)/$', views.show_factor),
-    url(r'logout/$', views.logout_view),
-    url(r'appointment/$', views.appointment_day),
-    url(r'appointment/([^/]+)/$', views.appointment),
-    url(r'insurance_categories/$', views.insurance_categories),
+    url(r'^logout/$', views.logout_view),
+    url(r'^appointment/$', views.appointment_day),
+    url(r'^appointment/([^/]+)/$', views.appointment),
+    url(r'^waitingList/$', views.patient_list),
 
     url(r'^ajax/find_patients/$', views.ajax_find_patients),
     url(r'^ajax/find_insurances/$', views.ajax_find_insurances),
     url(r'^ajax/find_therapists/$', views.ajax_find_therapists),
     url(r'^ajax/find_operations/$', views.ajax_find_operations),
+    url(r'^ajax/find_patients_list/$', views.ajax_find_patients_list),
+    url(r'^ajax/set_entered_patient/$', views.ajax_set_entered_patient),
 )
 
 if settings.DEBUG:

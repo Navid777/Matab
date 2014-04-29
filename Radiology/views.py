@@ -2,7 +2,7 @@
 from django.core.urlresolvers import reverse
 from Radiology.forms import LoginForm, AppointmentForm,  FactorForm
 from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist, \
-    Operation, Factor
+    Operation, Factor, PatientTurn
 from accounting import interface as accounting
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
@@ -63,6 +63,14 @@ def home(request):
         "operation_types": operation_types,
     })
 
+#doctor required
+@login_required
+def patient_list(request):
+    patient_turns = PatientTurn.objects.all().order_by("turn")
+    return render(request, 'patient_list.html', {
+        'patient_turns': patient_turns,
+    })
+
 
 @login_required
 def logout_view(request):
@@ -98,15 +106,6 @@ def appointment(request, day):
     })
 
 
-def insurance_categories(request):
-    if request.method == 'GET':
-        if 'insurance_type' in request.GET:
-            return HttpResponse(
-                serializers.serialize("xml", Insurance.objects.filter(insurance_type=request.GET['insurance_type'])))
-        else:
-            pass
-
-
 @login_required
 def ajax_find_patients(request):
     if request.method != "POST":
@@ -137,7 +136,10 @@ def ajax_find_therapists(request):
     if 'medical_number' in request.POST:
         filters['medical_number'] = request.POST['medical_number']
     therapists = Therapist.objects.filter(**filters)
-    return render(request, 'json/therapists.json', {'therapists':therapists})
+    return render(request, 'json/therapists.json', {
+        'therapists': therapists
+    })
+
 
 @login_required
 def ajax_find_insurances(request):
@@ -192,16 +194,25 @@ def ajax_find_operations(request):
         'codeographies': codeographies,
     })
 
+
 #TODO: inja bayad monshie tuye daftare pezeshk esme pezeshko login karde bashe
 @login_required
 def ajax_find_patients_list(request):
     if request.method != "POST":
         raise Http404()
-    if 'doctor' in request.POST:
-        doctor_id = request.POST['doctor']
-        patients = Patient.objects.filter(patientturn__doctor__id=doctor_id).order_by("patientturn__turn")
-    else:
-        patients = None
-    return render(request, 'json/patient_turn.json', {'patients':patients})
-        
-    
+    #FIXME:
+    request.session['doctor'] = Doctor.objects.all()[0].id
+    patient_turns = PatientTurn.objects.filter(doctor__id=request.session['doctor']).order_by('turn')
+    return render(request, 'json/patient_turn.json', {
+        'patient_turns': patient_turns,
+    })
+
+
+#TODO: doctor check
+@login_required
+def ajax_set_entered_patient(request):
+    if request.method != "POST":
+        raise Http404()
+    patient_turn = get_object_or_404(PatientTurn, id=request.POST['id'])
+    patient_turn.delete()
+    return HttpResponse()

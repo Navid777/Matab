@@ -1,12 +1,13 @@
 {
     "success": true,
-    "count": {{ patients.count }},
-    "patients": [
-        {% for p in patients %}
+    "count": {{ patient_turns.count }},
+    "patient_turns": [
+        {% for p in patient_turns %}
             {
-                "first_name": "{{ p.first_name }}",
-                "last_name": "{{ p.last_name }}",
-                "national_code": "{{ p.national_code }}"
+                "id": "{{ p.id }}",
+                "first_name": "{{ p.patient.first_name }}",
+                "last_name": "{{ p.patient.last_name }}",
+                "national_code": "{{ p.patient.national_code }}"
             }{% if not forloop.last %},{% endif %}
         {% endfor %}
     ]
