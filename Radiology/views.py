@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from django.core.urlresolvers import reverse
-from Radiology.forms import LoginForm, AppointmentForm,  FactorForm
+from Radiology.forms import LoginForm, AppointmentForm, FactorForm, \
+    MedicalHistoryForm
 from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist, \
     Operation, Factor, PatientTurn
 from accounting import interface as accounting
@@ -8,6 +8,7 @@ from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -63,14 +64,6 @@ def home(request):
         "operation_types": operation_types,
     })
 
-#doctor required
-@login_required
-def patient_list(request):
-    patient_turns = PatientTurn.objects.all().order_by("turn")
-    return render(request, 'patient_list.html', {
-        'patient_turns': patient_turns,
-    })
-
 
 @login_required
 def logout_view(request):
@@ -106,6 +99,15 @@ def appointment(request, day):
     })
 
 
+def insurance_categories(request):
+    if request.method == 'GET':
+        if 'insurance_type' in request.GET:
+            return HttpResponse(
+                serializers.serialize("xml", Insurance.objects.filter(insurance_type=request.GET['insurance_type'])))
+        else:
+            pass
+
+
 @login_required
 def ajax_find_patients(request):
     if request.method != "POST":
@@ -136,10 +138,7 @@ def ajax_find_therapists(request):
     if 'medical_number' in request.POST:
         filters['medical_number'] = request.POST['medical_number']
     therapists = Therapist.objects.filter(**filters)
-    return render(request, 'json/therapists.json', {
-        'therapists': therapists
-    })
-
+    return render(request, 'json/therapists.json', {'therapists':therapists})
 
 @login_required
 def ajax_find_insurances(request):
@@ -194,7 +193,6 @@ def ajax_find_operations(request):
         'codeographies': codeographies,
     })
 
-
 #TODO: inja bayad monshie tuye daftare pezeshk esme pezeshko login karde bashe
 @login_required
 def ajax_find_patients_list(request):
@@ -216,3 +214,29 @@ def ajax_set_entered_patient(request):
     patient_turn = get_object_or_404(PatientTurn, id=request.POST['id'])
     patient_turn.delete()
     return HttpResponse()
+
+@login_required
+def doctor_enroll(request):
+    if request.method =="POST":
+        if 'doctor_id' in request.POST:
+            request.session['doctor'] = request.POST['doctor_id']
+            return HttpResponseRedirect('/home/')
+        else:
+            return HttpResponseRedirect('/doctor_enroll/')
+    return render(request, 'doctorEnroll.html', {'doctors':Doctor.objects.all()})
+
+@login_required
+def fill_medical_history(request):
+    medical_history_form = None
+    #FIXME:
+    request.session['patient'] = 1
+    if 'patient' in request.session:
+        try:
+            patient = Patient.objects.get(id=request.session['patient'])
+            if patient.medical_history:
+                medical_history_form = MedicalHistoryForm(instance=patient.medical_history)
+        except Patient.DoesNotExist:
+            del request.session['patient']
+            #FIXME:
+            return HttpResponseRedirect('/home/')
+    return render(request,"medicalHistory.html", {'form':medical_history_form})
