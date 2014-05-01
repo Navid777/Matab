@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from Matab.decorators import doctor_in_session
 from Radiology.forms import LoginForm, AppointmentForm, FactorForm, \
     MedicalHistoryForm, RegisterPatientForm, RegisterTherapistForm
 from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist, \
@@ -195,11 +196,12 @@ def ajax_find_operations(request):
 
 #TODO: inja bayad monshie tuye daftare pezeshk esme pezeshko login karde bashe
 @login_required
+@doctor_in_session
 def ajax_find_patients_list(request):
     if request.method != "POST":
         raise Http404()
     #FIXME:
-    request.session['doctor'] = Doctor.objects.all()[0].id
+    #request.session['doctor'] = Doctor.objects.all()[0].id
     patient_turns = PatientTurn.objects.filter(doctor__id=request.session['doctor']).order_by('turn')
     return render(request, 'json/patient_turn.json', {
         'patient_turns': patient_turns,
@@ -254,9 +256,9 @@ def register_patient(request):
         register_form = RegisterPatientForm(request.POST)
         if register_form.is_valid():
             cd = register_form.cleaned_data
-            patient = Patient(first_name=cd['first_name'], last_name=cd['last_name'],
-                               national_code=cd['national_code'], account_id = cd['account_id'])
-            patient.save()
+            Patient.objects.create(first_name=cd['first_name'], last_name=cd['last_name'],
+                               national_code=cd['national_code'],
+                               account_id=accounting.create_account(Patient.ACCOUNT_SERIES))
             return HttpResponseRedirect('/home/')
     else:
         register_form = RegisterPatientForm()
