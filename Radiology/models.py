@@ -30,7 +30,7 @@ class MedicalHistory(models.Model):
 class Patient(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    national_code = models.CharField(max_length=20, unique=True)
+    national_code = models.IntegerField(max_length=20, unique=True)
     ACCOUNT_SERIES = 1000
     account_id = models.IntegerField()
     medical_history = models.OneToOneField(MedicalHistory, null=True, blank=True)
@@ -44,7 +44,8 @@ class Doctor(models.Model):
     last_name = models.CharField(max_length=30)
     ACCOUNT_SERIES = 2000
     account_id = models.IntegerField()
-    medical_number = models.CharField(max_length=20, unique=True)
+    medical_number = models.IntegerField(max_length=20, unique=True)
+    phone_number = models.CharField(max_length = 20)
 
     def get_full_name(self):
         return self.first_name + " " + self.last_name
@@ -59,7 +60,7 @@ class PatientTurn(models.Model):
 class Therapist(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    medical_number = models.CharField(max_length=20, unique=True)
+    medical_number = models.IntegerField(unique=True)
     
     def __unicode__(self):
         return self.first_name + " " + self.last_name
@@ -92,8 +93,9 @@ class Insurance(models.Model):
     ACCOUNT_SERIES = 3000
     account_id = models.IntegerField()
     portion = models.IntegerField()
-    complementary = models.CharField(max_length=100)
-    complementary_portion = models.IntegerField()
+    has_complementary = models.BooleanField()
+    complementary = models.CharField(max_length=100, null=True, blank=True)
+    complementary_account_id = models.IntegerField(null = True, blank = True)
 
     def __unicode__(self):
         return self.type+" "+self.category
@@ -125,3 +127,23 @@ class Factor(models.Model):
     insurance_account_id = models.IntegerField()
     total_fee = models.FloatField()
     patient_share = models.FloatField()
+    
+
+class UserRole(models.Model):
+    user = models.OneToOneField(User)
+    SECRETARY = 'S'
+    DOCTOR_OPERATOR = 'D'
+    MRI_OPERATOR='M'
+    PRE_CONDITIONER='P'
+    type = models.CharField(max_length=1, choices=(
+        (SECRETARY, "Secretary"),
+        (DOCTOR_OPERATOR, "Doctor Operator"),
+        (MRI_OPERATOR, "MRI Operator"),
+        (PRE_CONDITIONER, "Pre Conditioner"),
+    ))
+
+class Good(models.Model):
+    name = models.CharField(max_length=40)
+    quantity = models.IntegerField()
+    fee = models.FloatField()
+    

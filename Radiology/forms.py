@@ -149,7 +149,6 @@ class RegisterPatientForm(forms.Form):
     first_name = forms.CharField(max_length = 30)
     last_name = forms.CharField(max_length = 30)
     national_code = forms.CharField(max_length = 30)
-    account_id = forms.IntegerField()
     
     def clean_national_code(self):
         national_code = self.cleaned_data['national_code']
