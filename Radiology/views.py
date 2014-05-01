@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from Matab.decorators import doctor_in_session
+from Matab.decorators import exists_in_session
 from Radiology.forms import LoginForm, AppointmentForm, FactorForm, \
     MedicalHistoryForm, RegisterPatientForm, RegisterTherapistForm
 from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist, \
@@ -196,19 +196,17 @@ def ajax_find_operations(request):
 
 #TODO: inja bayad monshie tuye daftare pezeshk esme pezeshko login karde bashe
 @login_required
-@doctor_in_session
+@exists_in_session('doctor')
 def ajax_find_patients_list(request):
     if request.method != "POST":
         raise Http404()
     #FIXME:
-    #request.session['doctor'] = Doctor.objects.all()[0].id
     patient_turns = PatientTurn.objects.filter(doctor__id=request.session['doctor']).order_by('turn')
     return render(request, 'json/patient_turn.json', {
         'patient_turns': patient_turns,
     })
 
 
-#TODO: doctor check
 @login_required
 def ajax_set_entered_patient(request):
     if request.method != "POST":
@@ -217,9 +215,10 @@ def ajax_set_entered_patient(request):
     patient_turn.delete()
     return HttpResponse()
 
+
 @login_required
 def doctor_enroll(request):
-    if request.method =="POST":
+    if request.method == "POST":
         if 'doctor_id' in request.POST:
             request.session['doctor'] = request.POST['doctor_id']
             return HttpResponseRedirect('/home/')

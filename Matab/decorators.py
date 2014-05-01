@@ -1,9 +1,13 @@
 from django.http import HttpResponseRedirect
+from Radiology import views
 
-def doctor_in_session(function):
-    def wrap(request, *args, **kw):
-        if not request.session.get('doctor'):
-            return HttpResponseRedirect('/doctor_enroll/')
-        else:
-            return function(request, *args, **kw)
-    return wrap
+
+def exists_in_session(key):
+    def decorator(function):
+        def wrap(request, *args, **kwargs):
+            if key in request.session:
+                return function(request, *args, **kwargs)
+            else:
+                return HttpResponseRedirect(views.doctor_enroll)
+        return wrap
+    return decorator
