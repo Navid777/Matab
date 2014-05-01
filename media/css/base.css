@@ -1,0 +1,10 @@
+body{
+    font-family: Tahoma;
+    background-color: #eee;
+}
+
+
+#mainContainer{
+    margin-right: auto;
+    margin-left: auto;
+}

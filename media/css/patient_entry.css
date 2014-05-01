@@ -1,28 +1,16 @@
-body{
-	font-family: Tahoma;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  background-color: #eee;
-}
 h3{
-	font-family: Tahoma;
-}
-#mainContainer{
-	padding: 20px;
-	width: 50%;
-	margin-right: auto;
-	margin-left: auto;
+    font-family: Tahoma;
 }
 form{
-	padding-top: 30px;
+    padding-top: 30px;
 }
 .form-part{
-	margin-top: 3px;
-	background-color: white;
+    margin-top: 3px;
+    background-color: white;
 }
 
 .row div{
-	padding: 5px;
+    padding: 5px;
 }
 
 /* FIXME: temporary */

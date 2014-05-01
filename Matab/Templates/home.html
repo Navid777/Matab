@@ -1,179 +1,146 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/ajax_csrf_fix.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/chosen.jquery.min.js"></script>
+{% extends 'base.html' %}
+
+{% block title %}
+    پذیرش
+{% endblock %}
+
+{% block extrajs %}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/home.js"></script>
+{% endblock %}
 
-    <title>ثبت بیمار</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="{{ MEDIA_URL }}css/bootstrap.css" rel="stylesheet">
-
-    <!-- Bootstrap core CSS -->
-    <link href="{{ MEDIA_URL }}css/bootstrap-rtl.css" rel="stylesheet">
-
-    <!-- Chosen core CSS -->
-    <link href="{{ MEDIA_URL }}css/chosen.css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
+{% block extracss %}
     <link href="{{ MEDIA_URL }}css/patient_entry.css" rel="stylesheet">
+{% endblock %}
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="{{ MEDIA_URL }}js/html5shiv.js"></script>
-      <script src="{{ MEDIA_URL }}js/respond.min.js"></script>
-    <![endif]-->
-  </head>
-
-  <body>
-
-    <div class="container" id='mainContainer'>
+{% block content %}
+    <form role='form' action="" method="post">
         {% csrf_token %}
-    	<h2>اطلاعات بیمار را وارد نمایید</h2>
-    	<form role='form' action="" method="post">
-        {% csrf_token %}
-    		<div class='row'>
-    			<div class='panel panel-info col-md-5 form-part'>
-    				<div class='panel-heading'>
-    					<h3 class='panel-title'>
-	    					مشخصات بیمار
-    					</h3>
-    				</div>
-	    			<div class='panel-body'>
-	    				<div class='form-group'>
-	    					<label for='patientFirstNameInput'>نام</label>
-	    					<input name="patient_first_name" type='text' class='form-control'
-                                   id='patientFirstNameInput'/>
-	    				</div>
-	    				<div class='form-group'>
-	    					<label for='patientLastNameInput'> نام خانوادگی</label>
-	    					<input name="patient_last_name" type='text' class='form-control'
-                                   id='patientLastNameInput'/>
-	    				</div>
-                        <div class="form-group">
-                            <label for="patientNationalCodeInput">شماره‌ی ملی</label>
-                            <input name="patient_national_code" type="number" class="form-control"
-                                   id="patientNationalCodeInput"/>
-                        </div>
-    				</div>
-    				
-    			</div>
-    			<div class='col-md-5 form-part panel panel-success'>
-    				<div class="panel-heading">
-    					<h3 class='panel-title'>
-    						مشخصات بیمه
-    					</h3>
-    				</div>
-    				<div class='panel-body'>
-    					<div class='form-group'>
-	    					<label for='insuranceTypeSelect'>نوع بیمه</label>
-	    					<select name="insurance_type" id='insuranceTypeSelect' class='form-control chosen-select'>
-                                <option value="" selected></option>
-	    						{% for t in insurance_types %}
+        <div class='row'>
+            <div class='panel panel-info col-md-3 form-part'>
+                <div class='panel-heading'>
+                    <h3 class='panel-title'>
+                        مشخصات بیمار
+                    </h3>
+                </div>
+                <div class='panel-body'>
+                    <div class='form-group'>
+                        <label for='patientFirstNameInput'>نام</label>
+                        <input name="patient_first_name" type='text' class='form-control'
+                               id='patientFirstNameInput'/>
+                    </div>
+                    <div class='form-group'>
+                        <label for='patientLastNameInput'> نام خانوادگی</label>
+                        <input name="patient_last_name" type='text' class='form-control'
+                               id='patientLastNameInput'/>
+                    </div>
+                    <div class="form-group">
+                        <label for="patientNationalCodeInput">شماره‌ی ملی</label>
+                        <input name="patient_national_code" type="number" class="form-control"
+                               id="patientNationalCodeInput"/>
+                    </div>
+                </div>
+
+            </div>
+            <div class='col-md-3 form-part panel panel-success'>
+                <div class="panel-heading">
+                    <h3 class='panel-title'>
+                        مشخصات بیمه
+                    </h3>
+                </div>
+                <div class='panel-body'>
+                    <div class='form-group'>
+                        <label for='insuranceTypeSelect'>نوع بیمه</label>
+                        <select name="insurance_type" id='insuranceTypeSelect' class='form-control chosen-select'>
+                            <option value="" selected></option>
+                            {% for t in insurance_types %}
                                 <option value="{{ t }}">{{ t }}</option>
-                                {% endfor %}
-	    					</select>
-	    				</div>
-	    				<div class='form-group'>
-	    					<label for='insuranceCategorySelect'>گونه‌ی بیمه</label>
-	    					<select name="insurance_category" id="insuranceCategorySelect" class="form-control chosen-select">
-                                <option value="" selected></option>
-                            </select>
-	    				</div>
-                        <div class="form-group">
-                            <label for="insuranceComplementarySelect">بیمه‌ی تکمیلی</label>
-                            <select name="insurance_complementary" id="insuranceComplementarySelect"
-                                    class="form-control chosen-select">
-                                <option value="" selected></option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="insuranceSerialInput">سریال دفترچه</label>
-                            <input type="text" name="insurance_serial" class="form-control"
-                                   id="insuranceSerialInput"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="insurancePageInput">شماره‌ی صفحه</label>
-                            <input type="text" name="insurance_page" class="form-control"
-                                   id="insurancePageInput" />
-                        </div>
-    				</div>
-	    				
-    			</div>
-    		</div>
-    		<div class='row'>
-    			<div class='col-md-5 form-part panel panel-danger'>
-    				<div class='panel-heading'>
-    					<h3 class='panel-title'>
-	    					پزشک معالج
-    					</h3>
-    				</div>
-	    			<div class='panel-body'>
-                        <div class="form-group">
-                            <label for="therapistMedicalNumberInput">شماره‌ی نظام‌پزشکی</label>
-                            <input name="therapist_medical_number" type="number" class="form-control"
-                                   id="therapistMedicalNumberInput"/>
-                        </div>
-	    				<div class='form-group'>
-	    					<label for='therapistFirstNameInput'>نام</label>
-	    					<input name="therapist_first_name" type='text' class='form-control'
-                                   id='therapistFirstNameInput'/>
-	    				</div>
-	    				<div class='form-group'>
-	    					<label for='therapistLastNameInput'>نام خانوادگی</label>
-	    					<input name="therapist_last_name" type='text' class='form-control'
-                                   id='therapistLastNameInput'/>
-	    				</div>
-    				</div>
-    			</div>
-                <div class='col-md-5 form-part panel panel-success'>
-    				<div class="panel-heading">
-    					<h3 class='panel-title'>
-    						خدمت
-    					</h3>
-    				</div>
-    				<div class='panel-body'>
-    					<div class='form-group'>
-	    					<label for='operationTypeSelect'>نوع خدمت</label>
-	    					<select name="operation_type" id='operationTypeSelect' class='form-control chosen-select'>
-                                <option value="" selected></option>
-	    						{% for t in operation_types %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class='form-group'>
+                        <label for='insuranceCategorySelect'>گونه‌ی بیمه</label>
+                        <select name="insurance_category" id="insuranceCategorySelect" class="form-control chosen-select">
+                            <option value="" selected></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="insuranceComplementarySelect">بیمه‌ی تکمیلی</label>
+                        <select name="insurance_complementary" id="insuranceComplementarySelect"
+                                class="form-control chosen-select">
+                            <option value="" selected></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="insuranceSerialInput">سریال دفترچه</label>
+                        <input type="text" name="insurance_serial" class="form-control"
+                               id="insuranceSerialInput"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="insurancePageInput">شماره‌ی صفحه</label>
+                        <input type="text" name="insurance_page" class="form-control"
+                               id="insurancePageInput" />
+                    </div>
+                </div>
+
+            </div>
+            <div class='col-md-3 form-part panel panel-danger'>
+                <div class='panel-heading'>
+                    <h3 class='panel-title'>
+                        پزشک معالج
+                    </h3>
+                </div>
+                <div class='panel-body'>
+                    <div class="form-group">
+                        <label for="therapistMedicalNumberInput">شماره‌ی نظام‌پزشکی</label>
+                        <input name="therapist_medical_number" type="number" class="form-control"
+                               id="therapistMedicalNumberInput"/>
+                    </div>
+                    <div class='form-group'>
+                        <label for='therapistFirstNameInput'>نام</label>
+                        <input name="therapist_first_name" type='text' class='form-control'
+                               id='therapistFirstNameInput'/>
+                    </div>
+                    <div class='form-group'>
+                        <label for='therapistLastNameInput'>نام خانوادگی</label>
+                        <input name="therapist_last_name" type='text' class='form-control'
+                               id='therapistLastNameInput'/>
+                    </div>
+                </div>
+            </div>
+            <div class='col-md-3 form-part panel panel-success'>
+                <div class="panel-heading">
+                    <h3 class='panel-title'>
+                        خدمت
+                    </h3>
+                </div>
+                <div class='panel-body'>
+                    <div class='form-group'>
+                        <label for='operationTypeSelect'>نوع خدمت</label>
+                        <select name="operation_type" id='operationTypeSelect' class='form-control chosen-select'>
+                            <option value="" selected></option>
+                            {% for t in operation_types %}
                                 <option value="{{ t }}">{{ t }}</option>
-                                {% endfor %}
-	    					</select>
-	    				</div>
-	    				<div class='form-group'>
-	    					<label for='operationCodeographySelect'>گونه‌ی بیمه</label>
-	    					<select name="operation_codeography" class="form-control chosen-select"
-                                    id="operationCodeographySelect">
-                                <option value="" selected></option>
-                            </select>
-	    				</div>
-                        <div class="form-group">
-                            <label for="operationClothCheckbox"> لباس نیاز دارد</label>
-                            <input type="checkbox" name="operation_cloth"
-                                   id="operationClothCheckbox"/>
-                        </div>
-    				</div>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class='form-group'>
+                        <label for='operationCodeographySelect'>گونه‌ی بیمه</label>
+                        <select name="operation_codeography" class="form-control chosen-select"
+                                id="operationCodeographySelect">
+                            <option value="" selected></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="operationClothCheckbox"> لباس نیاز دارد</label>
+                        <input type="checkbox" name="operation_cloth"
+                               id="operationClothCheckbox"/>
+                    </div>
+                </div>
 
-    			</div>
-    		</div>
-    		<input type='submit' class='btn btn-primary btn-lg center-block' value="ثبت اطلاعات">
-    	</form>
-    	<div class='row'>
-    	</div>
-
-
-    </div> <!-- /container -->
-
-
-  </body>
-</html>
+            </div>
+        </div>
+        <input type='submit' class='btn btn-primary btn-lg center-block' value="ثبت اطلاعات">
+    </form>
+    <div class='row'>
+    </div>
+{% endblock %}

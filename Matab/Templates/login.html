@@ -1,35 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
+{% extends 'base.html' %}
 
-    <title>ورود دستیار</title>
+{% block title %}
+ورود دست‌یار
+{% endblock %}
 
-    <!-- Bootstrap core CSS -->
-    <link href="{{ MEDIA_URL }}css/bootstrap.css" rel="stylesheet">
+{% block extracss %}
+<link href="{{ MEDIA_URL }}css/monshi_signin.css" rel="stylesheet">
+{% endblock %}
 
-    <!-- Bootstrap core CSS -->
-    <link href="{{ MEDIA_URL }}css/bootstrap-rtl.css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-    <link href="{{ MEDIA_URL }}css/monshi_signin.css" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="{{ MEDIA_URL }}js/html5shiv.js"></script>
-      <script src="{{ MEDIA_URL }}js/respond.min.js"></script>
-    <![endif]-->
-  </head>
-
-  <body>
-
-    <div class="container">
-
+{% block content %}
       <form class="form-signin" role="form" method="post" action="">
           {% csrf_token %}
         <h2 class="form-signin-heading">لطفا وارد شوید</h2>
@@ -38,12 +17,4 @@
         
         <button class="btn btn-lg btn-primary btn-block" type="submit">ورود</button>
       </form>
-
-    </div> <!-- /container -->
-
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-  </body>
-</html>
+{% endblock %}
