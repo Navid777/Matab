@@ -12,15 +12,15 @@ $(document).ready(function() {
             success: function(data) {
                 if (data.success) {
                     if (data.count === 0) {
-                        $patientFirstName.removeClass('success');
-                        $patientLastName.removeClass('success');
-                        $patientNationalCode.removeClass('success').addClass('error');
+                        $patientFirstName.parent().removeClass('has-success');
+                        $patientLastName.parent().removeClass('has-success');
+                        $patientNationalCode.parent().removeClass('has-success').addClass('has-error');
                         $patientFirstName.val("");
                         $patientLastName.val("");
                     } else {
-                        $patientFirstName.removeClass('error');
-                        $patientLastName.removeClass('error');
-                        $patientNationalCode.removeClass('error').addClass('success');
+                        $patientFirstName.parent().removeClass('has-error');
+                        $patientLastName.parent().removeClass('has-error');
+                        $patientNationalCode.parent().removeClass('has-error').addClass('has-success');
                         $patientFirstName.val(data.patients[0].first_name);
                         $patientLastName.val(data.patients[0].last_name);
                     }
@@ -41,12 +41,12 @@ $(document).ready(function() {
             success: function(data) {
                 if (data.success) {
                     if (data.count === 0) {
-                        $patientFirstName.removeClass('success').addClass('error');
-                        $patientLastName.removeClass('success').addClass('error');
+                        $patientFirstName.parent().removeClass('has-success').addClass('has-error');
+                        $patientLastName.parent().removeClass('has-success').addClass('has-error');
                         $patientNationalCode.val("");
                     } else if(data.count === 1) {
-                        $patientFirstName.removeClass('error').addClass('success');
-                        $patientLastName.removeClass('error').addClass('success');
+                        $patientFirstName.parent().removeClass('has-error').addClass('has-success');
+                        $patientLastName.parent().removeClass('has-error').addClass('has-success');
                         $patientNationalCode.val(data.patients[0].national_code);
                     } else {
                         //TODO: modal
@@ -60,10 +60,14 @@ $(document).ready(function() {
 
     var $insuranceType = $("#insuranceTypeSelect");
     var $insuranceCategory = $("#insuranceCategorySelect");
+    var $insuranceHasComplementary = $("#insuranceHasComplementaryCheckbox");
     var $insuranceComplementary = $("#insuranceComplementarySelect");
 
     $insuranceType.on('change', function() {
         $insuranceCategory.html("<option value='' selected></option>");
+        $insuranceHasComplementary.prop('checked', false);
+        $insuranceHasComplementary.attr('disabled', 'disabled');
+        $insuranceComplementary.attr('disabled', 'disabled');
         $insuranceComplementary.html("<option value='' selected></option>");
         $.ajax({
             type: "POST",
@@ -85,7 +89,10 @@ $(document).ready(function() {
         });
     });
     $insuranceCategory.on('change', function() {
+        $insuranceComplementary.attr('disabled', 'disabled');
         $insuranceComplementary.html("<option value='' selected></option>");
+        $insuranceHasComplementary.prop('checked', false);
+        $insuranceHasComplementary.attr('disabled', 'disabled');
         $.ajax({
             type: "POST",
             url: "/ajax/find_insurances/",
@@ -93,6 +100,18 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(data) {
                 if (data.success) {
+                    if (data.has_complementaries.length == 1) {
+                        if (data.has_complementaries[0] === "False") {
+                            $insuranceHasComplementary.prop('checked', false);
+                            $insuranceHasComplementary.attr('disabled', 'disabled');
+                        } else {
+                            $insuranceHasComplementary.prop('checked', true);
+                            $insuranceHasComplementary.attr('disabled', 'disabled');
+                            $insuranceComplementary.removeAttr('disabled');
+                        }
+                    } else {
+                        $insuranceHasComplementary.removeAttr('disabled');
+                    }
                     for(var i in data.complementaries) {
                         $insuranceComplementary.append(
                             '<option value="' + data.complementaries[i] + '">'
@@ -102,6 +121,14 @@ $(document).ready(function() {
                 }
             }
         });
+    });
+
+    $insuranceHasComplementary.on('change', function() {
+        if (!$insuranceHasComplementary.prop('checked')) {
+            $insuranceComplementary.attr('disabled', 'disabled');
+        } else {
+            $insuranceComplementary.removeAttr('disabled');
+        }
     });
 
     var $therapistFirstName = $("#therapistFirstNameInput");
@@ -118,15 +145,15 @@ $(document).ready(function() {
             success: function(data) {
                 if (data.success) {
                     if(data.count === 0) {
-                        $therapistFirstName.removeClass('success');
-                        $therapistLastName.removeClass('success');
-                        $therapistMedicalNumber.removeClass('success').addClass('error');
+                        $therapistFirstName.parent().removeClass('has-success');
+                        $therapistLastName.parent().removeClass('has-success');
+                        $therapistMedicalNumber.parent().removeClass('has-success').addClass('has-error');
                         $therapistFirstName.val("");
                         $therapistLastName.val("");
                     } else {
-                        $therapistFirstName.removeClass('error');
-                        $therapistLastName.removeClass('error');
-                        $therapistMedicalNumber.removeClass('error').addClass('success');
+                        $therapistFirstName.parent().removeClass('has-error');
+                        $therapistLastName.parent().removeClass('has-error');
+                        $therapistMedicalNumber.parent().removeClass('has-error').addClass('has-success');
                         $therapistFirstName.val(data.therapists[0].first_name);
                         $therapistLastName.val(data.therapists[0].last_name);
                     }
@@ -147,11 +174,11 @@ $(document).ready(function() {
             success: function(data) {
                 if (data.success) {
                     if (data.count === 0) {
-                        $therapistFirstName.removeClass('success').addClass('error');
-                        $therapistLastName.removeClass('success').addClass('error');
+                        $therapistFirstName.parent().removeClass('has-success').addClass('has-error');
+                        $therapistLastName.parent().removeClass('has-success').addClass('has-error');
                     } else if(data.count === 1) {
-                        $therapistFirstName.removeClass('error').addClass('success');
-                        $therapistLastName.removeClass('error').addClass('success');
+                        $therapistFirstName.parent().removeClass('has-error').addClass('has-success');
+                        $therapistLastName.parent().removeClass('has-error').addClass('has-success');
                         $therapistMedicalNumber.val(data.therapists[0].medical_number);
                     } else {
                         //TODO: modal

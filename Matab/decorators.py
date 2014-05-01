@@ -1,5 +1,5 @@
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from Radiology import views
 
 
 def exists_in_session(key):
@@ -8,6 +8,6 @@ def exists_in_session(key):
             if key in request.session:
                 return function(request, *args, **kwargs)
             else:
-                return HttpResponseRedirect(views.doctor_enroll)
+                return HttpResponseRedirect(reverse('Radiology.views.doctor_enroll'))
         return wrap
     return decorator

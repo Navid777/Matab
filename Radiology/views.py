@@ -41,6 +41,7 @@ def show_factor(request, id):
     return HttpResponse('salam')
 
 
+@exists_in_session('doctor_id')
 @login_required
 def home(request):
     if request.method == "POST":
@@ -48,13 +49,13 @@ def home(request):
         if form.is_valid():
             cd = form.cleaned_data
             #TODO: READ FROM SESSIOn
-            print cd
-            doctor = Doctor.objects.all()[0]
+            doctor = Doctor.objects.get(id=request.session['doctor_id'])
             cd['doctor_first_name'] = doctor.first_name
             cd['doctor_last_name'] = doctor.last_name
             cd['doctor_medical_number'] = doctor.medical_number
             cd['doctor_account_id'] = doctor.account_id
             factor = Factor.objects.create(**cd)
+            request.session['patient_id'] = Patient.objects.get(national_code=cd['patient_national_code']).id
             return redirect(reverse(show_factor, args=(factor.id,)))
         else:
             print form.errors
@@ -84,7 +85,7 @@ def appointment(request, day):
         if form.is_valid():
             doctor = Doctor.objects.all()[0]
             app = Appointment.objects.create(
-                patient=Patient.objects.get(id=request.session['current_patient']),
+                patient=Patient.objects.get(id=request.session['patient_id']),
                 doctor=doctor,
                 day=datetime.strptime(day, '%Y-%m-%d'),
                 start_time=form.cleaned_data['start_time'],
@@ -150,6 +151,8 @@ def ajax_find_insurances(request):
         filters['type'] = request.POST['type']
     if 'category' in request.POST:
         filters['category'] = request.POST['category']
+    if 'has_complementary' in request.POST:
+        filters['has_complementary'] = request.POST['has_complementary']
     if 'complementary' in request.POST:
         filters['complementary'] = request.POST['complementary']
     insurances = Insurance.objects.filter(**filters)
@@ -161,6 +164,10 @@ def ajax_find_insurances(request):
         categories = None
     else:
         categories = insurances.values_list('category', flat=True).distinct()
+    if 'has_complementary' in filters:
+        has_complementaries = None
+    else:
+        has_complementaries = insurances.values_list('has_complementary', flat=True).distinct()
     if 'complementary' in filters:
         complementaries = None
     else:
@@ -168,6 +175,7 @@ def ajax_find_insurances(request):
     return render(request, 'json/insurances.json', {
         'types': types,
         'categories': categories,
+        'has_complementaries': has_complementaries,
         'complementaries': complementaries,
     })
     
@@ -196,12 +204,12 @@ def ajax_find_operations(request):
 
 #TODO: inja bayad monshie tuye daftare pezeshk esme pezeshko login karde bashe
 @login_required
-@exists_in_session('doctor')
+@exists_in_session('doctor_id')
 def ajax_find_patients_list(request):
     if request.method != "POST":
         raise Http404()
     #FIXME:
-    patient_turns = PatientTurn.objects.filter(doctor__id=request.session['doctor']).order_by('turn')
+    patient_turns = PatientTurn.objects.filter(doctor__id=request.session['doctor_id']).order_by('turn')
     return render(request, 'json/patient_turn.json', {
         'patient_turns': patient_turns,
     })
@@ -220,7 +228,7 @@ def ajax_set_entered_patient(request):
 def doctor_enroll(request):
     if request.method == "POST":
         if 'doctor_id' in request.POST:
-            request.session['doctor'] = request.POST['doctor_id']
+            request.session['doctor_id'] = request.POST['doctor_id']
             return HttpResponseRedirect('/home/')
         else:
             return HttpResponseRedirect('/doctor_enroll/')
@@ -232,16 +240,16 @@ def doctor_enroll(request):
 def fill_medical_history(request):
     medical_history_form = None
     #FIXME:
-    request.session['patient'] = 4
-    if 'patient' in request.session:
+    request.session['patient_id'] = 4
+    if 'patient_id' in request.session:
         try:
-            patient = Patient.objects.get(id=request.session['patient'])
+            patient = Patient.objects.get(id=request.session['patient_id'])
             if patient.medical_history:
                 medical_history_form = MedicalHistoryForm(instance=patient.medical_history)
             else:
                 medical_history_form = MedicalHistoryForm()
         except Patient.DoesNotExist:
-            del request.session['patient']
+            del request.session['patient_id']
             #FIXME:
             return HttpResponseRedirect('/home/')
     return render(request,"medicalHistory.html", {

@@ -6,6 +6,9 @@
     "categories":[{% if categories %}{% for c in categories %}
         "{{ c }}"{% if not forloop.last %},{% endif %}
     {% endfor %}{% endif %}],
+    "has_complementaries":[{% if has_complementaries %}{% for h in has_complementaries %}
+        "{{ h }}"{% if not forloop.last %},{%endif %}
+    {% endfor %}{% endif %}],
     "complementaries":[{% if complementaries %}{% for c in complementaries %}
         "{{ c }}"{% if not forloop.last %},{% endif %}
     {% endfor %}{% endif %}]

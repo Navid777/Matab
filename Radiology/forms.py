@@ -99,12 +99,13 @@ class FactorForm(forms.Form):
     #operation_fee = forms.FloatField()
     insurance_type = forms.CharField(max_length=100)
     insurance_category = forms.CharField(max_length=100)
-    insurance_complementary = forms.CharField(max_length=100)
+    insurance_has_complementary = forms.BooleanField(required=False)
+    insurance_complementary = forms.CharField(max_length=100, required=False)
     #insurance_portion = forms.IntegerField()
-    #insurance_complementary_portion = forms.IntegerField()
     insurance_serial = forms.CharField(max_length=20)
     insurance_page = forms.CharField(max_length=20)
     #insurance_account_id = forms.IntegerField()
+    #insurance_complementary_account_id = forms.IntegerField()
     #total_fee = forms.FloatField()
     #patient_share = forms.FloatField()
 
@@ -129,11 +130,13 @@ class FactorForm(forms.Form):
             insurance = Insurance.objects.get(
                 type=cd.get('insurance_type'),
                 category=cd.get('insurance_category'),
+                has_complementary=cd.get('insurance_has_complementary'),
                 complementary=cd.get('insurance_complementary')
             )
             cd['insurance_portion'] = insurance.portion
-            cd['insurance_complementary_portion'] = insurance.complementary_portion
             cd['insurance_account_id'] = insurance.account_id
+            if insurance.has_complementary:
+                cd['insurance_complementary_account_id'] = insurance.complementary_account_id
         except Insurance.DoesNotExist:
             raise ValidationError('بیمه نادرست است')
         cd['total_fee'] = 1000

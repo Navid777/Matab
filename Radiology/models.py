@@ -95,7 +95,7 @@ class Insurance(models.Model):
     portion = models.IntegerField()
     has_complementary = models.BooleanField()
     complementary = models.CharField(max_length=100, null=True, blank=True)
-    complementary_account_id = models.IntegerField(null = True, blank = True)
+    complementary_account_id = models.IntegerField(null=True, blank=True)
 
     def __unicode__(self):
         return self.type+" "+self.category
@@ -119,12 +119,13 @@ class Factor(models.Model):
     operation_fee = models.FloatField()
     insurance_type = models.CharField(max_length=100)
     insurance_category = models.CharField(max_length=100)
-    insurance_complementary = models.CharField(max_length=100)
+    insurance_has_complementary = models.BooleanField()
+    insurance_complementary = models.CharField(max_length=100, null=True, blank=True)
     insurance_portion = models.IntegerField()
-    insurance_complementary_portion = models.IntegerField()
     insurance_serial = models.CharField(max_length=20)
     insurance_page = models.CharField(max_length=20)
     insurance_account_id = models.IntegerField()
+    insurance_complementary_account_id = models.IntegerField(null=True, blank=True)
     total_fee = models.FloatField()
     patient_share = models.FloatField()
     
