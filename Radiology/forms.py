@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models.query_utils import Q
+from xml.dom import ValidationErr
 
 
 username_label = "نامِ کاربری"
@@ -143,3 +144,26 @@ class FactorForm(forms.Form):
 class MedicalHistoryForm(forms.ModelForm):
     class Meta:
         model = MedicalHistory
+        
+class RegisterPatientForm(forms.Form):
+    first_name = forms.CharField(max_length = 30)
+    last_name = forms.CharField(max_length = 30)
+    national_code = forms.CharField(max_length = 30)
+    account_id = forms.IntegerField()
+    
+    def clean_national_code(self):
+        national_code = self.cleaned_data['national_code']
+        if Patient.objects.filter(national_code=national_code):
+            raise ValidationError(national_code_duplicate_error)
+        return national_code
+    
+class RegisterTherapistForm(forms.Form):
+    first_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=30)
+    medical_number = forms.CharField(max_length=20)
+    
+    def clean_medical_number(self):
+        medical_number = self.cleaned_data['medical_number']
+        if Therapist.objects.filter(medical_number = medical_number):
+            raise ValidationError(therapist_medical_duplicate_error)
+        return medical_number

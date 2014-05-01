@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from Radiology.forms import LoginForm, AppointmentForm, FactorForm, \
-    MedicalHistoryForm
+    MedicalHistoryForm, RegisterPatientForm, RegisterTherapistForm
 from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist, \
     Operation, Factor, PatientTurn
 from accounting import interface as accounting
@@ -246,3 +246,33 @@ def fill_medical_history(request):
     return render(request,"medicalHistory.html", {
         'form': medical_history_form,
     })
+    
+@login_required
+def register_patient(request):
+    register_form = None
+    if request.method == 'POST':
+        register_form = RegisterPatientForm(request.POST)
+        if register_form.is_valid():
+            cd = register_form.cleaned_data
+            patient = Patient(first_name=cd['first_name'], last_name=cd['last_name'],
+                               national_code=cd['national_code'], account_id = cd['account_id'])
+            patient.save()
+            return HttpResponseRedirect('/home/')
+    else:
+        register_form = RegisterPatientForm()
+    return render(request, 'registerPatient.html', {'form':register_form})
+    
+@login_required
+def register_therapist(request):
+    register_form = None
+    if request.method == 'POST':
+        register_form = RegisterTherapistForm(request.POST)
+        if register_form.is_valid():
+            cd = register_form.cleaned_data
+            therapist = Therapist(first_name=cd['first_name'], last_name=cd['last_name'],
+                               medical_number=cd['medical_number'])
+            therapist.save()
+            return HttpResponseRedirect('/home/')
+    else:
+        register_form = RegisterTherapistForm()
+    return render(request, 'registerTherapist.html', {'form':register_form})
