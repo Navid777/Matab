@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
-from Matab.decorators import exists_in_session, user_logged_in, user_has_type, user_type_conforms_or_404, exists_in_session_or_redirect
-from Radiology.forms import LoginForm, AppointmentForm, FactorForm, \
-    MedicalHistoryForm, RegisterPatientForm, RegisterTherapistForm
-from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist, \
-    Operation, Factor, PatientTurn
+from Matab.decorators import *
+from Radiology.forms import *
+from Radiology.models import *
 from accounting import interface as accounting
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
-from django.core import serializers
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -23,30 +19,49 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 
 def login_view(request):
+    if not request.user.is_anonymous():
+        return redirect(logout_view)
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
             user = authenticate(username=cd['username'], password=cd['password'])
             login(request, user)
-            return HttpResponseRedirect(operation_select_view)
+            if user.is_staff:
+                return  redirect(add_users)
+            if user.usertype.type == UserType.RECEPTOR:
+                return redirect(reception)
+            return redirect(waiting_list)
     else:
         form = LoginForm()
-    return render(request, "login.html", {'form': form})
+    return render(request, "login.html", {
+        'form': form,
+    })
 
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect('/login/')
+    return redirect(login_view)
+
+
+@user_is_staff_or_404
+def add_users(request):
+    if request.method == "POST":
+        form = UserForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = User.objects.create_user(username=cd['username'], email=cd['email'], password=cd['password'])
+            UserType.objects.create(type=cd['user_type'], user=user)
+            return redirect(add_users)
+    else:
+        form = UserForm()
+    return render(request, 'add_users.html', {
+        "form": form,
+    })
 
 
 @user_logged_in
-def operation_select_view(request):
-    pass #TODO
-
-
-@user_logged_in
-@user_type_conforms_or_404(lambda t: t == 'پذیرنده')
+@user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
 def reception(request):
     if request.method == "POST":
         form = FactorForm(request.POST)
@@ -60,7 +75,7 @@ def reception(request):
             cd['doctor_account_id'] = doctor.account_id
             factor = Factor.objects.create(**cd)
             request.session['patient_id'] = Patient.objects.get(national_code=cd['patient_national_code']).id
-            return redirect(reverse(show_factor, args=(factor.id,)))
+            return redirect(show_factor, args=factor.id,)
         else:
             print form.errors
     insurance_types = Insurance.objects.values_list('type', flat=True).distinct()
@@ -79,15 +94,15 @@ def waiting_list(request):
 
 
 @user_logged_in
-@user_type_conforms_or_404(lambda t: t == Operation.MRI_TYPE)
-@exists_in_session_or_redirect('patient_id', reverse(waiting_list))
+@user_type_conforms_or_404(lambda t: t == UserType.MRI)
+@exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.waiting_list'))
 def print_medical_history(request):
     pass
 
 
 @user_logged_in
-@user_type_conforms_or_404(lambda t: t == Operation.MRI_TYPE)
-@exists_in_session_or_redirect('patient_id', reverse(waiting_list))
+@user_type_conforms_or_404(lambda t: t == UserType.MRI)
+@exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.waiting_list'))
 def fill_medical_history(request):
     patient = Patient.objects.get(id=request.session['patient_id'])
     if request.method == "POST":
@@ -98,7 +113,7 @@ def fill_medical_history(request):
         if form.is_valid():
             patient.medical_history = form.save()
             patient.save()
-            return HttpResponseRedirect(print_medical_history)
+            return redirect(print_medical_history)
     else:
         if patient.medical_history:
             form = MedicalHistoryForm(instance=patient.medical_history)
@@ -110,8 +125,8 @@ def fill_medical_history(request):
 
 
 @user_logged_in
-@user_type_conforms_or_404(lambda t: t == Operation.MRI_TYPE)
-@exists_in_session_or_redirect('patient_id', reverse(waiting_list))
+@user_type_conforms_or_404(lambda t: t == UserType.MRI)
+@exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.waiting_list'))
 def print_mri_response_receipt(request):
     pass
 
@@ -134,11 +149,10 @@ def write_response(request):
     pass
 
 
-@login_required
 def appointment_day(request):
     return render(request, 'appointment_day.html', {})
 
-@login_required
+
 def appointment(request, day):
     if request.method == "POST":
         form = AppointmentForm(request.POST)
@@ -162,7 +176,6 @@ def appointment(request, day):
     })
 
 
-@login_required
 def ajax_find_patients(request):
     if request.method != "POST":
         raise Http404()
@@ -180,7 +193,7 @@ def ajax_find_patients(request):
         'patients': patients
     })
 
-@login_required
+
 def ajax_find_therapists(request):
     if request.method != "POST":
         raise Http404()
@@ -194,7 +207,7 @@ def ajax_find_therapists(request):
     therapists = Therapist.objects.filter(**filters)
     return render(request, 'json/therapists.json', {'therapists':therapists})
 
-@login_required
+
 def ajax_find_insurances(request):
     if request.method != "POST":
         raise Http404()
@@ -231,7 +244,7 @@ def ajax_find_insurances(request):
         'complementaries': complementaries,
     })
     
-@login_required
+
 def ajax_find_operations(request):
     if request.method != "POST":
         raise Http404()
@@ -254,9 +267,7 @@ def ajax_find_operations(request):
         'codeographies': codeographies,
     })
 
-#TODO: inja bayad monshie tuye daftare pezeshk esme pezeshko login karde bashe
-@login_required
-@exists_in_session('doctor_id')
+
 def ajax_find_patients_list(request):
     if request.method != "POST":
         raise Http404()
@@ -267,7 +278,7 @@ def ajax_find_patients_list(request):
     })
 
 
-@login_required
+
 def ajax_set_entered_patient(request):
     if request.method != "POST":
         raise Http404()
@@ -276,20 +287,6 @@ def ajax_set_entered_patient(request):
     return HttpResponse()
 
 
-@login_required
-def doctor_enroll(request):
-    if request.method == "POST":
-        if 'doctor_id' in request.POST:
-            request.session['doctor_id'] = request.POST['doctor_id']
-            return HttpResponseRedirect('/home/')
-        else:
-            return HttpResponseRedirect('/doctor_enroll/')
-    return render(request, 'doctorEnroll.html', {
-        'doctors': Doctor.objects.all(),
-    })
-
-
-@login_required
 def register_patient(request):
     register_form = None
     if request.method == 'POST':
@@ -304,7 +301,7 @@ def register_patient(request):
         register_form = RegisterPatientForm()
     return render(request, 'registerPatient.html', {'form':register_form})
     
-@login_required
+
 def register_therapist(request):
     register_form = None
     if request.method == 'POST':

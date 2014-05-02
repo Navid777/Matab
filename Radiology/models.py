@@ -40,7 +40,10 @@ class Patient(models.Model):
         return self.first_name + " " + self.last_name
 
 
-class UserRole(models.Model):
+class UserType(models.Model):
+    MRI = u'MRI'
+    RECEPTOR = u'پذیرنده'
+
     user = models.OneToOneField(User)
     type = models.CharField(max_length=30)
 
@@ -84,8 +87,6 @@ class Operation(models.Model):
     type = models.CharField(max_length=30)
     codeography = models.CharField(max_length=30)
     fee = models.FloatField()
-
-    MRI_TYPE = 'MRI'
 
     def __unicode__(self):
         return self.type
