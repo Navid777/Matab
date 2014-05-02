@@ -128,23 +128,9 @@ class Factor(models.Model):
     insurance_complementary_account_id = models.IntegerField(null=True, blank=True)
     total_fee = models.FloatField()
     patient_share = models.FloatField()
-    
 
-class UserRole(models.Model):
-    user = models.OneToOneField(User)
-    SECRETARY = 'S'
-    DOCTOR_OPERATOR = 'D'
-    MRI_OPERATOR='M'
-    PRE_CONDITIONER='P'
-    type = models.CharField(max_length=1, choices=(
-        (SECRETARY, "Secretary"),
-        (DOCTOR_OPERATOR, "Doctor Operator"),
-        (MRI_OPERATOR, "MRI Operator"),
-        (PRE_CONDITIONER, "Pre Conditioner"),
-    ))
 
 class Good(models.Model):
     name = models.CharField(max_length=40)
     quantity = models.IntegerField()
     fee = models.FloatField()
-    
