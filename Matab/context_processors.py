@@ -1,4 +1,10 @@
-from Radiology.models import Patient, Doctor
+from Radiology.models import Patient, Doctor, Operation
+
+
+def fetch_mri_type(request):
+    return {
+        'MRI_TYPE': Operation.MRI_TYPE
+    }
 
 
 def fetch_patient(request):

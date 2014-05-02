@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from Matab.decorators import exists_in_session
+from Matab.decorators import exists_in_session, user_logged_in, user_has_type, user_type_conforms_or_404, exists_in_session_or_redirect
 from Radiology.forms import LoginForm, AppointmentForm, FactorForm, \
     MedicalHistoryForm, RegisterPatientForm, RegisterTherapistForm
 from Radiology.models import Insurance, Patient, Appointment, Doctor, Therapist, \
@@ -29,21 +29,25 @@ def login_view(request):
             cd = form.cleaned_data
             user = authenticate(username=cd['username'], password=cd['password'])
             login(request, user)
-            return HttpResponseRedirect('/home/')
+            return HttpResponseRedirect(operation_select_view)
     else:
         form = LoginForm()
     return render(request, "login.html", {'form': form})
 
 
-@login_required
-def show_factor(request, id):
-    factor = get_object_or_404(Factor, id=id)
-    return HttpResponse('salam')
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect('/login/')
 
 
-@exists_in_session('doctor_id')
-@login_required
-def home(request):
+@user_logged_in
+def operation_select_view(request):
+    pass #TODO
+
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t == 'پذیرنده')
+def reception(request):
     if request.method == "POST":
         form = FactorForm(request.POST)
         if form.is_valid():
@@ -67,10 +71,67 @@ def home(request):
     })
 
 
-@login_required
-def logout_view(request):
-    logout(request)
-    return HttpResponseRedirect('/login/')
+@user_logged_in
+@user_type_conforms_or_404(lambda t: Operation.objects.filter(type=t).count() > 0)
+def waiting_list(request):
+    pass
+
+
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t == Operation.MRI_TYPE)
+@exists_in_session_or_redirect('patient_id', reverse(waiting_list))
+def print_medical_history(request):
+    pass
+
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t == Operation.MRI_TYPE)
+@exists_in_session_or_redirect('patient_id', reverse(waiting_list))
+def fill_medical_history(request):
+    patient = Patient.objects.get(id=request.session['patient_id'])
+    if request.method == "POST":
+        if patient.medical_history:
+            form = MedicalHistoryForm(request.POST, instance=patient.medical_history)
+        else:
+            form = MedicalHistoryForm(request.POST)
+        if form.is_valid():
+            patient.medical_history = form.save()
+            patient.save()
+            return HttpResponseRedirect(print_medical_history)
+    else:
+        if patient.medical_history:
+            form = MedicalHistoryForm(instance=patient.medical_history)
+        else:
+            form = MedicalHistoryForm()
+    return render(request, 'fill_medical_history.html', {
+        'form': form,
+    })
+
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t == Operation.MRI_TYPE)
+@exists_in_session_or_redirect('patient_id', reverse(waiting_list))
+def print_mri_response_receipt(request):
+    pass
+
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: Operation.objects.filter(type=t).count() > 0)
+def sign_operator_in(request):
+    pass
+
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: Operation.objects.filter(type=t).count() > 0)
+def sign_operator_out(request):
+    pass
+
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: Operation.objects.filter(type=t).count() > 0)
+def write_response(request):
+    pass
 
 
 @login_required
@@ -99,15 +160,6 @@ def appointment(request, day):
         'form': form,
         'apps': Appointment.objects.filter(day=datetime.strptime(day, '%Y-%m-%d'))
     })
-
-
-def insurance_categories(request):
-    if request.method == 'GET':
-        if 'insurance_type' in request.GET:
-            return HttpResponse(
-                serializers.serialize("xml", Insurance.objects.filter(insurance_type=request.GET['insurance_type'])))
-        else:
-            pass
 
 
 @login_required
@@ -236,26 +288,7 @@ def doctor_enroll(request):
         'doctors': Doctor.objects.all(),
     })
 
-@login_required
-def fill_medical_history(request):
-    medical_history_form = None
-    #FIXME:
-    request.session['patient_id'] = 4
-    if 'patient_id' in request.session:
-        try:
-            patient = Patient.objects.get(id=request.session['patient_id'])
-            if patient.medical_history:
-                medical_history_form = MedicalHistoryForm(instance=patient.medical_history)
-            else:
-                medical_history_form = MedicalHistoryForm()
-        except Patient.DoesNotExist:
-            del request.session['patient_id']
-            #FIXME:
-            return HttpResponseRedirect('/home/')
-    return render(request,"medicalHistory.html", {
-        'form': medical_history_form,
-    })
-    
+
 @login_required
 def register_patient(request):
     register_form = None

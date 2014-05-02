@@ -101,6 +101,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages",
     "Matab.context_processors.fetch_patient",
     "Matab.context_processors.fetch_doctor",
+    "Matab.context_processors.fetch_mri_type",
 )
 
 MIDDLEWARE_CLASSES = (

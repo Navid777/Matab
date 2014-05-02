@@ -27,6 +27,7 @@ class MedicalHistory(models.Model):
     comment = models.CharField(null=True, blank=True,max_length = 300)
     special_disease = models.CharField(null=True, blank=True,max_length = 300)
 
+
 class Patient(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -37,6 +38,11 @@ class Patient(models.Model):
 
     def get_full_name(self):
         return self.first_name + " " + self.last_name
+
+
+class UserRole(models.Model):
+    user = models.OneToOneField(User)
+    type = models.CharField(max_length=30)
 
 
 class Doctor(models.Model):
@@ -52,7 +58,7 @@ class Doctor(models.Model):
 
 
 class PatientTurn(models.Model):
-    doctor = models.ForeignKey(Doctor)
+    type = models.CharField(max_length=30)
     patient = models.ForeignKey(Patient)
     turn = models.DateTimeField()
 
@@ -78,6 +84,8 @@ class Operation(models.Model):
     type = models.CharField(max_length=30)
     codeography = models.CharField(max_length=30)
     fee = models.FloatField()
+
+    MRI_TYPE = 'MRI'
 
     def __unicode__(self):
         return self.type
