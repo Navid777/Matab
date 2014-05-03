@@ -69,7 +69,7 @@ def reception(request):
             cd = form.cleaned_data
             factor = Factor.objects.create(**cd)
             request.session['patient_id'] = factor.get_patient().id
-            return redirect(show_factor, args=factor.id,)
+            return redirect(show_factor, args=(factor.id,))
         else:
             print form.errors
     insurance_types = Insurance.objects.values_list('type', flat=True).distinct()
@@ -78,10 +78,7 @@ def reception(request):
         "insurance_types": insurance_types,
         "operation_types": operation_types,
     })
-
-def show_factor(request):
-    pass
-
+    
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
 def show_factor(request, id):
@@ -314,3 +311,9 @@ def register_therapist(request):
     else:
         register_form = RegisterTherapistForm()
     return render(request, 'registerTherapist.html', {'form':register_form})
+
+def register_insurance(request):
+    pass
+
+def register_operation(request):
+    pass

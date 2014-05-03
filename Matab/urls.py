@@ -2,10 +2,10 @@ from Radiology import views
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
+from django.contrib import admin
 
 
 # Uncomment the next two lines to enable the admin:
-from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -28,9 +28,13 @@ urlpatterns = patterns('',
     url(r'^register_patient/$', views.register_patient),
     url(r'^register_therapist/$', views.register_therapist),
     url(r'^add_users/$', views.add_users),
+    url(r'^FOLAN/(\d+)/$', views.show_factor),
 
 
     url(r'^register/patient/$', views.register_patient),
+    url(r'^register/insurance/$', views.register_insurance),
+    url(r'^register/therapist/$', views.register_therapist),
+    url(r'^register/operation/$', views.register_operation),
 
 
     url(r'^ajax/find_patients/$', views.ajax_find_patients),

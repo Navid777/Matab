@@ -217,5 +217,20 @@ $(document).ready(function() {
     var $patientModal = $("#registerPatientModal");
     $("#registerPatientSubmit").on('click', function() {
         $patientModal.find('form').submit();
-    })
+    });
+    
+    var $insuranceModal = $("#registerInsuranceModal");
+    $("#registerInsuranceSubmit").on('click', function(){
+    	$insuranceModal.find('form').submit();
+    });
+    
+    var $therapistModal = $("#registerTherapistModal");
+    $("#registerTherapistSubmit").on('click', function(){
+    	$therapistModal.find('form').submit();
+    }); 
+    
+    var $operationModal = $("#registerOperationModal");
+    $("#registerOperationSubmit").on('click', function(){
+    	$operationModal.find('form').submit();
+    });
 });

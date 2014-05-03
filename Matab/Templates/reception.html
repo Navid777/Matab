@@ -180,5 +180,122 @@
             </div>
         </div>
     </div>
+    <div id="registerInsuranceModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">ثبت بیمه جدید</h4>
+                    <div class="modal-body">
+                        <form action="{% url 'Radiology.views.register_insurance' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="registerInsuranceTyInput">نوع بیمه</label>
+                                <input type="text" name="type" class="form-control"
+                                        id="registerInsuranceTypeInput"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerInsuranceCategoryInput"> دسته بیمه</label>
+                                <input type="text" name="category" class="form-control"
+                                        id="registerInsuranceCategoryInput"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerInsurancePortionInput">سهم بیمه</label>
+                                <input type="text" name="portion" class="form-control"
+                                       id="registerInsurancePortionInput"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerInsuranceHasComplementaryInput">بیمه تکمیلی</label>
+                                <input type="checkbox" name="has_complementary" class="form-control"
+                                       id="registerInsuranceHasComplementaryInput"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerInsuranceComlementaryInput">نام بیمه تکمیلی</label>
+                                <input type="text" name="complementary" class="form-control"
+                                       id="registerInsuranceComplementaryInput"/>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="registerInsuranceSubmit">ثبت</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">بازگشت</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+       </div>
+    <div id="registerTherapistModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">ثبت پزشک معالج جدید</h4>
+                    <div class="modal-body">
+                        <form action="{% url 'Radiology.views.register_therapist' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="registerTherapistFirstNameInput">نام</label>
+                                <input type="text" name="first_name" class="form-control"
+                                        id="registerTherapistFirstNameInput"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerTherapistLastNameInput">نام خانوادگی</label>
+                                <input type="text" name="last_name" class="form-control"
+                                        id="registerTherapistLastNameInput"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerTherapistMedicalNumberInput">شماره نظام پزشکی</label>
+                                <input type="text" name="medical_number" class="form-control"
+                                       id="registerTherapistMedicalNumber"/>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="registerTherapistSubmit">ثبت</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">بازگشت</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="registerOperationModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">ثبت خدمت جدید</h4>
+                    <div class="modal-body">
+                        <form action="{% url 'Radiology.views.register_operation' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="registerOperationTypeInput">نوع</label>
+                                <input type="text" name="type" class="form-control"
+                                        id="registerOperationTypeInput"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerOperationCodeographyInput">کدگرافی</label>
+                                <input type="text" name="codeography" class="form-control"
+                                        id="registerOperationCodeographyInput"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerOperationFee">قیمت</label>
+                                <input type="text" name="fee" class="form-control"
+                                       id="registerOperationFee"/>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="registerOperationSubmit">ثبت</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">بازگشت</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#registerPatientModal">ثبت کاربر</button>
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#registerInsuranceModal">ثبت بیمه</button>
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#registerTherapistModal">ثبت پزشک معالج</button>
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#registerOperationModal">ثبت خدمت </button>
+   </div>
 {% endblock %}
