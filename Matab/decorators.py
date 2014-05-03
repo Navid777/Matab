@@ -39,9 +39,11 @@ def user_is_staff_or_404(function):
 def user_type_conforms_or_404(assertion):
     def decorator(function):
         def wrap(request, *args, **kwargs):
-            if assertion(request.user.user_role.type):
+            if assertion(request.user.usertype.type):
                 return function(request, *args, **kwargs)
             else:
                 raise Http404()
+
+        return wrap
 
     return decorator

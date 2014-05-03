@@ -1,4 +1,4 @@
-from Radiology.models import Patient, Doctor, UserType
+from Radiology.models import Patient, UserType
 
 
 def fetch_static_types(request):
@@ -15,14 +15,4 @@ def fetch_patient(request):
         }
     return {
         'patient': None
-    }
-
-
-def fetch_doctor(request):
-    if 'doctor_id' in request.session:
-        return {
-            'doctor': Doctor.objects.get(id=request.session['doctor_id'])
-        }
-    return {
-        'doctor': None
     }
