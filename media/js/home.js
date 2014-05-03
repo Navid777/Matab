@@ -214,4 +214,8 @@ $(document).ready(function() {
             }
         });
     });
+    var $patientModal = $("#registerPatientModal");
+    $("#registerPatientSubmit").on('click', function() {
+        $patientModal.find('form').submit();
+    })
 });

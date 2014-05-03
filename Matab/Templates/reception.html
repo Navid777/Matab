@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block extracss %}
-    <link href="{{ MEDIA_URL }}css/patient_entry.css" rel="stylesheet">
+    <link href="{{ MEDIA_URL }}css/reception.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -146,6 +146,39 @@
         </div>
         <input type='submit' class='btn btn-primary btn-lg center-block' value="ثبت اطلاعات">
     </form>
-    <div class='row'>
+    <div id="registerPatientModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">ثبت بیمار جدید</h4>
+                    <div class="modal-body">
+                        <form action="{% url 'Radiology.views.register_patient' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="registerPatientFirstNameInput">نام</label>
+                                <input type="text" name="first_name" class="form-control"
+                                        id="registerPatientFirstNameInput"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerPatientLastNameInput">نام خانوادگی</label>
+                                <input type="text" name="last_name" class="form-control"
+                                        id="registerPatientLastNameInput"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerPatientNationalCode">شماره‌ی ملی</label>
+                                <input type="text" name="national_code" class="form-control"
+                                       id="registerPatientNationalCode"/>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="registerPatientSubmit">ثبت</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">بازگشت</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#registerPatientModal">ثبت کاربر</button>
 {% endblock %}

@@ -48,18 +48,6 @@ class UserType(models.Model):
     type = models.CharField(max_length=30)
 
 
-class Doctor(models.Model):
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    ACCOUNT_SERIES = 2000
-    account_id = models.IntegerField()
-    medical_number = models.IntegerField(max_length=20, unique=True)
-    phone_number = models.CharField(max_length = 20)
-
-    def get_full_name(self):
-        return self.first_name + " " + self.last_name
-
-
 class PatientTurn(models.Model):
     type = models.CharField(max_length=30)
     patient = models.ForeignKey(Patient)
@@ -77,7 +65,6 @@ class Therapist(models.Model):
 
 class Appointment(models.Model):
     patient = models.ForeignKey(Patient)
-    doctor = models.ForeignKey(Doctor)
     day = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
@@ -115,10 +102,6 @@ class Factor(models.Model):
     patient_last_name = models.CharField(max_length=50)
     patient_national_code = models.CharField(max_length=30)
     patient_account_id = models.IntegerField()
-    doctor_first_name = models.CharField(max_length=30)
-    doctor_last_name = models.CharField(max_length=50)
-    doctor_medical_number = models.CharField(max_length=20)
-    doctor_account_id = models.IntegerField()
     therapist_first_name = models.CharField(max_length=30)
     therapist_last_name = models.CharField(max_length=50)
     therapist_medical_number = models.CharField(max_length=20)
@@ -137,6 +120,34 @@ class Factor(models.Model):
     insurance_complementary_account_id = models.IntegerField(null=True, blank=True)
     total_fee = models.FloatField()
     patient_share = models.FloatField()
+
+    def get_patient(self):
+        return Patient.objects.get(
+            first_name=self.patient_first_name,
+            last_name=self.patient_last_name,
+            national_code=self.patient_national_code,
+        )
+
+    def get_therapist(self):
+        return Therapist.objects.get(
+            first_name=self.therapist_first_name,
+            last_name=self.therapist_last_name,
+            medical_number=self.therapist_medical_number,
+        )
+
+    def get_operation(self):
+        return Operation.objects.get(
+            type=self.operation_type,
+            codeography=self.operation_codeography
+        )
+
+    def get_insurance(self):
+        return Insurance.objects.get(
+            type=self.insurance_type,
+            category=self.insurance_category,
+            has_complementary=self.insurance_has_complementary,
+            complementary=self.insurance_complementary,
+        )
 
 
 class Good(models.Model):

@@ -67,25 +67,24 @@ def reception(request):
         form = FactorForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            #TODO: READ FROM SESSIOn
-            doctor = Doctor.objects.get(id=request.session['doctor_id'])
-            cd['doctor_first_name'] = doctor.first_name
-            cd['doctor_last_name'] = doctor.last_name
-            cd['doctor_medical_number'] = doctor.medical_number
-            cd['doctor_account_id'] = doctor.account_id
             factor = Factor.objects.create(**cd)
-            request.session['patient_id'] = Patient.objects.get(national_code=cd['patient_national_code']).id
+            request.session['patient_id'] = factor.get_patient().id
             return redirect(show_factor, args=factor.id,)
         else:
             print form.errors
     insurance_types = Insurance.objects.values_list('type', flat=True).distinct()
     operation_types = Operation.objects.values_list('type', flat=True).distinct()
-    return render(request, 'home.html', {
+    return render(request, 'reception.html', {
         "insurance_types": insurance_types,
         "operation_types": operation_types,
     })
 
 def show_factor(request):
+    pass
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
+def show_factor(request, id):
     pass
 
 @user_logged_in
@@ -160,10 +159,8 @@ def appointment(request, day):
         form = AppointmentForm(request.POST)
         form.set_day(datetime.strptime(day, '%Y-%m-%d'))
         if form.is_valid():
-            doctor = Doctor.objects.all()[0]
             app = Appointment.objects.create(
                 patient=Patient.objects.get(id=request.session['patient_id']),
-                doctor=doctor,
                 day=datetime.strptime(day, '%Y-%m-%d'),
                 start_time=form.cleaned_data['start_time'],
                 end_time=form.cleaned_data['end_time'],
