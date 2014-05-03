@@ -1,3 +1,6 @@
 {
-    "success": false
+    "success": false,
+    "errors": [{% for e in errors %}
+        "{{ e }}"{% if not forloop.last %},{% endif %}
+    {% endfor %}]
 }

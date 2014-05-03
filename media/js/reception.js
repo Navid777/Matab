@@ -214,9 +214,25 @@ $(document).ready(function() {
             }
         });
     });
-    var $patientModal = $("#registerPatientModal");
+    var $patientForm = $("#registerPatientModal").find('form');
     $("#registerPatientSubmit").on('click', function() {
-        $patientModal.find('form').submit();
+        $.ajax({
+            type: "POST",
+            url: $patientForm.attr('action'),
+            data: $patientForm.serialize(),
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    $patientFirstName.val(data.patient.first_name);
+                    $patientLastName.val(data.patient.last_name);
+                    $patientNationalCode.val(data.patient.national_code);
+                    $("#registerPatientModal").modal('hide');
+                } else {
+                    //TODO
+                    alert(data.errors);
+                }
+            }
+        });
     });
     
     var $insuranceModal = $("#registerInsuranceModal");

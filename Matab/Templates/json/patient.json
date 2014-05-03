@@ -1,0 +1,8 @@
+{
+    "success": true,
+    "patient": {
+        "first_name": "{{ patient.first_name }}",
+        "last_name": "{{ patient.last_name }}",
+        "national_code": "{{ patient.national_code }}"
+    }
+}

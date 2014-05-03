@@ -274,7 +274,6 @@ def ajax_find_patients_list(request):
     })
 
 
-
 def ajax_set_entered_patient(request):
     if request.method != "POST":
         raise Http404()
@@ -284,33 +283,35 @@ def ajax_set_entered_patient(request):
 
 
 def register_patient(request):
-    register_form = None
-    if request.method == 'POST':
-        register_form = RegisterPatientForm(request.POST)
-        if register_form.is_valid():
-            cd = register_form.cleaned_data
-            Patient.objects.create(first_name=cd['first_name'], last_name=cd['last_name'],
-                               national_code=cd['national_code'],
-                               account_id=accounting.create_account(Patient.ACCOUNT_SERIES))
-            return HttpResponseRedirect('/home/')
-    else:
-        register_form = RegisterPatientForm()
-    return render(request, 'registerPatient.html', {'form':register_form})
-    
+    if not request.method == "POST":
+        raise Http404()
+    form = PatientForm(request.POST)
+    if form.is_valid():
+        cd = form.cleaned_data
+        cd['account_id'] = accounting.create_account(Patient.ACCOUNT_SERIES)
+        patient = Patient.objects.create(**cd)
+        return render(request, 'json/patient.json', {
+            'patient': patient,
+        })
+    return render(request, 'json/error.json', {
+        'errors': form.errors,
+    })
+
 
 def register_therapist(request):
-    register_form = None
-    if request.method == 'POST':
-        register_form = RegisterTherapistForm(request.POST)
-        if register_form.is_valid():
-            cd = register_form.cleaned_data
-            therapist = Therapist(first_name=cd['first_name'], last_name=cd['last_name'],
-                               medical_number=cd['medical_number'])
-            therapist.save()
-            return HttpResponseRedirect('/home/')
-    else:
-        register_form = RegisterTherapistForm()
-    return render(request, 'registerTherapist.html', {'form':register_form})
+    if not request.method == "POST":
+        raise Http404()
+    form = TherapistForm(request.POST)
+    if form.is_valid():
+        cd = form.cleaned_data
+        #
+        return render(request, 'json/therapist.json', {
+            'therapist': therapist,
+        })
+    return render(request, 'json/error.json', {
+        'errors': form.errors,
+    })
+
 
 def register_insurance(request):
     pass

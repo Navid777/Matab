@@ -170,7 +170,7 @@ class MedicalHistoryForm(forms.ModelForm):
         model = MedicalHistory
 
 
-class RegisterPatientForm(forms.Form):
+class PatientForm(forms.Form):
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30)
     national_code = forms.CharField(max_length=30)
@@ -182,7 +182,7 @@ class RegisterPatientForm(forms.Form):
         return national_code
 
 
-class RegisterTherapistForm(forms.Form):
+class TherapistForm(forms.Form):
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30)
     medical_number = forms.CharField(max_length=20)
