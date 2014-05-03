@@ -1,0 +1,8 @@
+{
+    "success": true,
+    "operation": {
+        "type": "{{ operation.type }}",
+        "codeography": "{{ operation.codeography }}",
+        "fee": "{{ operation.fee }}"
+    }
+}

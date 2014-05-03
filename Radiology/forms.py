@@ -180,6 +180,14 @@ class PatientForm(forms.Form):
         if Patient.objects.filter(national_code=national_code):
             raise ValidationError(national_code_duplicate_error)
         return national_code
+    
+class InsuranceForm(forms.Form):
+    type = forms.CharField(max_length=100)
+    category = forms.CharField(max_length=100)
+    portion = forms.IntegerField()
+    has_complementary = forms.BooleanField(required=False)
+    complementary = forms.CharField(max_length=100, required = False)
+
 
 
 class TherapistForm(forms.Form):
@@ -192,3 +200,8 @@ class TherapistForm(forms.Form):
         if Therapist.objects.filter(medical_number=medical_number):
             raise ValidationError(therapist_medical_duplicate_error)
         return medical_number
+
+class OperationForm(forms.Form):
+    type = forms.CharField(max_length = 30)
+    codeography = forms.CharField(max_length = 30)
+    fee = forms.FloatField()

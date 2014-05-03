@@ -1,6 +1,6 @@
 {
     "success": true,
-    "patient": {
+    "therapist": {
         "first_name": "{{ therapist.first_name }}",
         "last_name": "{{ therapist.last_name }}",
         "medical_number": "{{ therapist.medical_number }}"

@@ -304,7 +304,7 @@ def register_therapist(request):
     form = TherapistForm(request.POST)
     if form.is_valid():
         cd = form.cleaned_data
-        #
+        therapist = Therapist.objects.create(**cd)
         return render(request, 'json/therapist.json', {
             'therapist': therapist,
         })
@@ -314,7 +314,26 @@ def register_therapist(request):
 
 
 def register_insurance(request):
-    pass
-
+    if not request.method == "POST":
+        raise Http404()
+    form = InsuranceForm(request.POST)
+    if form.is_valid():
+        cd = form.cleaned_data
+        cd['account_id'] = accounting.create_account(Insurance.ACCOUNT_SERIES)
+        if cd['has_complementary'] == True:
+            cd['complementary_account_id'] = accounting.create_account(Insurance.ACCOUNT_SERIES)
+        insurance = Insurance.objects.create(**cd)
+        return render(request, 'json/insurance.json', {
+            'insurance':insurance,
+        })
+    
 def register_operation(request):
-    pass
+    if not request.method == "POST":
+        raise Http404()
+    form = OperationForm(request.POST)
+    if form.is_valid():
+        cd = form.cleaned_data
+        operation = Operation.objects.create(**cd)
+        return render(request, 'json/insurance.json', {
+            'operation':operation,
+        })

@@ -161,7 +161,7 @@ $(document).ready(function() {
                     //TODO
                 }
             }
-        })
+        });
     });
 
     $("#therapistFirstNameInput, #therapistLastNameInput").on('blur', function() {
@@ -215,6 +215,10 @@ $(document).ready(function() {
         });
     });
     var $patientForm = $("#registerPatientModal").find('form');
+    var $patientModal = $("#registerPatientModal");
+    $patientModal.on('shown.bs.modal', function() {
+    	$patientModal.find("#registerPatientFirstNameInput").focus();
+    });
     $("#registerPatientSubmit").on('click', function() {
         $.ajax({
             type: "POST",
@@ -228,7 +232,7 @@ $(document).ready(function() {
                     $patientNationalCode.val(data.patient.national_code);
                     $("#registerPatientModal").modal('hide');
                 } else {
-                    //TODO
+                    //TODO:
                     alert(data.errors);
                 }
             }
@@ -236,17 +240,83 @@ $(document).ready(function() {
     });
     
     var $insuranceModal = $("#registerInsuranceModal");
+    var $insuranceForm = $insuranceModal.find('form');
+    $insuranceModal.on('shown.bs.modal', function() {
+    	$insuranceModal.find("#registerInsuranceTypeInput").focus();
+    });
     $("#registerInsuranceSubmit").on('click', function(){
-    	$insuranceModal.find('form').submit();
+		$.ajax({
+			type: "POST",
+			url: $insuranceForm.attr('action'),
+			data: $insuranceForm.serialize(),
+			dataType: 'json',
+			success: function(data) {
+				if(data.success) {
+					$insuranceType.find("option:selected").prop("selected", false);
+					if ($insuranceType.find("option[value='"+data.insurance.type+"']").length > 0) {
+						$insuranceType.find("option[value='"+data.insurance.type+"']").prop("selected", true);
+					} else {
+						$insuranceType.append("<option value='"+data.insurance.type+"' selected>"+data.insurance.type+"</option>");
+					}
+					$insuranceType.trigger('change');
+					$insuranceType.focus();
+					$("#registerInsuranceModal").modal('hide');
+					//TODO: FILL OTHER FIELDS
+				} else {
+					//TODO
+					alert(data.errors);
+				}
+			}
+		});
     });
     
     var $therapistModal = $("#registerTherapistModal");
+    var $therapistForm = $therapistModal.find('form');
+    $therapistModal.on('shown.bs.modal', function() {
+    	$therapistModal.find("#registerTherapistFirstNameInput").focus();
+    });
     $("#registerTherapistSubmit").on('click', function(){
-    	$therapistModal.find('form').submit();
+    	$.ajax({
+    		type: "POST",
+    		url: $therapistForm.attr('action'),
+    		data: $therapistForm.serialize(),
+    		dataType: 'json',
+    		success: function(data) {
+    			if(data.success) {
+    				$therapistFirstName.val(data.therapist.first_name);
+    				$therapistLastName.val(data.therapist.last_name);
+    				$therapistMedicalNumber.val(data.therapist.medical_number);
+    				$("#registerTherapistModal").modal('hide');
+    			}
+    			else {
+    				//TODO:
+    				alert(data.errors);
+    			}
+    		}
+    	});
     }); 
     
     var $operationModal = $("#registerOperationModal");
+    var $operationForm = $operationModal.find('form');
+    $operationModal.on('shown.bs.modal', function(){
+    	$operationModal.find("#registerOperationTypeInput").focus();
+    });
     $("#registerOperationSubmit").on('click', function(){
-    	$operationModal.find('form').submit();
+    	$.ajax({
+    		type: "POST",
+    		url: $operationForm.attr('action'),
+    		data: $operationForm.serialize(),
+    		dataType: 'json',
+    		success: function(data) {
+    			if(data.success) {
+    				$("#registerOperationModal").modal('hide');
+    			}
+    			else {
+    			//TODO:
+    			alert(data.errors);
+    		}
+    		}
+
+    	});
     });
 });

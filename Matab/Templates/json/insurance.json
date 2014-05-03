@@ -1,0 +1,10 @@
+{
+    "success": true,
+    "insurance": {
+        "type": "{{ insurance.type }}",
+        "category": "{{ insurance.category }}",
+        "portion": "{{ insurance.portion }}",
+        "has_complementary": "{{insurance.has_complementary}}",
+        "complementary": "{{insurance.complementary}}"
+    }
+}

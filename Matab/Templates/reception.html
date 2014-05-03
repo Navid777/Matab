@@ -190,7 +190,7 @@
                         <form action="{% url 'Radiology.views.register_insurance' %}" method="post">
                             {% csrf_token %}
                             <div class="form-group">
-                                <label for="registerInsuranceTyInput">نوع بیمه</label>
+                                <label for="registerInsuranceTypeInput">نوع بیمه</label>
                                 <input type="text" name="type" class="form-control"
                                         id="registerInsuranceTypeInput"/>
                             </div>
@@ -293,7 +293,7 @@
         </div>
     </div>
     
-    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#registerPatientModal">ثبت کاربر</button>
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#registerPatientModal">ثبت بیمار</button>
     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#registerInsuranceModal">ثبت بیمه</button>
     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#registerTherapistModal">ثبت پزشک معالج</button>
     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#registerOperationModal">ثبت خدمت </button>
