@@ -1,6 +1,5 @@
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponseRedirect
-from django.http.response import Http404
+from django.http import HttpResponseRedirect, Http404
 
 
 def exists_in_session_or_redirect(key, url):

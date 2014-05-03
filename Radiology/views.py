@@ -85,6 +85,8 @@ def reception(request):
         "operation_types": operation_types,
     })
 
+def show_factor(request):
+    pass
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: Operation.objects.filter(type=t).count() > 0)
