@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from Radiology.models import Patient, Appointment, Therapist, Insurance, \
-    Operation, Doctor, MedicalHistory
+    Operation, MedicalHistory, UserType
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models.query_utils import Q
-from xml.dom import ValidationErr
 
 
 username_label = "نامِ کاربری"
@@ -59,6 +58,28 @@ class LoginForm(forms.Form):
         return cd
 
 
+class UserForm(forms.Form):
+    first_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=50)
+    username = forms.SlugField(max_length=20)
+    password = forms.CharField(max_length=20)
+    email = forms.EmailField(required=False)
+    user_type = forms.ChoiceField()
+
+    def __init__(self, *args, **kwargs):
+        super(UserForm, self).__init__(*args, **kwargs)
+        self.fields['user_type'].choices = \
+            [(v, "اپراتور" + " " + v)
+             for v in Operation.objects.values_list('type', flat=True).distinct()] + \
+            [(UserType.RECEPTOR, UserType.RECEPTOR)]
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if User.objects.filter(username=username).count() > 0:
+            raise ValidationError('Username already exists')
+        return username
+
+
 class AppointmentForm(forms.Form):
     start_time = forms.TimeField()
     end_time = forms.TimeField()
@@ -75,7 +96,7 @@ class AppointmentForm(forms.Form):
         st = cd['start_time']
         et = cd['end_time']
         if Appointment.objects.filter(day=self.day).filter(Q(start_time__lt=st, end_time__gt=st)
-                | Q(start_time__lt=et, end_time__gt=et)).count() > 0:
+                                            | Q(start_time__lt=et, end_time__gt=et)).count() > 0:
             raise forms.ValidationError(overlapping_appointments_error)
         print cd
         return cd
@@ -147,25 +168,27 @@ class FactorForm(forms.Form):
 class MedicalHistoryForm(forms.ModelForm):
     class Meta:
         model = MedicalHistory
-        
+
+
 class RegisterPatientForm(forms.Form):
-    first_name = forms.CharField(max_length = 30)
-    last_name = forms.CharField(max_length = 30)
-    national_code = forms.CharField(max_length = 30)
-    
+    first_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=30)
+    national_code = forms.CharField(max_length=30)
+
     def clean_national_code(self):
         national_code = self.cleaned_data['national_code']
         if Patient.objects.filter(national_code=national_code):
             raise ValidationError(national_code_duplicate_error)
         return national_code
-    
+
+
 class RegisterTherapistForm(forms.Form):
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30)
     medical_number = forms.CharField(max_length=20)
-    
+
     def clean_medical_number(self):
         medical_number = self.cleaned_data['medical_number']
-        if Therapist.objects.filter(medical_number = medical_number):
+        if Therapist.objects.filter(medical_number=medical_number):
             raise ValidationError(therapist_medical_duplicate_error)
         return medical_number

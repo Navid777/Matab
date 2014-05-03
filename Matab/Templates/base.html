@@ -38,9 +38,9 @@
                 <span class="icon-bar"></span>
             </button>
             {% if user.is_anonymous %}
-                <a class="navbar-brand" href="/login/">ورود</a>
+                <a class="navbar-brand" href="{% url 'Radiology.views.login_view' %}">ورود</a>
             {% else %}
-                <a class="navbar-brand" href="#">فرداد جلیلی</a>
+                <a class="navbar-brand" href="{% url 'Radiology.views.logout_view' %}">فرداد جلیلی</a>
             {% endif %}
         </div>
         <div class="navbar-collapse collapse">

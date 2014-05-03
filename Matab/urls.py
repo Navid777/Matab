@@ -18,17 +18,16 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^login/$' , views.login_view),
-    url(r'^home/$', views.home),
-    url(r'^home/factors/(\d+)/$', views.show_factor),
+    url(r'^$', views.login_view),
     url(r'logout/$', views.logout_view),
+    url(r'^reception/$', views.reception),
+    #url(r'^home/factors/(\d+)/$', views.show_factor),
     url(r'appointment/$', views.appointment_day),
     url(r'appointment/([^/]+)/$', views.appointment),
-    url(r'insurance_categories/$', views.insurance_categories),
-    url(r'^doctor_enroll/$', views.doctor_enroll),
     url(r'^fill_medical_history/$', views.fill_medical_history),
     url(r'^register_patient/$', views.register_patient),
     url(r'^register_therapist/$', views.register_therapist),
+    url(r'^add_users/$', views.add_users),
 
 
     url(r'^ajax/find_patients/$', views.ajax_find_patients),

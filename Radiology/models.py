@@ -27,6 +27,7 @@ class MedicalHistory(models.Model):
     comment = models.CharField(null=True, blank=True,max_length = 300)
     special_disease = models.CharField(null=True, blank=True,max_length = 300)
 
+
 class Patient(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -37,6 +38,14 @@ class Patient(models.Model):
 
     def get_full_name(self):
         return self.first_name + " " + self.last_name
+
+
+class UserType(models.Model):
+    MRI = u'MRI'
+    RECEPTOR = u'پذیرنده'
+
+    user = models.OneToOneField(User)
+    type = models.CharField(max_length=30)
 
 
 class Doctor(models.Model):
@@ -52,7 +61,7 @@ class Doctor(models.Model):
 
 
 class PatientTurn(models.Model):
-    doctor = models.ForeignKey(Doctor)
+    type = models.CharField(max_length=30)
     patient = models.ForeignKey(Patient)
     turn = models.DateTimeField()
 
@@ -128,23 +137,9 @@ class Factor(models.Model):
     insurance_complementary_account_id = models.IntegerField(null=True, blank=True)
     total_fee = models.FloatField()
     patient_share = models.FloatField()
-    
 
-class UserRole(models.Model):
-    user = models.OneToOneField(User)
-    SECRETARY = 'S'
-    DOCTOR_OPERATOR = 'D'
-    MRI_OPERATOR='M'
-    PRE_CONDITIONER='P'
-    type = models.CharField(max_length=1, choices=(
-        (SECRETARY, "Secretary"),
-        (DOCTOR_OPERATOR, "Doctor Operator"),
-        (MRI_OPERATOR, "MRI Operator"),
-        (PRE_CONDITIONER, "Pre Conditioner"),
-    ))
 
 class Good(models.Model):
     name = models.CharField(max_length=40)
     quantity = models.IntegerField()
     fee = models.FloatField()
-    

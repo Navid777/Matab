@@ -1,4 +1,11 @@
-from Radiology.models import Patient, Doctor
+from Radiology.models import Patient, Doctor, UserType
+
+
+def fetch_static_types(request):
+    return {
+        'MRI_TYPE': UserType.MRI,
+        'RECEPTOR_TYPE': UserType.RECEPTOR,
+    }
 
 
 def fetch_patient(request):
