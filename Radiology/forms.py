@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from Radiology.models import Patient, Appointment, Therapist, Insurance, \
-    Operation, MedicalHistory, UserType
+    Operation, MedicalHistory, UserType, Good
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -125,6 +125,9 @@ class FactorForm(forms.Form):
     #insurance_portion = forms.IntegerField()
     insurance_serial = forms.CharField(max_length=20)
     insurance_page = forms.CharField(max_length=20)
+    insurance_share = forms.FloatField()
+    complementary_share = forms.FloatField()
+    has_complementary = forms.BooleanField()
     #insurance_account_id = forms.IntegerField()
     #insurance_complementary_account_id = forms.IntegerField()
     #total_fee = forms.FloatField()
@@ -160,8 +163,27 @@ class FactorForm(forms.Form):
                 cd['insurance_complementary_account_id'] = insurance.complementary_account_id
         except Insurance.DoesNotExist:
             raise ValidationError('بیمه نادرست است')
-        cd['total_fee'] = 1000
-        cd['patient_share'] = 973
+        if cd['operation_cloth']:
+            try:
+                cloth_fee = Good.objects.get(name='لباس').fee
+            except Good.DoesNotExist:
+                raise ValidationError('قیمت لباس معلوم نیست.')
+            total_fee = cd['operation_fee'] + cloth_fee
+        else:
+            total_fee = cd['operation_fee']
+        cd['total_fee'] = total_fee
+        cd['has_complementary'] = insurance.has_complementary
+        if insurance.has_complementary:
+            patient_share = 0
+            insurance_share = total_fee * insurance.portion / 100
+            complementary_share = total_fee - insurance_share
+        else:
+            patient_share = total_fee * (100 - insurance.portion)/100
+            insurance_share = total_fee * insurance.portion / 100
+            complementary_share = 0
+        cd['patient_share'] = patient_share
+        cd['insurance_share'] = insurance_share
+        cd['complementary_share']= complementary_share
         return cd
 
 
