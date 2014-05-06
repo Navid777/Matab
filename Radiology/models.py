@@ -100,7 +100,7 @@ class Insurance(models.Model):
 class Factor(models.Model):
     patient_first_name = models.CharField(max_length=30)
     patient_last_name = models.CharField(max_length=50)
-    patient_national_code = models.CharField(max_length=30)
+    patient_national_code = models.IntegerField()
     patient_account_id = models.IntegerField()
     therapist_first_name = models.CharField(max_length=30)
     therapist_last_name = models.CharField(max_length=50)

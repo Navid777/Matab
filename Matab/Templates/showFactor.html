@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    چاپ فاکتور
+{% endblock %}
+
+{%block content%}
+	<link rel="stylesheet" href="{{MEDIA_URL}}css/show_factor.css"/>
+	<table class="factor_table">
+		<tr>
+			<td>نام بیمار</td>
+			<td>{{factor.patient_first_name}} {{factor.patient_last_name}}</td>
+		</tr>
+		<tr>
+			<td>کد ملی بیمار</td>
+			<td>{{factor.patient_national_code}}</td>
+		</tr>
+		<tr>
+			<td>پزشک معالج</td>
+			<td>{{factor.therapist_first_name}} {{factor.therapist_last_name}}</td>
+		</tr>
+		<tr>
+			<td>نوع خدمت</td>
+			<td>{{factor.operation_type}}-{{factor.operation_codeography}}</td>
+		</tr>
+		<tr>
+			<td>بیمه</td>
+			<td>{{factor.insurance_type}}-{{factor.insurance_category}}</td>
+		</tr>
+		{%if factor.has_complementary%}
+		<tr>
+			<td>بیمه تکمیلی</td>
+			<td>{{factor.insurace_complementary}}</td>
+		</tr>
+		{%endif%}
+		<tr>
+			<td>سریال دفترچه</td>
+			<td>{{factor.insurance_serial}}</td>
+		</tr>
+		<tr>
+			<td>شماره صفحه دفترچه</td>
+			<td>{{factor.insurance_page}}</td>
+		</tr>
+		<tr>
+			<td>مبلغ کل</td>
+			<td>{{factor.total_fee}}</td>
+		</tr>
+		<tr>
+			<td>سهم بیمه</td>
+			<td>{{factor.insurance_share}}</td>
+		</tr>
+		<tr>
+			<td>سهم بیمار</td>
+			<td>{{factor.patient_share}}</td>
+		</tr>
+		{%if factor.has_complementary%}
+		<tr>
+			<td>سهم بیمه تکمیلی</td>
+			<td>{{factor.complementary_share}}</td>
+		</tr>
+		{%endif%}
+	</table>
+	<div class="factor_buttons">
+	<button class="no-printable btn btn-default">بازگشت</button>
+	<button class="no-printable btn btn-primary">چاپ فاکتور</button>
+	</div>
+{%endblock%}

@@ -82,7 +82,10 @@ def reception(request):
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
 def show_factor(request, id):
-    pass
+    factor = get_object_or_404(Factor, id=id)
+    return render(request, "showFactor.html", {
+        'factor': factor,
+    })
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: Operation.objects.filter(type=t).count() > 0)
