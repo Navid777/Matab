@@ -5,7 +5,7 @@ from Radiology.models import *
 from accounting import interface as accounting
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -75,7 +75,7 @@ def reception(request):
                 type=factor.operation_type,
                 turn=datetime.now(),
             )
-            return redirect(show_factor, args=(factor.id,))
+            return redirect(reverse(show_factor, args=(factor.id,)))
         else:
             print form.errors
     insurance_types = Insurance.objects.values_list('type', flat=True).distinct()
@@ -89,7 +89,7 @@ def reception(request):
 @user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
 def show_factor(request, id):
     factor = get_object_or_404(Factor, id=id)
-    return render(request, "showFactor.html", {
+    return render(request, "show_factor.html", {
         'factor': factor,
     })
 

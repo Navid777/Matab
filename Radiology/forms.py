@@ -161,10 +161,7 @@ class FactorForm(forms.Form):
         except Insurance.DoesNotExist:
             raise ValidationError('بیمه نادرست است')
         if cd['operation_cloth']:
-            try:
-                cloth_fee = Good.objects.get(name='لباس').fee
-            except Good.DoesNotExist:
-                raise ValidationError('قیمت لباس معلوم نیست.')
+            cloth_fee = Good.objects.get(name='لباس').fee
             total_fee = cd['operation_fee'] + cloth_fee
         else:
             total_fee = cd['operation_fee']
@@ -180,7 +177,7 @@ class FactorForm(forms.Form):
             complementary_share = 0
         cd['patient_share'] = patient_share
         cd['insurance_share'] = insurance_share
-        cd['complementary_share']= complementary_share
+        cd['insurance_complementary_share'] = complementary_share
         return cd
 
 

@@ -1,5 +1,4 @@
-from Radiology.models import Patient, MedicalHistory, Insurance, \
-    Operation, Therapist, PatientTurn, Factor
+from Radiology.models import *
 from django.contrib import admin
 
 class PatientAdmin(admin.ModelAdmin):
@@ -30,3 +29,4 @@ admin.site.register(Operation, OperationAdmin)
 admin.site.register(Therapist, TherapistAdmin)
 admin.site.register(PatientTurn, PatientTurnAdmin)
 admin.site.register(Factor, FactorAdmin)
+admin.site.register(Good)
