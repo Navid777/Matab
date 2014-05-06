@@ -171,10 +171,12 @@ class FactorForm(forms.Form):
             patient_share = 0
             insurance_share = total_fee * insurance.portion / 100
             complementary_share = total_fee - insurance_share
+            cd['patient_paid'] = True
         else:
             patient_share = total_fee * (100 - insurance.portion)/100
             insurance_share = total_fee * insurance.portion / 100
             complementary_share = 0
+            cd['complementary_paid'] = True
         cd['patient_share'] = patient_share
         cd['insurance_share'] = insurance_share
         cd['insurance_complementary_share'] = complementary_share
