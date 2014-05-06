@@ -4,6 +4,10 @@
     چاپ فاکتور
 {% endblock %}
 
+{% block extrajs %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/show_factor.js"></script>
+{% endblock %}
+
 {%block content%}
 	<link rel="stylesheet" href="{{MEDIA_URL}}css/show_factor.css"/>
 	<table class="factor_table">
@@ -62,6 +66,7 @@
 	</table>
 	<div class="factor_buttons">
 	<button class="no-printable btn btn-default">افزودن به بدهکاری</button>
-	<button class="no-printable btn btn-primary">پرداخت و چاپ</button>
+	<button id="#factorPaid" data-id="{{ factor.id }}" class="no-printable btn btn-primary"
+            data-url="{% url 'Radiology.views.ajax_patient_pay_factor' %}">پرداخت و چاپ</button>
 	</div>
 {%endblock%}

@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="{{ MEDIA_URL }}css/bootstrap.min.css"/>
     <link rel="stylesheet" href="{{ MEDIA_URL }}css/bootstrap-rtl.min.css"/>
     <link rel="stylesheet" href="{{ MEDIA_URL }}css/printable.css"/>
+    {% block extracss %{% endblock %}
+
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/bootstrap.min.js"/>
+    {% block extrajs %}%{% endblock %}
 </head>
 <body>
 {% block content %}{% endblock %}
