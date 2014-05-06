@@ -68,7 +68,13 @@ def reception(request):
         if form.is_valid():
             cd = form.cleaned_data
             factor = Factor.objects.create(**cd)
-            request.session['patient_id'] = factor.get_patient().id
+            patient = factor.get_patient()
+            request.session['patient_id'] = patient.id
+            PatientTurn.objects.create(
+                patient=patient,
+                type=factor.operation_type,
+                turn=datetime.now(),
+            )
             return redirect(show_factor, args=(factor.id,))
         else:
             print form.errors
@@ -84,10 +90,14 @@ def reception(request):
 def show_factor(request, id):
     pass
 
+
 @user_logged_in
 @user_type_conforms_or_404(lambda t: Operation.objects.filter(type=t).count() > 0)
 def waiting_list(request):
-    pass
+    turns = PatientTurn.objects.filter(type=request.user.usertype.type).order_by("-turn")
+    return render(request, 'waiting_list.html', {
+        "turns": turns,
+    })
 
 
 
@@ -282,6 +292,8 @@ def ajax_set_entered_patient(request):
     return HttpResponse()
 
 
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
 def register_patient(request):
     if not request.method == "POST":
         raise Http404()
@@ -298,6 +310,8 @@ def register_patient(request):
     })
 
 
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
 def register_therapist(request):
     if not request.method == "POST":
         raise Http404()
@@ -313,6 +327,8 @@ def register_therapist(request):
     })
 
 
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
 def register_insurance(request):
     if not request.method == "POST":
         raise Http404()
@@ -320,13 +336,16 @@ def register_insurance(request):
     if form.is_valid():
         cd = form.cleaned_data
         cd['account_id'] = accounting.create_account(Insurance.ACCOUNT_SERIES)
-        if cd['has_complementary'] == True:
+        if cd['has_complementary']:
             cd['complementary_account_id'] = accounting.create_account(Insurance.ACCOUNT_SERIES)
         insurance = Insurance.objects.create(**cd)
         return render(request, 'json/insurance.json', {
             'insurance':insurance,
         })
-    
+
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
 def register_operation(request):
     if not request.method == "POST":
         raise Http404()
