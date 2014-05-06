@@ -1,0 +1,23 @@
+.factor_table{
+	border-color: black ;
+	border-style:solid ;
+	border-radius: 10px ;
+	border-width: 2px;
+	padding: 10px ;
+	background: white;
+	margin-left: auto;
+	margin-right: auto;
+	width: 18cm ;
+}
+
+.factor_table td {
+	border-style: solid;
+	border-width: 1px;
+	padding: 5px;
+}
+
+.factor_buttons {
+	margin-left: auto;
+	margin-right: auto;
+	width: 18cm;
+}

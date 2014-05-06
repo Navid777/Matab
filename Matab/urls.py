@@ -28,7 +28,7 @@ urlpatterns = patterns('',
     url(r'^register_patient/$', views.register_patient),
     url(r'^register_therapist/$', views.register_therapist),
     url(r'^add_users/$', views.add_users),
-    url(r'^FOLAN/(\d+)/$', views.show_factor),
+    url(r'^factor/(\d+)/$', views.show_factor),
 
 
     url(r'^register/patient/$', views.register_patient),
