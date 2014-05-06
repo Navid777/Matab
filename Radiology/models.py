@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib.auth.models import User
 from django.db import models
+from django.template.defaultfilters import default
 
 # Create your models here.
 
@@ -125,7 +126,9 @@ class Factor(models.Model):
     patient_share = models.FloatField()
     insurance_share = models.FloatField()
     insurance_complementary_share = models.FloatField()
-    paid = models.BooleanField(default=False)
+    patient_paid = models.BooleanField(default=False)
+    insurance_paid = models.BooleanField(default=False)
+    complementary_paid = models.BooleanField(defaul=False)
 
     def get_patient(self):
         return Patient.objects.get(
