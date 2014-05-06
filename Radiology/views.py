@@ -28,7 +28,7 @@ def login_view(request):
             user = authenticate(username=cd['username'], password=cd['password'])
             login(request, user)
             if user.is_staff:
-                return  redirect(add_users)
+                return redirect(add_users)
             if user.usertype.type == UserType.RECEPTOR:
                 return redirect(reception)
             return redirect(waiting_list)
@@ -84,7 +84,8 @@ def reception(request):
         "insurance_types": insurance_types,
         "operation_types": operation_types,
     })
-    
+
+
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
 def show_factor(request, id):
@@ -101,7 +102,6 @@ def waiting_list(request):
     return render(request, 'waiting_list.html', {
         "turns": turns,
     })
-
 
 
 @user_logged_in
@@ -214,7 +214,7 @@ def ajax_find_therapists(request):
     if 'medical_number' in request.POST:
         filters['medical_number'] = request.POST['medical_number']
     therapists = Therapist.objects.filter(**filters)
-    return render(request, 'json/therapists.json', {'therapists':therapists})
+    return render(request, 'json/therapists.json', {'therapists': therapists})
 
 
 def ajax_find_insurances(request):
@@ -252,7 +252,7 @@ def ajax_find_insurances(request):
         'has_complementaries': has_complementaries,
         'complementaries': complementaries,
     })
-    
+
 
 def ajax_find_operations(request):
     if request.method != "POST":
@@ -280,7 +280,7 @@ def ajax_find_operations(request):
 def ajax_find_patients_list(request):
     if request.method != "POST":
         raise Http404()
-    #FIXME:
+        #FIXME:
     patient_turns = PatientTurn.objects.filter(doctor__id=request.session['doctor_id']).order_by('turn')
     return render(request, 'json/patient_turn.json', {
         'patient_turns': patient_turns,
@@ -294,15 +294,25 @@ def ajax_set_entered_patient(request):
     patient_turn.delete()
     return HttpResponse()
 
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
 def ajax_patient_pay_factor(request):
     if request.method != "POST":
         raise Http404
     factor = get_object_or_404(Factor, id=request.POST['id'])
     #TODO: descriptions
+    if factor.patient_paid:
+        return render(request, 'json/error.json', {
+            'errors': ['پرداخت شده است.'],
+        })
     if not factor.has_complementary:
         accounting.move_credit(factor.patient_account_id, accounting.get_static_account("office"),
-                            factor.patient_share, "", "", "", datetime.now(), factor.id)
+                               factor.patient_share, "", "", "", datetime.now(), factor.id)
         factor.patient_paid = True
+        factor.save()
+    return render(request, 'json/patient_paid.json', {})
+
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
@@ -352,7 +362,7 @@ def register_insurance(request):
             cd['complementary_account_id'] = accounting.create_account(Insurance.ACCOUNT_SERIES)
         insurance = Insurance.objects.create(**cd)
         return render(request, 'json/insurance.json', {
-            'insurance':insurance,
+            'insurance': insurance,
         })
 
 
@@ -366,5 +376,5 @@ def register_operation(request):
         cd = form.cleaned_data
         operation = Operation.objects.create(**cd)
         return render(request, 'json/insurance.json', {
-            'operation':operation,
+            'operation': operation,
         })
