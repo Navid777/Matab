@@ -306,7 +306,7 @@ def ajax_patient_pay_factor(request):
         return render(request, 'json/error.json', {
             'errors': ['پرداخت شده است.'],
         })
-    if not factor.has_complementary:
+    if not factor.insurance_has_complementary:
         accounting.move_credit(factor.patient_account_id, accounting.get_static_account("office"),
                                factor.patient_share, "", "", "", datetime.now(), factor.id)
         factor.patient_paid = True

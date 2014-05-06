@@ -1,4 +1,4 @@
-from accounting.models import Account, Document, Record
+from accounting.models import Account, Document, Record, StaticAccount
 
 
 #TODO: check function input
@@ -70,12 +70,12 @@ def get_credit(acc_id):
     acc = Account.objects.get(id=acc_id)
     return acc.credit
 
-static_accounts = {}
-
 
 def initialize_static_accounts():
-    static_accounts['office'] = create_account(0)
+    if not StaticAccount.objects.filter(key='office'):
+        acc = Account.objects.create(serial=0, credit=0)
+        StaticAccount.objects.create(key='office', account=acc)
 
 
 def get_static_account(name):
-    return static_accounts[map]
+    return StaticAccount.objects.get(key=name).account.id

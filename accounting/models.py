@@ -7,7 +7,12 @@ class Account(models.Model):
     credit = models.FloatField()
 
     def __unicode__(self):
-        return "%04d%08d" % self.serial, self.id
+        return "%04d%08d" % (self.serial, self.id)
+
+
+class StaticAccount(models.Model):
+    key = models.CharField(max_length=50)
+    account = models.ForeignKey(Account)
 
 
 class Document(models.Model):
@@ -28,7 +33,7 @@ class Record(models.Model):
     description = models.CharField(max_length=300)
 
     def __unicode__(self):
-        return self.account + ": " + self.description[0:20] + "..."
+        return unicode(self.account) + ": " + self.description[0:20] + "..."
 
 
 admin.site.register(Account)

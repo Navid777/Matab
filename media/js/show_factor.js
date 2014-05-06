@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var $button = $("#payFactor");
+    var $button = $("#factorPaid");
     $button.on('click', function() {
         if (!confirm("آیا مطمئن هستید؟")) {
             return;

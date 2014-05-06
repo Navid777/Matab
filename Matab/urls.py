@@ -43,6 +43,7 @@ urlpatterns = patterns('',
     url(r'^ajax/find_operations/$', views.ajax_find_operations),
     url(r'^ajax/find_patients_list/$', views.ajax_find_patients_list),
     url(r'^ajax/set_entered_patient/$', views.ajax_set_entered_patient),
+    url(r'^ajax/patient_pay_factor/$', views.ajax_patient_pay_factor),
 
 )
 

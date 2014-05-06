@@ -8,7 +8,7 @@
     <script type="text/javascript" src="{{ MEDIA_URL }}js/show_factor.js"></script>
 {% endblock %}
 
-{%block content%}
+{% block content %}
 	<link rel="stylesheet" href="{{MEDIA_URL}}css/show_factor.css"/>
 	<table class="factor_table">
 		<tr>
@@ -65,8 +65,8 @@
 		{%endif%}
 	</table>
 	<div class="factor_buttons">
-	<button class="no-printable btn btn-default">افزودن به بدهکاری</button>
-	<button id="#factorPaid" data-id="{{ factor.id }}" class="no-printable btn btn-primary"
+	<a href="{% url 'Radiology.views.reception' %}" class="no-printable btn btn-default">افزودن به بدهکاری</a>
+	<button id="factorPaid" data-id="{{ factor.id }}" class="no-printable btn btn-primary"
             data-url="{% url 'Radiology.views.ajax_patient_pay_factor' %}">پرداخت و چاپ</button>
 	</div>
 {%endblock%}
