@@ -128,7 +128,7 @@ class Factor(models.Model):
     insurance_complementary_share = models.FloatField()
     patient_paid = models.BooleanField(default=False)
     insurance_paid = models.BooleanField(default=False)
-    complementary_paid = models.BooleanField(defaul=False)
+    complementary_paid = models.BooleanField(default=False)
 
     def get_patient(self):
         return Patient.objects.get(
