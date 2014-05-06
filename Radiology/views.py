@@ -303,6 +303,7 @@ def ajax_patient_pay_factor(request):
         accounting.move_credit(factor.patient_account_id, accounting.get_static_account("office"),
                             factor.patient_share, "", "", "", datetime.now(), factor.id)
         factor.patient_paid = True
+
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
 def register_patient(request):
