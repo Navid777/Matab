@@ -169,7 +169,7 @@ class FactorForm(forms.Form):
         else:
             total_fee = cd['operation_fee']
         cd['total_fee'] = total_fee
-        cd['has_complementary'] = insurance.has_complementary
+        cd['insurance_has_complementary'] = insurance.has_complementary
         if insurance.has_complementary:
             patient_share = 0
             insurance_share = total_fee * insurance.portion / 100
@@ -206,6 +206,17 @@ class InsuranceForm(forms.Form):
     portion = forms.IntegerField()
     has_complementary = forms.BooleanField(required=False)
     complementary = forms.CharField(max_length=100, required = False)
+    
+    def clean(self):
+        super(InsuranceForm, self).clean()
+        cd = self.cleaned_data
+        if Insurance.objects.filter(
+            type=cd.get('type'),
+            category=cd.get('category'),
+            has_complementary=cd.get('has_complementary'),
+            complementary=cd.get('complementary')):
+            raise ValidationError('بیمه تکراری است.')
+        return cd
 
 
 
