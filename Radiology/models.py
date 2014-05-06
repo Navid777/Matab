@@ -123,6 +123,8 @@ class Factor(models.Model):
     insurance_complementary_account_id = models.IntegerField(null=True, blank=True)
     total_fee = models.FloatField()
     patient_share = models.FloatField()
+    insurance_share = models.FloatField()
+    insurance_complementary_share = models.FloatField()
     paid = models.BooleanField(default=False)
 
     def get_patient(self):

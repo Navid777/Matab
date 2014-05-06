@@ -1,5 +1,4 @@
 from accounting.models import Account, Document, Record
-from datetime import datetime
 
 
 #TODO: check function input
@@ -70,3 +69,13 @@ def get_credit(acc_id):
     """
     acc = Account.objects.get(id=acc_id)
     return acc.credit
+
+static_accounts = {}
+
+
+def initialize_static_accounts():
+    static_accounts['office'] = create_account(0)
+
+
+def get_static_account(name):
+    return static_accounts[map]
