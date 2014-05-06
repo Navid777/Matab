@@ -4,12 +4,15 @@
     چاپ فاکتور
 {% endblock %}
 
+{% block extracss %}
+	<link rel="stylesheet" href="{{MEDIA_URL}}css/show_factor.css"/>
+{% endblock %}
+
 {% block extrajs %}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/show_factor.js"></script>
 {% endblock %}
 
 {% block content %}
-	<link rel="stylesheet" href="{{MEDIA_URL}}css/show_factor.css"/>
 	<table class="factor_table">
 		<tr>
 			<td>نام بیمار</td>
@@ -64,9 +67,12 @@
 		</tr>
 		{%endif%}
 	</table>
-	<div class="factor_buttons">
-	<a href="{% url 'Radiology.views.reception' %}" class="no-printable btn btn-default">افزودن به بدهکاری</a>
-	<button id="factorPaid" data-id="{{ factor.id }}" class="no-printable btn btn-primary"
+    <hr class="no-printable"/>
+	<div class="no-printable factor_buttons">
+    <button type="button" id="print" class="btn btn-default">چاپ</button>
+	<a href="{% url 'Radiology.views.reception' %}" class="btn btn-default">افزودن به بدهکاری</a>
+	<button id="factorPaid" data-id="{{ factor.id }}" class="btn btn-primary"
             data-url="{% url 'Radiology.views.ajax_patient_pay_factor' %}">پرداخت و چاپ</button>
+    <a href="{% url 'Radiology.views.reception' %}" id="return" class="btn btn-primary hide">بازگشت</a>
 	</div>
 {%endblock%}

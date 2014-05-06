@@ -11,13 +11,18 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(data) {
                 if (data.success) {
-                    //TODO: show success and change hard-coded url
-                    document.location = "/reception/"
+                    $button.hide();
+                    $("#return").removeClass('hide');
+                    window.print();
                 } else {
                     //TODO error
-                    alert(data.errors)
+                    alert(data.errors);
                 }
             }
         });
+    });
+
+    $("#print").on('click',function() {
+        window.print();
     });
 });
