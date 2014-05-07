@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-s
 from django.contrib.auth.models import User
 from django.db import models
 from django.template.defaultfilters import default
@@ -74,18 +74,15 @@ class Appointment(models.Model):
     end_time = models.TimeField()
 
 
-class Operation(models.Model):
-    type = models.CharField(max_length=30)
-    codeography = models.CharField(max_length=30)
-    fee = models.FloatField()
-
-    def __unicode__(self):
-        return self.type
-
 
 class Visit(models.Model):
     appointment = models.OneToOneField(Appointment)
 
+class ComplementaryInsurance(models.Model):
+    type = models.CharField(max_length=100)
+    account_id = models.IntegerField(null=True, blank=True)
+    def __unicode__(self):
+        return self.type
 
 class Insurance(models.Model):
     type = models.CharField(max_length=100)
@@ -94,8 +91,7 @@ class Insurance(models.Model):
     account_id = models.IntegerField()
     portion = models.IntegerField()
     has_complementary = models.BooleanField()
-    complementary = models.CharField(max_length=100, null=True, blank=True)
-    complementary_account_id = models.IntegerField(null=True, blank=True)
+    complementary = models.ForeignKey(ComplementaryInsurance)
 
     def __unicode__(self):
         return self.type+" "+self.category
@@ -106,6 +102,11 @@ class Factor(models.Model):
     patient_last_name = models.CharField(max_length=50)
     patient_national_code = models.IntegerField()
     patient_account_id = models.IntegerField()
+    receptor_first_name = models.CharField(max_length=50)
+    receptor_last_name = models.CharField(max_length=50)
+    MRI_operator_first_name = models.CharField(max_length=50, null=True, blank=True)
+    MRI_operator_last_name = models.CharField(max_length=50, null=True, blank=True)
+    MRI_prepare_first_name = models.CharField(max_length=50, null=True, blank=True)
     therapist_first_name = models.CharField(max_length=30)
     therapist_last_name = models.CharField(max_length=50)
     therapist_medical_number = models.CharField(max_length=20)
@@ -163,3 +164,15 @@ class Good(models.Model):
     name = models.CharField(max_length=40)
     quantity = models.IntegerField()
     fee = models.FloatField()
+    
+class Operation(models.Model):
+    type = models.CharField(max_length=30)
+    codeography = models.CharField(max_length=30)
+    individual_fee = models.FloatField()
+    governmental_fee = models.FloatField()
+    medical_fee = models.FloatField()
+    film = models.ForeignKey(Good)
+    film_quantity = models.IntegerField()
+
+    def __unicode__(self):
+        return self.type

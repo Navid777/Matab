@@ -60,6 +60,12 @@ def add_users(request):
     })
 
 
+#todo: etelaate bimare voroodi dar forme registere bimar neshan dade shavad
+#vaghti shomare nezam pezeshki zade shod va dorost bood beppare tuye entekhabe khedmat
+#bime takmili khodesh kelase jodast
+#name monshi o operator o amadesaz be factor ezafe shavad
+#saate kari mohem nist
+#khedmat 3 ta gheimat dare!    
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
 def reception(request):
