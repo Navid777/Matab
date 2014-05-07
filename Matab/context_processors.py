@@ -3,8 +3,8 @@ from Radiology.models import Patient, UserType
 
 def fetch_static_types(request):
     return {
-        'MRI_TYPE': UserType.MRI,
-        'RECEPTOR_TYPE': UserType.RECEPTOR,
+        'MRI_OPERATION': UserType.MRI_OPERATION,
+        'USER_TYPES': UserType.TYPES,
     }
 
 

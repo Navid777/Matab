@@ -71,13 +71,23 @@ class UserForm(forms.Form):
         self.fields['user_type'].choices = \
             [(v, "اپراتور" + " " + v)
              for v in Operation.objects.values_list('type', flat=True).distinct()] + \
-            [(UserType.RECEPTOR, UserType.RECEPTOR)]
+            [(UserType.TYPES['RECEPTOR'], UserType.TYPES['RECEPTOR'])]
 
     def clean_username(self):
         username = self.cleaned_data['username']
         if User.objects.filter(username=username).count() > 0:
             raise ValidationError('Username already exists')
         return username
+
+    def clean(self):
+        cd = super(UserForm, self).clean()
+        user_type = cd.get('user_type')
+        if user_type == UserType.TYPES['RECEPTOR']:
+            cd['user_operation'] = None
+        else:
+            cd['user_operation'] = user_type
+            cd['user_type'] = UserType.TYPES['OPERATOR']
+        return cd
 
 
 class AppointmentForm(forms.Form):

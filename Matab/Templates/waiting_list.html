@@ -1,18 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <style>
-    table {
-        border-color: white;
-    }
-    thead {
-        background-color: white;
-    }
-    td, th {
-      text-align: center;
-      vertical-align: middle;
-    }
-    </style>
 <table class="table table-hover table-condensed table-bordered">
     <thead>
     <tr>
@@ -28,7 +16,13 @@
         <td>{{ p.patient.first_name }}</td>
         <td>{{ p.patient.last_name }}</td>
         <td>{{ p.patient.national_code }}</td>
-        <td><button class="btn btn-default btn-block" data-id="{{ p.id }}">ثبت ورود</button></td>
+        {% if user.usertype.operation == MRI_OPERATION %}
+            {% url "Radiology.views.fill_medical_history" as u %}
+        {% else %}
+            {% url "Radiology.views.write_response" as u %}
+        {% endif %}
+        <td><a href="{% url "Radiology.views.session_patient" p.patient.id u %}"
+                 class="btn btn-default btn-block">ثبت ورود</a></td>
         </tr>
         {% endfor %}
     </tbody>

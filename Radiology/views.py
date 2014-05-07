@@ -29,7 +29,7 @@ def login_view(request):
             login(request, user)
             if user.is_staff:
                 return redirect(add_users)
-            if user.usertype.type == UserType.RECEPTOR:
+            if user.usertype.type == UserType.TYPES['RECEPTOR']:
                 return redirect(reception)
             return redirect(waiting_list)
     else:
@@ -51,7 +51,7 @@ def add_users(request):
         if form.is_valid():
             cd = form.cleaned_data
             user = User.objects.create_user(username=cd['username'], email=cd['email'], password=cd['password'])
-            UserType.objects.create(type=cd['user_type'], user=user)
+            UserType.objects.create(type=cd['user_type'], operation=cd['user_operation'], user=user)
             return redirect(add_users)
     else:
         form = UserForm()
@@ -67,7 +67,7 @@ def add_users(request):
 #saate kari mohem nist
 #khedmat 3 ta gheimat dare!    
 @user_logged_in
-@user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def reception(request):
     if request.method == "POST":
         form = FactorForm(request.POST)
@@ -93,7 +93,7 @@ def reception(request):
 
 
 @user_logged_in
-@user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def show_factor(request, id):
     factor = get_object_or_404(Factor, id=id)
     return render(request, "show_factor.html", {
@@ -102,23 +102,23 @@ def show_factor(request, id):
 
 
 @user_logged_in
-@user_type_conforms_or_404(lambda t: Operation.objects.filter(type=t).count() > 0)
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['OPERATOR'])
 def waiting_list(request):
-    turns = PatientTurn.objects.filter(type=request.user.usertype.type).order_by("-turn")
+    turns = PatientTurn.objects.filter(type=request.user.usertype.operation).order_by("-turn")
     return render(request, 'waiting_list.html', {
         "turns": turns,
     })
 
 
 @user_logged_in
-@user_type_conforms_or_404(lambda t: t == UserType.MRI)
+@user_type_conforms_or_404(lambda t: t.operation == UserType.MRI_OPERATION)
 @exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.waiting_list'))
 def print_medical_history(request):
     pass
 
 
 @user_logged_in
-@user_type_conforms_or_404(lambda t: t == UserType.MRI)
+@user_type_conforms_or_404(lambda t: t.operation == UserType.MRI_OPERATION)
 @exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.waiting_list'))
 def fill_medical_history(request):
     patient = Patient.objects.get(id=request.session['patient_id'])
@@ -142,26 +142,26 @@ def fill_medical_history(request):
 
 
 @user_logged_in
-@user_type_conforms_or_404(lambda t: t == UserType.MRI)
+@user_type_conforms_or_404(lambda t: t.operation == UserType.MRI_OPERATION)
 @exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.waiting_list'))
 def print_mri_response_receipt(request):
     pass
 
 
 @user_logged_in
-@user_type_conforms_or_404(lambda t: Operation.objects.filter(type=t).count() > 0)
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['OPERATOR'])
 def sign_operator_in(request):
     pass
 
 
 @user_logged_in
-@user_type_conforms_or_404(lambda t: Operation.objects.filter(type=t).count() > 0)
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['OPERATOR'])
 def sign_operator_out(request):
     pass
 
 
 @user_logged_in
-@user_type_conforms_or_404(lambda t: Operation.objects.filter(type=t).count() > 0)
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['OPERATOR'])
 def write_response(request):
     pass
 
@@ -191,6 +191,20 @@ def appointment(request, day):
     })
 
 
+@user_logged_in
+def session_patient(request, id, next):
+    patient = get_object_or_404(Patient, id=id)
+    request.session['patient_id'] = patient.id
+    return redirect(next)
+
+
+@user_logged_in
+def session_clear_patient(request):
+    del request.session['patient_id']
+    #TODO: redirect where?
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def ajax_find_patients(request):
     if request.method != "POST":
         raise Http404()
@@ -209,6 +223,8 @@ def ajax_find_patients(request):
     })
 
 
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def ajax_find_therapists(request):
     if request.method != "POST":
         raise Http404()
@@ -223,6 +239,8 @@ def ajax_find_therapists(request):
     return render(request, 'json/therapists.json', {'therapists': therapists})
 
 
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def ajax_find_insurances(request):
     if request.method != "POST":
         raise Http404()
@@ -260,6 +278,8 @@ def ajax_find_insurances(request):
     })
 
 
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def ajax_find_operations(request):
     if request.method != "POST":
         raise Http404()
@@ -283,26 +303,8 @@ def ajax_find_operations(request):
     })
 
 
-def ajax_find_patients_list(request):
-    if request.method != "POST":
-        raise Http404()
-        #FIXME:
-    patient_turns = PatientTurn.objects.filter(doctor__id=request.session['doctor_id']).order_by('turn')
-    return render(request, 'json/patient_turn.json', {
-        'patient_turns': patient_turns,
-    })
-
-
-def ajax_set_entered_patient(request):
-    if request.method != "POST":
-        raise Http404()
-    patient_turn = get_object_or_404(PatientTurn, id=request.POST['id'])
-    patient_turn.delete()
-    return HttpResponse()
-
-
 @user_logged_in
-@user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def ajax_patient_pay_factor(request):
     if request.method != "POST":
         raise Http404
@@ -321,7 +323,7 @@ def ajax_patient_pay_factor(request):
 
 
 @user_logged_in
-@user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def register_patient(request):
     if not request.method == "POST":
         raise Http404()
@@ -339,7 +341,7 @@ def register_patient(request):
 
 
 @user_logged_in
-@user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def register_therapist(request):
     if not request.method == "POST":
         raise Http404()
@@ -356,7 +358,7 @@ def register_therapist(request):
 
 
 @user_logged_in
-@user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def register_insurance(request):
     if not request.method == "POST":
         raise Http404()
@@ -373,7 +375,7 @@ def register_insurance(request):
 
 
 @user_logged_in
-@user_type_conforms_or_404(lambda t: t == UserType.RECEPTOR)
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def register_operation(request):
     if not request.method == "POST":
         raise Http404()
