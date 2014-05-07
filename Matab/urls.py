@@ -34,6 +34,7 @@ urlpatterns = patterns('',
     url(r'^register/insurance/$', views.register_insurance),
     url(r'^register/therapist/$', views.register_therapist),
     url(r'^register/operation/$', views.register_operation),
+    url(r'^register/complementary_insurance$', views.register_complementary_insurance),
 
 
     url(r'^session/patient/(\d+)/(.*)$', views.session_patient),

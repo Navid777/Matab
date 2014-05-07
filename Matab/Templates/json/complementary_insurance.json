@@ -1,0 +1,6 @@
+{
+    "success": true,
+    "complementary_insurance": {
+        "type": "{{ complementary_insurance.type }}"
+    }
+}

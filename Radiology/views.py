@@ -73,6 +73,8 @@ def reception(request):
         form = FactorForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
+            cd['receptor_first_name'] = request.user.first_name
+            cd['receptor_last_name'] = request.user.last_name
             factor = Factor.objects.create(**cd)
             patient = factor.get_patient()
             request.session['patient_id'] = patient.id
@@ -80,19 +82,21 @@ def reception(request):
                 patient=patient,
                 type=factor.operation_type,
                 turn=datetime.now(),
+                factor_id = factor.id,
             )
             return redirect(reverse(show_factor, args=(factor.id,)))
         else:
             print form.errors
     insurance_types = Insurance.objects.values_list('type', flat=True).distinct()
     operation_types = Operation.objects.values_list('type', flat=True).distinct()
-    #TODO: just choose films
+    complementary_insurance_types = ComplementaryInsurance.objects.values_list('type', flat=True).distinct()
+    #TODO: faghat betavanad az film ha entekhab konad
     film_types = Good.objects.all()
     return render(request, 'reception.html', {
         "insurance_types": insurance_types,
-        "operation_types": 
-    operation_types,
+        "operation_types": operation_types,
         "film_types":film_types,
+        "complementary_insurance_types": complementary_insurance_types,
     })
 
 
@@ -253,10 +257,6 @@ def ajax_find_insurances(request):
         filters['type'] = request.POST['type']
     if 'category' in request.POST:
         filters['category'] = request.POST['category']
-    if 'has_complementary' in request.POST:
-        filters['has_complementary'] = request.POST['has_complementary']
-    if 'complementary' in request.POST:
-        filters['complementary'] = request.POST['complementary']
     insurances = Insurance.objects.filter(**filters)
     if 'type' in filters:
         types = None
@@ -266,19 +266,9 @@ def ajax_find_insurances(request):
         categories = None
     else:
         categories = insurances.values_list('category', flat=True).distinct()
-    if 'has_complementary' in filters:
-        has_complementaries = None
-    else:
-        has_complementaries = insurances.values_list('has_complementary', flat=True).distinct()
-    if 'complementary' in filters:
-        complementaries = None
-    else:
-        complementaries = insurances.values_list('complementary', flat=True).distinct()
     return render(request, 'json/insurances.json', {
         'types': types,
         'categories': categories,
-        'has_complementaries': has_complementaries,
-        'complementaries': complementaries,
     })
 
 
@@ -370,11 +360,23 @@ def register_insurance(request):
     if form.is_valid():
         cd = form.cleaned_data
         cd['account_id'] = accounting.create_account(Insurance.ACCOUNT_SERIES)
-        if cd['has_complementary']:
-            cd['complementary_account_id'] = accounting.create_account(Insurance.ACCOUNT_SERIES)
         insurance = Insurance.objects.create(**cd)
         return render(request, 'json/insurance.json', {
             'insurance': insurance,
+        })
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def register_complementary_insurance(request):
+    if not request.method == "POST":
+        raise Http404()
+    form = ComplementaryInsuranceForm(request.POST)
+    if form.is_valid():
+        cd = form.cleaned_data
+        cd['account_id'] = accounting.create_account(ComplementaryInsurance.ACCOUNT_SERIES)
+        complementary_insurance = ComplementaryInsurance.objects.create(**cd)
+        return render(request, 'json/complementary_insurance.json', {
+            'complementary_insurance': complementary_insurance,
         })
 
 

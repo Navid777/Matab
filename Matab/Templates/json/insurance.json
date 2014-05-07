@@ -3,8 +3,6 @@
     "insurance": {
         "type": "{{ insurance.type }}",
         "category": "{{ insurance.category }}",
-        "portion": "{{ insurance.portion }}",
-        "has_complementary": "{{insurance.has_complementary}}",
-        "complementary": "{{insurance.complementary}}"
+        "portion": "{{ insurance.portion }}"
     }
 }

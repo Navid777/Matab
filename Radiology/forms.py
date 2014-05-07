@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from Radiology.models import Patient, Appointment, Therapist, Insurance, \
-    Operation, MedicalHistory, UserType, Good
+    Operation, MedicalHistory, UserType, Good, ComplementaryInsurance
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -171,21 +171,22 @@ class FactorForm(forms.Form):
             insurance = Insurance.objects.get(
                 type=cd.get('insurance_type'),
                 category=cd.get('insurance_category'),
-                has_complementary=cd.get('insurance_has_complementary'),
-                complementary=cd.get('insurance_complementary')
             )
             cd['insurance_portion'] = insurance.portion
             cd['insurance_account_id'] = insurance.account_id
-            if insurance.has_complementary:
-                cd['insurance_complementary_account_id'] = insurance.complementary_account_id
+            if cd['insurance_has_complementary']:
+                cd['insurance_complementary_account_id'] = ComplementaryInsurance.objects.get(
+                                                                type = cd['insurance_complementary']
+                                                            ).account_id
         except Insurance.DoesNotExist:
             raise ValidationError('بیمه نادرست است')
+        except ComplementaryInsurance.DoesNotExist:
+            raise ValidationError('Complementary Insurance is invalid')
         if cd['operation_cloth']:
             cd['operation_cloth_fee'] = Good.objects.get(name='لباس').fee
         else:
             cd['operation_cloth_fee'] = 0
-        cd['insurance_has_complementary'] = insurance.has_complementary
-        if insurance.has_complementary:
+        if cd['insurance_has_complementary']:
             patient_share = 0
             insurance_share = cd['operation_governmental_fee'] * insurance.portion / 100
             complementary_share = cd['operation_governmental_fee'] - insurance_share
@@ -222,21 +223,17 @@ class InsuranceForm(forms.Form):
     type = forms.CharField(max_length=100)
     category = forms.CharField(max_length=100)
     portion = forms.IntegerField()
-    has_complementary = forms.BooleanField(required=False)
-    complementary = forms.CharField(max_length=100, required = False)
     
     def clean(self):
         super(InsuranceForm, self).clean()
         cd = self.cleaned_data
         if Insurance.objects.filter(
             type=cd.get('type'),
-            category=cd.get('category'),
-            has_complementary=cd.get('has_complementary'),
-            complementary=cd.get('complementary')):
+            category=cd.get('category'),):
             raise ValidationError('بیمه تکراری است.')
         return cd
-
-
+class ComplementaryInsuranceForm(forms.Form):
+    type = forms.CharField(max_length = 100)
 
 class TherapistForm(forms.Form):
     first_name = forms.CharField(max_length=30)

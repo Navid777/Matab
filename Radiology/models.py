@@ -56,10 +56,7 @@ class UserType(models.Model):
     operation = models.CharField(max_length=30, blank=True, null=True)
 
 
-class PatientTurn(models.Model):
-    type = models.CharField(max_length=30)
-    patient = models.ForeignKey(Patient)
-    turn = models.DateTimeField()
+
 
 
 class Therapist(models.Model):
@@ -83,14 +80,17 @@ class Visit(models.Model):
     appointment = models.OneToOneField(Appointment)
 
 
+class ComplementaryInsurance(models.Model):
+    type = models.CharField(max_length=100)
+    account_id = models.IntegerField()
+    ACCOUNT_SERIES = 4000
+    
 class Insurance(models.Model):
     type = models.CharField(max_length=100)
     category = models.CharField(max_length=100)
     ACCOUNT_SERIES = 3000
     account_id = models.IntegerField()
     portion = models.IntegerField()
-    has_complementary = models.BooleanField()
-    complementary = models.CharField(max_length=100)
 
     def __unicode__(self):
         return self.type+" "+self.category
@@ -164,7 +164,12 @@ class Factor(models.Model):
             complementary=self.insurance_complementary,
         )
 
-
+class PatientTurn(models.Model):
+    type = models.CharField(max_length=30)
+    patient = models.ForeignKey(Patient)
+    turn = models.DateTimeField()
+    factor = models.ForeignKey(Factor)
+    
 class Good(models.Model):
     name = models.CharField(max_length=40)
     quantity = models.IntegerField()

@@ -34,10 +34,10 @@
 			<td>بیمه</td>
 			<td>{{factor.insurance_type}}-{{factor.insurance_category}}</td>
 		</tr>
-		{%if factor.has_complementary%}
+		{%if factor.insurance_has_complementary%}
 		<tr>
 			<td>بیمه تکمیلی</td>
-			<td>{{factor.insurace_complementary}}</td>
+			<td>{{factor.insurance_complementary}}</td>
 		</tr>
 		{%endif%}
 		<tr>

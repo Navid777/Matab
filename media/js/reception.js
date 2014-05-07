@@ -66,9 +66,6 @@ $(document).ready(function() {
     $insuranceType.on('change', function() {
         $insuranceCategory.html("<option value='' selected></option>");
         $insuranceHasComplementary.prop('checked', false);
-        $insuranceHasComplementary.attr('disabled', 'disabled');
-        $insuranceComplementary.attr('disabled', 'disabled');
-        $insuranceComplementary.html("<option value='' selected></option>");
         $.ajax({
             type: "POST",
             url: "/ajax/find_insurances/",
@@ -88,11 +85,10 @@ $(document).ready(function() {
             }
         });
     });
-    $insuranceCategory.on('change', function() {
+/*    $insuranceCategory.on('change', function() {
         $insuranceComplementary.attr('disabled', 'disabled');
         $insuranceComplementary.html("<option value='' selected></option>");
         $insuranceHasComplementary.prop('checked', false);
-        $insuranceHasComplementary.attr('disabled', 'disabled');
         $.ajax({
             type: "POST",
             url: "/ajax/find_insurances/",
@@ -122,7 +118,7 @@ $(document).ready(function() {
             }
         });
     });
-
+*/
     $insuranceHasComplementary.on('change', function() {
         if (!$insuranceHasComplementary.prop('checked')) {
             $insuranceComplementary.attr('disabled', 'disabled');
@@ -237,6 +233,36 @@ $(document).ready(function() {
                 }
             }
         });
+    });
+    
+    
+    var $complementaryInsuranceModal = $("#registerComplementaryInsuranceModal");
+    var $complementaryInsuranceForm = $complementaryInsuranceModal.find('form');
+    $complementaryInsuranceModal.on("show.bs.modal", function(){
+    	$complementaryInsuranceModal.find("#registerComplementaryInsuranceTypeInput").focus();
+    });
+    $("#registerComplementaryInsuranceSubmit").on('click', function(){
+    	$.ajax({
+    		type: "POST",
+    		url: $complementaryInsuranceForm.attr('action'),
+    		data: $complementaryInsuranceForm.serialize(),
+    		dataType: 'json',
+    		success: function(data){
+    			if(data.success) {
+    				$insuranceComplementary.find("option:selected").prop("selected", false);
+					if($insuranceComplementary.find("option [value='"+data.complementary_insurance.type+"']").length > 0) {
+						$insuranceComplementary.find("option [value='"+data.complementary_insurance.type+"']").prop("selected", true);
+					} else {
+						$insuranceComplementary.append("<option value='"+data.complementary_insurance.type+"' selected>"+ data.complementary_insurance.type+"</option>");
+						$insuranceComplementary.focus();
+						$insuranceComplementary.removeAttr('disabled');
+						$insuranceHasComplementary.prop('checked', true);
+						$("#registerComplementaryInsuranceModal").modal('hide');
+					}
+    			}
+    		}
+    		
+    	});
     });
     
     var $insuranceModal = $("#registerInsuranceModal");
