@@ -45,11 +45,15 @@ class Patient(models.Model):
 
 
 class UserType(models.Model):
-    MRI = u'MRI'
-    RECEPTOR = u'پذیرنده'
+    MRI_OPERATION = u'MRI'
+    TYPES = {
+        "RECEPTOR": u'پذیرنده',
+        "OPERATOR": u'اپراتور',
+    }
 
     user = models.OneToOneField(User)
     type = models.CharField(max_length=30)
+    operation = models.CharField(max_length=30, blank=True, null=True)
 
 
 class PatientTurn(models.Model):

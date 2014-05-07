@@ -45,20 +45,33 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
+            {% if user.is_authenticated %}
+                {% if user.usertype.type == USER_TYPES.RECEPTOR %}
                 <li class="active"><a href="#">پذیرش</a></li>
                 <li><a href="#">حساب‌داری</a></li>
-                <li><a href="#">لیست بیماران</a></li>
+                {% elif user.usertype.type == USER_TYPES.OPERATOR %}
+                <li class="active"><a href="#">لیست بیماران</a></li>
+                <li><a href="#">ثبت ورود و خروج اپراتور</a></li>
+                {% endif %}
                 {% if patient %}
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">بیمار:
                             {{ patient.first_name }} {{ patient.last_name }}<b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">دریافت پیشینه‌ی پزشکی</a></li>
+                            {% if user.usertype.type == USER_TYPES.RECEPTOR %}
                             <li><a href="#">پرداخت بدهی</a></li>
+                            {% elif user.usertype.type == USER_TYPES.OPERATOR %}
+                                {% if user.usertype.operation == MRI_OPERATION %}
+                            <li><a href="#">دریافت پیشینه‌ی پزشکی</a></li>
+                                 {% endif %}
+                            <li><a href="#">ثبت پاسخ</a></li>
+                            {% endif %}
+                            <li><a href="{% url "Radiology.views.session_clear_patinet" %}">خروج بیمار</a></li>
                         </ul>
                     </li>
                 {% endif %}
+            {% endif %}
             </ul>
         </div><!--/.nav-collapse -->
     </div>

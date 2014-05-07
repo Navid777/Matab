@@ -18,6 +18,7 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^add_users/$', views.add_users),
     url(r'^$', views.login_view),
     url(r'logout/$', views.logout_view),
     url(r'^reception/$', views.reception),
@@ -25,9 +26,7 @@ urlpatterns = patterns('',
     url(r'appointment/$', views.appointment_day),
     url(r'appointment/([^/]+)/$', views.appointment),
     url(r'^fill_medical_history/$', views.fill_medical_history),
-    url(r'^register_patient/$', views.register_patient),
-    url(r'^register_therapist/$', views.register_therapist),
-    url(r'^add_users/$', views.add_users),
+    url(r'^write_response/$', views.write_response),
     url(r'^factor/(\d+)/$', views.show_factor),
 
 
@@ -37,12 +36,13 @@ urlpatterns = patterns('',
     url(r'^register/operation/$', views.register_operation),
 
 
+    url(r'^session/patient/(\d+)/(.*)$', views.session_patient),
+
+
     url(r'^ajax/find_patients/$', views.ajax_find_patients),
     url(r'^ajax/find_insurances/$', views.ajax_find_insurances),
     url(r'^ajax/find_therapists/$', views.ajax_find_therapists),
     url(r'^ajax/find_operations/$', views.ajax_find_operations),
-    url(r'^ajax/find_patients_list/$', views.ajax_find_patients_list),
-    url(r'^ajax/set_entered_patient/$', views.ajax_set_entered_patient),
     url(r'^ajax/patient_pay_factor/$', views.ajax_patient_pay_factor),
 
 )
