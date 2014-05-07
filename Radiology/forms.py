@@ -151,12 +151,22 @@ class FactorForm(forms.Form):
         except Patient.DoesNotExist:
             raise ValidationError('اطلاعات بیمار نادرست است')
         try:
-            cd['operation_fee'] = Operation.objects.get(
+                operation = Operation.objects.get(
                 type=cd.get('operation_type'),
-                codeography=cd.get('operation_codeography'),
-            ).fee
+                codeography=cd.get('operation_codeography'),)
+                cd['operation_governmental_fee'] = operation.governmental_fee
+                cd['operation_individual_fee'] = operation.individual_fee
+                cd['operation_medical_fee'] = operation.medical_fee
+                if operation.film :
+                    cd['operation_film_name'] = Good.objects.get(id=operation.film_id).name
+                    cd['operation_film_fee'] = Good.objects.get(id=operation.film_id).fee
+                    cd['operation_film_quantity'] = operation.film_quantity
+                else:
+                    cd['operation_film_fee'] = 0
         except Operation.DoesNotExist:
             raise ValidationError('خدمت نادرست است')
+        except Good.DoesNotExist:
+            raise ValidationError('Film Type is invalid')
         try:
             insurance = Insurance.objects.get(
                 type=cd.get('insurance_type'),
@@ -171,25 +181,24 @@ class FactorForm(forms.Form):
         except Insurance.DoesNotExist:
             raise ValidationError('بیمه نادرست است')
         if cd['operation_cloth']:
-            cloth_fee = Good.objects.get(name='لباس').fee
-            total_fee = cd['operation_fee'] + cloth_fee
+            cd['operation_cloth_fee'] = Good.objects.get(name='لباس').fee
         else:
-            total_fee = cd['operation_fee']
-        cd['total_fee'] = total_fee
+            cd['operation_cloth_fee'] = 0
         cd['insurance_has_complementary'] = insurance.has_complementary
         if insurance.has_complementary:
             patient_share = 0
-            insurance_share = total_fee * insurance.portion / 100
-            complementary_share = total_fee - insurance_share
+            insurance_share = cd['operation_governmental_fee'] * insurance.portion / 100
+            complementary_share = cd['operation_governmental_fee'] - insurance_share
             cd['patient_paid'] = True
         else:
-            patient_share = total_fee * (100 - insurance.portion)/100
-            insurance_share = total_fee * insurance.portion / 100
+            insurance_share = cd['operation_governmental_fee'] * insurance.portion / 100
+            patient_share = cd['operation_individual_fee'] - insurance_share
             complementary_share = 0
             cd['complementary_paid'] = True
         cd['patient_share'] = patient_share
         cd['insurance_share'] = insurance_share
         cd['insurance_complementary_share'] = complementary_share
+        cd['total_fee'] = patient_share + cd['operation_cloth_fee'] + cd['operation_film_fee']
         return cd
 
 
@@ -243,4 +252,8 @@ class TherapistForm(forms.Form):
 class OperationForm(forms.Form):
     type = forms.CharField(max_length = 30)
     codeography = forms.CharField(max_length = 30)
-    fee = forms.FloatField()
+    individual_fee = forms.FloatField()
+    governmental_fee = forms.FloatField()
+    medical_fee = forms.FloatField()
+    film_id = forms.IntegerField()
+    film_quantity = forms.IntegerField()

@@ -3,6 +3,10 @@
     "operation": {
         "type": "{{ operation.type }}",
         "codeography": "{{ operation.codeography }}",
-        "fee": "{{ operation.fee }}"
+        "individual_fee": "{{ operation.individual_fee }}",
+        "governmental_fee": "{{operation.governmental_fee}}",
+        "medical_fee":"{{operation.medical_fee}}",
+        "film_id": "{{operation.film_id}}",
+        "film_quantity":"{{operation.film_quantity}}"
     }
 }

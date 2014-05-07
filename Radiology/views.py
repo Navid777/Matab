@@ -86,9 +86,13 @@ def reception(request):
             print form.errors
     insurance_types = Insurance.objects.values_list('type', flat=True).distinct()
     operation_types = Operation.objects.values_list('type', flat=True).distinct()
+    #TODO: just choose films
+    film_types = Good.objects.all()
     return render(request, 'reception.html', {
         "insurance_types": insurance_types,
-        "operation_types": operation_types,
+        "operation_types": 
+    operation_types,
+        "film_types":film_types,
     })
 
 

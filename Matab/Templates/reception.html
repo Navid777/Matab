@@ -129,7 +129,7 @@
                         </select>
                     </div>
                     <div class='form-group'>
-                        <label for='operationCodeographySelect'>گونه‌ی بیمه</label>
+                        <label for='operationCodeographySelect'>کدگرافی خدمت</label>
                         <select name="operation_codeography" class="form-control chosen-select"
                                 id="operationCodeographySelect">
                             <option value="" selected></option>
@@ -278,9 +278,33 @@
                                         id="registerOperationCodeographyInput"/>
                             </div>
                             <div class="form-group">
-                                <label for="registerOperationFee">قیمت</label>
-                                <input type="text" name="fee" class="form-control"
-                                       id="registerOperationFee"/>
+                                <label for="registerOperationGovernmentalFee">تعرفه دولتی</label>
+                                <input type="text" name="governmental_fee" class="form-control"
+                                       id="registerOperationGovernmentalFee"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerOperationIndividualFee">تعرفه خصوصی</label>
+                                <input type="text" name="individual_fee" class="form-control"
+                                       id="registerOperationIndividualFee"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerOperationMedicalFee">تعرفه نظام پزشکی</label>
+                                <input type="text" name="medical_fee" class="form-control"
+                                       id="registerOperationMedicalFee"/>
+                            </div>
+                    		<div class='form-group'>
+                      		  <label for='registerOperationFilm'>نوع فیلم</label>
+                      		  <select name="film_id" id='registerOperationFilm' class='form-control chosen-select'>
+                           	  <option value="" selected></option>
+                          	  	{% for f in film_types %}
+                            	    <option value="{{ f.id }}">{{ f.name }}</option>
+                           	 	{% endfor %}
+                        	  </select>
+                    		</div>
+                            <div class="form-group">
+                                <label for="registerOperationFilmQuantity">تعداد فیلم</label>
+                                <input type="text" name="film_quantity" class="form-control"
+                                       id="registerOperationFilmQuantity"/>
                             </div>
                         </form>
                     </div>

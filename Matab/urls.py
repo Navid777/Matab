@@ -37,7 +37,7 @@ urlpatterns = patterns('',
 
 
     url(r'^session/patient/(\d+)/(.*)$', views.session_patient),
-
+    url(r'^session/clear_patient$', views.session_clear_patient),
 
     url(r'^ajax/find_patients/$', views.ajax_find_patients),
     url(r'^ajax/find_insurances/$', views.ajax_find_insurances),

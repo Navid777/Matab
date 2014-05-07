@@ -82,11 +82,6 @@ class Appointment(models.Model):
 class Visit(models.Model):
     appointment = models.OneToOneField(Appointment)
 
-class ComplementaryInsurance(models.Model):
-    type = models.CharField(max_length=100)
-    account_id = models.IntegerField(null=True, blank=True)
-    def __unicode__(self):
-        return self.type
 
 class Insurance(models.Model):
     type = models.CharField(max_length=100)
@@ -95,7 +90,7 @@ class Insurance(models.Model):
     account_id = models.IntegerField()
     portion = models.IntegerField()
     has_complementary = models.BooleanField()
-    complementary = models.ForeignKey(ComplementaryInsurance)
+    complementary = models.CharField(max_length=100)
 
     def __unicode__(self):
         return self.type+" "+self.category
@@ -117,7 +112,13 @@ class Factor(models.Model):
     operation_type = models.CharField(max_length=30)
     operation_codeography = models.CharField(max_length=30)
     operation_cloth = models.BooleanField()
-    operation_fee = models.FloatField()
+    operation_governmental_fee = models.FloatField()
+    operation_individual_fee = models.FloatField()
+    operation_medical_fee = models.FloatField()
+    operation_film_name = models.CharField(max_length=100, null=True, blank=True)
+    operation_film_quantity = models.CharField(max_length=100, null=True, blank=True)
+    operation_film_fee = models.FloatField()
+    operation_cloth_fee = models.FloatField()
     insurance_type = models.CharField(max_length=100)
     insurance_category = models.CharField(max_length=100)
     insurance_has_complementary = models.BooleanField()
