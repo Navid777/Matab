@@ -82,7 +82,7 @@ def reception(request):
                 patient=patient,
                 type=factor.operation_type,
                 turn=datetime.now(),
-                factor_id = factor.id,
+                factor_id=factor.id,
             )
             return redirect(reverse(show_factor, args=(factor.id,)))
         else:
@@ -95,7 +95,7 @@ def reception(request):
     return render(request, 'reception.html', {
         "insurance_types": insurance_types,
         "operation_types": operation_types,
-        "film_types":film_types,
+        "film_types": film_types,
         "complementary_insurance_types": complementary_insurance_types,
     })
 

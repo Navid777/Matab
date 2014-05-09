@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block extrajs %}
+<script type="text/javascript" src="{{ MEDIA_URL }}js/waiting_list.js"></script>
+{% endblock %}
+
 {% block content %}
 <table class="table table-hover table-condensed table-bordered">
     <thead>
@@ -27,4 +31,14 @@
         {% endfor %}
     </tbody>
 </table>
+
+<script type="text/html" id="row-template">
+<tr>
+<td>###first_name###</td>
+<td>###last_name###</td>
+<td>###national_code###</td>
+<td><a href="###url###"
+         class="btn btn-default btn-block">ثبت ورود</a></td>
+</tr>
+</script>
 {% endblock %}

@@ -1,13 +1,19 @@
 {
     "success": true,
-    "count": {{ patient_turns.count }},
-    "patient_turns": [
-        {% for p in patient_turns %}
+    "count": {{ turns.count }},
+    "turns": [
+        {% for p in turns %}
             {
-                "id": "{{ p.id }}",
+                "id": "{{ p.patient.id }}",
                 "first_name": "{{ p.patient.first_name }}",
                 "last_name": "{{ p.patient.last_name }}",
-                "national_code": "{{ p.patient.national_code }}"
+                "national_code": "{{ p.patient.national_code }}",
+{% if user.usertype.operation == MRI_OPERATION %}
+    {% url "Radiology.views.fill_medical_history" as u %}
+{% else %}
+    {% url "Radiology.views.write_response" as u %}
+{% endif %}
+                "url": "{% url "Radiology.views.session_patient" p.patient.id u %}"
             }{% if not forloop.last %},{% endif %}
         {% endfor %}
     ]
