@@ -40,7 +40,7 @@
             {% if user.is_anonymous %}
                 <a class="navbar-brand" href="{% url 'Radiology.views.login_view' %}">ورود</a>
             {% else %}
-                <a class="navbar-brand" href="{% url 'Radiology.views.logout_view' %}">فرداد جلیلی</a>
+                <a class="navbar-brand" href="{% url 'Radiology.views.logout_view' %}">نوید اعظمی</a>
             {% endif %}
         </div>
         <div class="navbar-collapse collapse">
@@ -51,7 +51,7 @@
                 <li><a href="#">حساب‌داری</a></li>
                 {% elif user.usertype.type == USER_TYPES.OPERATOR %}
                 <li class="active"><a href="#">لیست بیماران</a></li>
-                <li><a href="#">ثبت ورود و خروج اپراتور</a></li>
+                <li><a href="{% url "Radiology.views.sign_technesian_in"%}">ورود تکنسین</a></li>
                 {% endif %}
                 {% if patient %}
                     <li class="dropdown">
