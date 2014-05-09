@@ -1,0 +1,21 @@
+.medical_history_table{
+    border-radius: 10px ;
+    border: 2px solid black;
+    padding: 10px ;
+	background: white;
+	margin-left: auto;
+	margin-right: auto;
+	width: 18cm ;
+}
+
+.medical_history_table td {
+    border: 1px solid;
+    padding: 5px;
+}
+
+.medical_history_buttons {
+	margin-left: auto;
+	margin-right: auto;
+	width: 18cm;
+    text-align: left;
+}

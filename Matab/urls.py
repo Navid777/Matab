@@ -28,6 +28,7 @@ urlpatterns = patterns('',
     url(r'^fill_medical_history/$', views.fill_medical_history),
     url(r'^write_response/$', views.write_response),
     url(r'^factor/(\d+)/$', views.show_factor),
+    url(r'^print_medical_history/$', views.print_medical_history),
 
 
     url(r'^register/patient/$', views.register_patient),

@@ -8,25 +8,29 @@ from django.template.defaultfilters import default
 
 class MedicalHistory(models.Model):
 # todo: complete the fields of this class
-    diabet = models.BooleanField()
-    blood_pressure = models.BooleanField()
-    heart_battery = models.BooleanField()
-    artificial_organ = models.BooleanField()
-    external_metal = models.BooleanField()
-    metal_clamp = models.BooleanField()
-    protez = models.BooleanField()
-    organ_disability = models.BooleanField()
-    uncontrolable_tension = models.BooleanField()
-    pregnancy = models.BooleanField()
-    surgery = models.BooleanField()
-    trauma = models.BooleanField()
-    malt_fever = models.BooleanField()
-    anemia = models.BooleanField()
-    thyroid = models.BooleanField()
+    diabet = models.BooleanField(verbose_name=u"دیابت")
+    blood_pressure = models.BooleanField(verbose_name=u"فشار خون")
+    heart_battery = models.BooleanField(verbose_name=u"باتری قلب")
+    artificial_organ = models.BooleanField(verbose_name=u"اندام مصنوعی")
+    external_metal = models.BooleanField(verbose_name=u"فلز خارجی")
+    metal_clamp = models.BooleanField(verbose_name=u"گیره فلزی")
+    protez = models.BooleanField(verbose_name=u"پروتز")
+    organ_disability = models.BooleanField(verbose_name=u"عضو ناکارآمد")
+    uncontrolable_tension = models.BooleanField(verbose_name=u"تشنج غیرقابل کنترل")
+    pregnancy = models.BooleanField(verbose_name=u"بارداری")
+    surgery = models.BooleanField(verbose_name=u"جراحی")
+    trauma = models.BooleanField(verbose_name=u"زخم")
+    malt_fever = models.BooleanField(verbose_name=u"تب مالت")
+    anemia = models.BooleanField(verbose_name=u"کم خونی")
+    thyroid = models.BooleanField(verbose_name=u"تیرویید")
     #TODO: tarjomeye ina peida beshe!
-    history = models.CharField(null=True, blank=True,max_length=300)
-    comment = models.CharField(null=True, blank=True,max_length = 300)
-    special_disease = models.CharField(null=True, blank=True,max_length = 300)
+    history = models.CharField(null=True, blank=True,max_length=300, verbose_name=u"شرح حال")
+    comment = models.CharField(null=True, blank=True,max_length = 300, verbose_name=u"توضیحات")
+    special_disease = models.CharField(null=True, blank=True,max_length = 300, verbose_name="بیماری خاص")
+    
+    def medical_attrs(self):
+        for attr, value in self.__dict__.iteritems():
+            yield attr, value
 
 
 class Patient(models.Model):

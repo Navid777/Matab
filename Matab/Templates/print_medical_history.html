@@ -1,0 +1,47 @@
+{% extends "printable_base.html" %}
+{% block title%}
+چاپ پیشینه پزشکی
+{%endblock%}
+
+{% block extracss %}
+	<link rel="stylesheet" href="{{MEDIA_URL}}css/print_medical_history.css"/>
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/print_medical_history.js"></script>
+{% endblock %}
+
+{% block content %}
+	<table class="medical_history_table">
+		<tr>
+			<td>نام بیمار</td>
+			<td>{{patient.first_name}} {{patient.last_name}}</td>
+		</tr>
+		<tr>
+			<td>کد ملی بیمار</td>
+			<td>{{patient.national_code}}</td>
+		</tr>
+		<tr>
+			<td>وضعیتِ بیمار</td>
+			<!--TODO: fieldhaye boolean namayesh dade shavad !-->
+		</tr>
+		<tr>
+			<td>شرح حال</td>
+			<td>{{medical_history.history}}</td>
+		</tr>
+		<tr>
+			<td>توضیحات</td>
+			<td>{{medical_history.comment}}</td>
+		</tr>
+		<tr>
+			<td>بیماری خاص</td>
+			<td>{{medical_history.special_disease}}</td>
+		</tr> 
+	</table>
+    <hr class="no-printable"/>
+	<div class="no-printable medical_history_buttons">
+    <button type="button" id="print" class="btn btn-primary">چاپ</button>
+    <a href="{% url 'Radiology.views.waiting_list' %}" id="return" class="btn btn-default">بازگشت</a>
+	</div>
+{%endblock%}
+

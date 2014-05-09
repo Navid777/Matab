@@ -122,7 +122,22 @@ def waiting_list(request):
 @user_type_conforms_or_404(lambda t: t.operation == UserType.MRI_OPERATION)
 @exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.waiting_list'))
 def print_medical_history(request):
-    pass
+    try:
+        patient = Patient.objects.get(id=request.session['patient_id'])
+        if request.method == "POST":
+            pass
+        else :
+            try:
+                medical_history = patient.medical_history
+                return render(request, "print_medical_history.html", {
+                        'medical_history':medical_history,
+                        'patient': patient, 
+                        })
+            except MedicalHistory.DoesNotExist:
+                return redirect(fill_medical_history)
+    except Patient.DoesNotExist:
+        return redirect(waiting_list)
+                    
 
 
 @user_logged_in
