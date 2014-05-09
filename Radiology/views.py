@@ -137,6 +137,11 @@ def waiting_list(request):
 
 
 @user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def accounting(request):
+    return render(request, 'accounting.html')
+
+@user_logged_in
 @user_type_conforms_or_404(lambda t: t.operation == UserType.MRI_OPERATION)
 @exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.waiting_list'))
 def print_medical_history(request):
@@ -252,6 +257,7 @@ def session_patient(request, id, next):
 def session_clear_patient(request):
     del request.session['patient_id']
     #TODO: redirect where?
+    return redirect(waiting_list)
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
