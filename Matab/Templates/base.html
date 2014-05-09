@@ -60,7 +60,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             {% if user.usertype.type == USER_TYPES.RECEPTOR %}
-                            <li><a href="#">پرداخت بدهی</a></li>
+                            <li><a href="{% url "Radiology.views.show_unpaid_factors" %}">پرداخت بدهی</a></li>
                             {% elif user.usertype.type == USER_TYPES.OPERATOR %}
                                 {% if user.usertype.operation == MRI_OPERATION %}
                             <li><a href="#">دریافت پیشینه‌ی پزشکی</a></li>

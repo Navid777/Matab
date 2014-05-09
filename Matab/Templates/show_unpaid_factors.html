@@ -1,0 +1,13 @@
+{%extends "base.html" %}
+
+{%block title%}
+بدهی بیمار
+{%endblock%}
+
+{%block content%}
+	{%for f in factors%}
+	gheimat : {{f.total_fee}} </br>
+	{%endfor%}
+{%endblock%}
+
+

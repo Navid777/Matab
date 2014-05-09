@@ -108,6 +108,24 @@ def show_factor(request, id):
         'factor': factor,
     })
 
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+@exists_in_session_or_redirect('patient_id','reverse_lazy("Radiology.views.reception")')
+def show_unpaid_factors(request):
+    try:
+        patient = Patient.objects.get(id=request.session['patient_id'])
+        factors = Factor.objects.filter(
+                    patient_first_name = patient.first_name,
+                    patient_last_name = patient.last_name,
+                    patient_national_code = patient.national_code,
+                    patient_paid = False,
+                )
+    except Patient.DoesNotExist:
+        return redirect(reception)
+    return render(request, 'show_unpaid_factors.html', {
+                'factors' : factors,
+            })
+
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['OPERATOR'])
