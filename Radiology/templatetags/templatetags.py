@@ -16,3 +16,8 @@ def active(context, pat_url):
     if re.search(pattern, path):
         return 'active'
     return ''
+
+
+@register.filter
+def klass(ob):
+    return ob.__class__.__name__

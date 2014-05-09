@@ -1,0 +1,8 @@
+.btn-group {
+    display: table;
+    width: 100%;
+}
+.btn-group .btn.onethird {
+    display: table-cell;
+    width: 33.3%;
+}
