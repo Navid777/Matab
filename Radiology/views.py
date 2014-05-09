@@ -108,23 +108,24 @@ def show_factor(request, id):
         'factor': factor,
     })
 
+
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-@exists_in_session_or_redirect('patient_id','reverse_lazy("Radiology.views.reception")')
+@exists_in_session_or_redirect('patient_id', 'reverse_lazy("Radiology.views.reception")')
 def show_unpaid_factors(request):
     try:
         patient = Patient.objects.get(id=request.session['patient_id'])
         factors = Factor.objects.filter(
-                    patient_first_name = patient.first_name,
-                    patient_last_name = patient.last_name,
-                    patient_national_code = patient.national_code,
-                    patient_paid = False,
-                )
+            patient_first_name=patient.first_name,
+            patient_last_name=patient.last_name,
+            patient_national_code=patient.national_code,
+            patient_paid=False,
+        )
     except Patient.DoesNotExist:
         return redirect(reception)
     return render(request, 'show_unpaid_factors.html', {
-                'factors' : factors,
-            })
+        'factors': factors,
+    })
 
 
 @user_logged_in
@@ -145,14 +146,13 @@ def print_medical_history(request):
         try:
             medical_history = patient.medical_history
             return render(request, "print_medical_history.html", {
-                     'medical_history':medical_history,
-                     'patient': patient, 
-                   })
+                'medical_history': medical_history,
+                'patient': patient,
+            })
         except MedicalHistory.DoesNotExist:
             return redirect(fill_medical_history)
     except Patient.DoesNotExist:
         return redirect(waiting_list)
-                    
 
 
 @user_logged_in
@@ -188,26 +188,25 @@ def print_mri_response_receipt(request):
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['OPERATOR'])
-def sign_technesian_in(request):
+def sign_technician_in(request):
     if request.method == "POST":
-        if 'technesian_id' in request.POST:
-            request.session['technesian_id'] = request.POST['technesian_id']
+        if 'technician_id' in request.POST:
+            request.session['technician_id'] = request.POST['technician_id']
             return redirect(waiting_list)
         else:
-            return redirect(sign_technesian_in)
+            return redirect(sign_technician_in)
     else:
-        user = UserType.objects.get(user=request.user)
-        print user
-        technesians = User.objects.filter(usertype__type=UserType.TYPES['TECHNESIAN'], usertype__operation=user.operation)
-        return render(request, 'sign_technesian_in.html', {
-                    'technesians':technesians,
-                })
+        technicians = Technician.objects.filter(operation=request.user.usertype.operation)
+        return render(request, 'sign_technician_in.html', {
+            'technicians': technicians,
+        })
 
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['OPERATOR'])
-def sign_technesian_out(request):
-    pass
+def sign_technician_out(request):
+    del request.session['technician_id']
+    return redirect(sign_technician_in)
 
 
 @user_logged_in
@@ -243,8 +242,9 @@ def appointment(request, day):
 
 @user_logged_in
 def session_patient(request, id, next):
-    patient = get_object_or_404(Patient, id=id)
-    request.session['patient_id'] = patient.id
+    turn = get_object_or_404(PatientTurn, id=id)
+    request.session['patient_id'] = turn.patient.id
+    turn.delete()
     return redirect(next)
 
 
@@ -252,6 +252,7 @@ def session_patient(request, id, next):
 def session_clear_patient(request):
     del request.session['patient_id']
     #TODO: redirect where?
+
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
@@ -350,6 +351,7 @@ def ajax_find_patients_list(request):
         'turns': turns,
     })
 
+
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def ajax_patient_pay_factor(request):
@@ -417,6 +419,7 @@ def register_insurance(request):
         return render(request, 'json/insurance.json', {
             'insurance': insurance,
         })
+
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])

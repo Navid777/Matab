@@ -53,7 +53,6 @@ class UserType(models.Model):
     TYPES = {
         "RECEPTOR": u'پذیرنده',
         "OPERATOR": u'اپراتور',
-        "TECHNESIAN": u'تکنسین'
     }
 
     user = models.OneToOneField(User)
@@ -61,7 +60,11 @@ class UserType(models.Model):
     operation = models.CharField(max_length=30, blank=True, null=True)
 
 
-
+class Technician(models.Model):
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=50)
+    national_code = models.IntegerField(max_length=20, unique=True)
+    operation = models.CharField(max_length=30)
 
 
 class Therapist(models.Model):

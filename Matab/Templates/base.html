@@ -1,3 +1,4 @@
+{% load templatetags %}
 <!DOCTYPE html>
 <html lang="fa">
 <head>
@@ -47,11 +48,11 @@
             <ul class="nav navbar-nav">
             {% if user.is_authenticated %}
                 {% if user.usertype.type == USER_TYPES.RECEPTOR %}
-                <li class="active"><a href="#">پذیرش</a></li>
+                <li class="{% active 'Radiology.views.reception' %}"><a href="{% url "Radiology.views.reception" %}">پذیرش</a></li>
                 <li><a href="#">حساب‌داری</a></li>
                 {% elif user.usertype.type == USER_TYPES.OPERATOR %}
-                <li class="active"><a href="#">لیست بیماران</a></li>
-                <li><a href="{% url "Radiology.views.sign_technesian_in"%}">ورود تکنسین</a></li>
+                <li class="{% active 'Radiology.views.waiting_list' %}"><a href="{% url "Radiology.views.waiting_list" %}">لیست بیماران</a></li>
+                <li class="{% active 'Radiology.views.sign_technician_in' %}"><a href="{% url "Radiology.views.sign_technician_in" %}">ورود تکنسین</a></li>
                 {% endif %}
                 {% if patient %}
                     <li class="dropdown">
@@ -63,11 +64,21 @@
                             <li><a href="{% url "Radiology.views.show_unpaid_factors" %}">پرداخت بدهی</a></li>
                             {% elif user.usertype.type == USER_TYPES.OPERATOR %}
                                 {% if user.usertype.operation == MRI_OPERATION %}
-                            <li><a href="#">دریافت پیشینه‌ی پزشکی</a></li>
+                            <li><a href="{% url "Radiology.views.fill_medical_history" %}">دریافت پیشینه‌ی پزشکی</a></li>
                                  {% endif %}
-                            <li><a href="#">ثبت پاسخ</a></li>
+                            <li><a href="{% url "Radiology.views.write_response" %}">ثبت پاسخ</a></li>
                             {% endif %}
                             <li><a href="{% url "Radiology.views.session_clear_patient" %}">خروج بیمار</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+                {% if technician and user.usertype.type == USER_TYPES.OPERATOR %}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">تکنیسین:
+                            {{ technician.first_name }} {{ technician.last_name }}<b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url "Radiology.views.sign_technician_out" %}">ثبت خروج تکنیسین</a></li>
                         </ul>
                     </li>
                 {% endif %}
