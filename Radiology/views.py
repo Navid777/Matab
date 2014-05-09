@@ -82,7 +82,7 @@ def reception(request):
                 patient=patient,
                 type=factor.operation_type,
                 turn=datetime.now(),
-                factor_id = factor.id,
+                factor_id=factor.id,
             )
             return redirect(reverse(show_factor, args=(factor.id,)))
         else:
@@ -95,7 +95,7 @@ def reception(request):
     return render(request, 'reception.html', {
         "insurance_types": insurance_types,
         "operation_types": operation_types,
-        "film_types":film_types,
+        "film_types": film_types,
         "complementary_insurance_types": complementary_insurance_types,
     })
 
@@ -126,18 +126,17 @@ def print_medical_history(request):
         patient = Patient.objects.get(id=request.session['patient_id'])
         if request.method == "POST":
             pass
-        else :
+        else:
             try:
                 medical_history = patient.medical_history
                 return render(request, "print_medical_history.html", {
-                        'medical_history':medical_history,
-                        'patient': patient, 
-                        })
+                    'medical_history': medical_history,
+                    'patient': patient,
+                })
             except MedicalHistory.DoesNotExist:
                 return redirect(fill_medical_history)
     except Patient.DoesNotExist:
         return redirect(waiting_list)
-                    
 
 
 @user_logged_in
@@ -225,6 +224,7 @@ def session_patient(request, id, next):
 def session_clear_patient(request):
     del request.session['patient_id']
     #TODO: redirect where?
+
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
@@ -332,6 +332,18 @@ def ajax_patient_pay_factor(request):
 
 
 @user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['OPERATOR'])
+def ajax_find_patients_list(request):
+    if request.method != "POST":
+        raise Http404()
+        #FIXME:
+    turns = PatientTurn.objects.filter(type=request.user.usertype.operation).order_by("-turn")
+    return render(request, 'json/patient_turn.json', {
+        'turns': turns,
+    })
+
+
+@user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def register_patient(request):
     if not request.method == "POST":
@@ -379,6 +391,7 @@ def register_insurance(request):
         return render(request, 'json/insurance.json', {
             'insurance': insurance,
         })
+
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
