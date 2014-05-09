@@ -29,7 +29,8 @@ urlpatterns = patterns('',
     url(r'^write_response/$', views.write_response),
     url(r'^factor/(\d+)/$', views.show_factor),
     url(r'^print_medical_history/$', views.print_medical_history),
-    url(r'^sign_technesian_in/$', views.sign_technesian_in),
+    url(r'^sign_technician_in/$', views.sign_technician_in),
+    url(r'^sign_technician_out/$', views.sign_technician_out),
     url(r'^show_unpaid_factors/$', views.show_unpaid_factors),
 
 

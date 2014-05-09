@@ -12,13 +12,13 @@
       <form class="form-signin" role="form" method="post" action="">
           {% csrf_token %}
         <h2 class="form-signin-heading">لطفا نام تکنسین را انتخاب کنید</h2>
-        <select name="technesian_id" class="form-control" placeholder="نام تکنسین" required autofocus>
-        	{%for t in technesians%}
+        <select name="technician_id" class="form-control" placeholder="نام تکنسین" required autofocus>
+        	{% for t in technicians %}
         	<option value="{{t.id}}">{{t.first_name}} {{t.last_name}}</option>
         	{%endfor%}
         </select>
         
         <button class="btn btn-lg btn-primary btn-block" type="submit">انتخاب</button>
-        <a href="{% url 'Radiology.views.waiting_list' %}" id="return" class="btn btn-default">بازگشت</a>
+        <a href="{% url 'Radiology.views.waiting_list' %}" id="return" class="btn btn-default btn-block">بازگشت</a>
       </form>
 {% endblock %}
