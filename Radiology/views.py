@@ -340,6 +340,17 @@ def ajax_find_operations(request):
 
 
 @user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['OPERATOR'])
+def ajax_find_patients_list(request):
+    if request.method != "POST":
+        raise Http404()
+        #FIXME:
+    turns = PatientTurn.objects.filter(type=request.user.usertype.operation).order_by("-turn")
+    return render(request, 'json/patient_turn.json', {
+        'turns': turns,
+    })
+
+@user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def ajax_patient_pay_factor(request):
     if request.method != "POST":
