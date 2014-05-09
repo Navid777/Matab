@@ -124,17 +124,14 @@ def waiting_list(request):
 def print_medical_history(request):
     try:
         patient = Patient.objects.get(id=request.session['patient_id'])
-        if request.method == "POST":
-            pass
-        else :
-            try:
-                medical_history = patient.medical_history
-                return render(request, "print_medical_history.html", {
-                        'medical_history':medical_history,
-                        'patient': patient, 
-                        })
-            except MedicalHistory.DoesNotExist:
-                return redirect(fill_medical_history)
+        try:
+            medical_history = patient.medical_history
+            return render(request, "print_medical_history.html", {
+                     'medical_history':medical_history,
+                     'patient': patient, 
+                   })
+        except MedicalHistory.DoesNotExist:
+            return redirect(fill_medical_history)
     except Patient.DoesNotExist:
         return redirect(waiting_list)
                     
@@ -173,13 +170,25 @@ def print_mri_response_receipt(request):
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['OPERATOR'])
-def sign_operator_in(request):
-    pass
+def sign_technesian_in(request):
+    if request.method == "POST":
+        if 'technesian_id' in request.POST:
+            request.session['technesian_id'] = request.POST['technesian_id']
+            return redirect(waiting_list)
+        else:
+            return redirect(sign_technesian_in)
+    else:
+        user = UserType.objects.get(user=request.user)
+        print user
+        technesians = User.objects.filter(usertype__type=UserType.TYPES['TECHNESIAN'], usertype__operation=user.operation)
+        return render(request, 'sign_technesian_in.html', {
+                    'technesians':technesians,
+                })
 
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['OPERATOR'])
-def sign_operator_out(request):
+def sign_technesian_out(request):
     pass
 
 

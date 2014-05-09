@@ -53,6 +53,7 @@ class UserType(models.Model):
     TYPES = {
         "RECEPTOR": u'پذیرنده',
         "OPERATOR": u'اپراتور',
+        "TECHNESIAN": u'تکنسین'
     }
 
     user = models.OneToOneField(User)
