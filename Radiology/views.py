@@ -153,13 +153,33 @@ def accounting(request):
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 @exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.log_patient_in'))
-def patient_accounting(request):
-    pass
+def accounting_patient(request):
+    patient = Patient.objects.get(id=request.session['patient_id'])
+    factors = Factor.objects.filter(patient_first_name=patient.first_name,
+                                    patient_last_name=patient.last_name,
+                                    )
+    total_debt = 0
+    for factor in factors:
+        total_debt = total_debt + factor.total_fee
+    return render(request, 'accounting_patient.html', {
+                'factors':factors,
+                'total_debt':total_debt,
+            })
 
-#@user_logged_in
-#@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-#def storing2(request):
-#    return render(request, 'storing.html')
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def log_patient_in(request):
+    if request.method == "POST":
+        try:
+            patient = Patient.objects.get(national_code=request.POST['national_code'],
+                                           first_name=request.POST['first_name'],
+                                            last_name=request.POST['last_name'])
+            request.session['patient_id'] = patient.id
+            return redirect(accounting_patient)
+        except Patient.DoesNotExist:
+            return redirect(log_patient_in)
+    return render(request, 'log_patient_in.html')
 
 
 @user_logged_in
