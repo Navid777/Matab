@@ -144,6 +144,10 @@ class Factor(models.Model):
     patient_paid = models.BooleanField(default=False)
     insurance_paid = models.BooleanField(default=False)
     complementary_paid = models.BooleanField(default=False)
+    factor_date = models.DateField()
+    patient_pay_date = models.DateField(null=True, blank=True)
+    insurance_pay_date = models.DateField(null=True, blank=True)
+    complementary_pay_date = models.DateField(null=True, blank=True)
 
     def get_patient(self):
         return Patient.objects.get(

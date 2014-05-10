@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}
+انبارگردانی
+{% endblock %}
+
+{% block content %}
+	<a href="#" class="btn btn-primary">مشاهده موجودی انبار</a>
+	<a href="#" class="btn btn-primary">اضافه کردن موجودی انبار</a>
+	<a href="#" class="btn btn-primary">ثبت کالای جدید</a>
+	<a href="{% url "Radiology.views.reception" %}" class="btn btn-default">بازگشت</a>
+{% endblock %}

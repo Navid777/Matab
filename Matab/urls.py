@@ -32,6 +32,7 @@ urlpatterns = patterns('',
     url(r'^sign_technician_in/$', views.sign_technician_in),
     url(r'^sign_technician_out/$', views.sign_technician_out),
     url(r'^show_unpaid_factors/$', views.show_unpaid_factors),
+    url(r'^storing$', views.storing),
 
 
     url(r'^register/patient/$', views.register_patient),

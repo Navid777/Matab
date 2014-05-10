@@ -76,6 +76,14 @@ def reception(request):
             cd['receptor_first_name'] = request.user.first_name
             cd['receptor_last_name'] = request.user.last_name
             factor = Factor.objects.create(**cd)
+            if factor.operation_cloth:
+                cloth = Good.objects.get(name='لباس')
+                cloth.quantity = cloth.quantity - 1
+                cloth.save()
+            if factor.operation_film_quantity != 0 :
+                film = Good.objects.get(name=factor.operation_film_name)
+                film.quantity = film.quantity - factor.operation_film_quantity
+                film.save()
             patient = factor.get_patient()
             request.session['patient_id'] = patient.id
             PatientTurn.objects.create(
@@ -147,6 +155,11 @@ def accounting(request):
 @exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.log_patient_in'))
 def patient_accounting(request):
     pass
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def storing(request):
+    return render(request, 'storing.html')
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.operation == UserType.MRI_OPERATION)
