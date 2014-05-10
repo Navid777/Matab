@@ -1,0 +1,8 @@
+{
+    "success": true,
+    "good": {
+        "name": "{{ good.name }}",
+        "fee": "{{ good.fee }}",
+        "quantity": "{{ good.quantity }}"
+    }
+}

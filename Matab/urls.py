@@ -32,7 +32,10 @@ urlpatterns = patterns('',
     url(r'^sign_technician_in/$', views.sign_technician_in),
     url(r'^sign_technician_out/$', views.sign_technician_out),
     url(r'^show_unpaid_factors/$', views.show_unpaid_factors),
+    
+    
     url(r'^storing$', views.storing),
+    url(r'^storing/check_quantity', views.storing_check_quantity),
 
 
     url(r'^register/patient/$', views.register_patient),
@@ -40,6 +43,8 @@ urlpatterns = patterns('',
     url(r'^register/therapist/$', views.register_therapist),
     url(r'^register/operation/$', views.register_operation),
     url(r'^register/complementary_insurance$', views.register_complementary_insurance),
+    
+    url(r'^edit/good/$', views.edit_good),
 
 
     url(r'^session/patient/(\d+)/(.*)$', views.session_patient),
@@ -51,6 +56,7 @@ urlpatterns = patterns('',
     url(r'^ajax/find_operations/$', views.ajax_find_operations),
     url(r'^ajax/find_patients_list/$', views.ajax_find_patients_list),
     url(r'^ajax/patient_pay_factor/$', views.ajax_patient_pay_factor),
+    url(r'^ajax/find_good/$', views.ajax_find_good ),
 
 )
 

@@ -162,6 +162,14 @@ def storing(request):
     return render(request, 'storing.html')
 
 @user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def storing_check_quantity(request):
+    goods = Good.objects.all()
+    return render(request, 'storing_check_quantity.html', {
+                'goods': goods,
+            })
+
+@user_logged_in
 @user_type_conforms_or_404(lambda t: t.operation == UserType.MRI_OPERATION)
 @exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.waiting_list'))
 def print_medical_history(request):
@@ -315,6 +323,24 @@ def ajax_find_therapists(request):
     return render(request, 'json/therapists.json', {'therapists': therapists})
 
 
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def ajax_find_good(request):
+    if request.method != "POST":
+        raise Http404()
+    if 'id' in request.POST:
+        try: 
+            good = Good.objects.get(id = request.POST['id'])    
+            return render(request, 'json/good.json', { 'good': good })
+        except Good.DoesNotExist:
+            #TODO:
+            pass
+    else:
+        #TODO:
+        pass
+    
+    
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def ajax_find_insurances(request):
@@ -394,6 +420,27 @@ def ajax_patient_pay_factor(request):
         factor.patient_paid = True
         factor.save()
     return render(request, 'json/patient_paid.json', {})
+
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def edit_good(request):
+    print "Hello"
+    if not request.method == "POST":
+        raise Http404()
+    if 'name' in request.POST:
+        try:
+            print "Here"
+            good = Good.objects.get(name=request.POST['name'])
+            good.fee = request.POST['fee']
+            good.quantity = request.POST['quantity']
+            good.save()
+            return render(request, 'json/good.json', {'good':good})
+        except Good.DoesNotExist:
+            print "E"
+            pass
+    else:
+        pass
 
 
 @user_logged_in
