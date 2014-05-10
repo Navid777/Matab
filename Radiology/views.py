@@ -156,16 +156,17 @@ def accounting(request):
 def patient_accounting(request):
     pass
 
-@user_logged_in
-@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-def storing(request):
-    return render(request, 'storing.html')
+#@user_logged_in
+#@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+#def storing2(request):
+#    return render(request, 'storing.html')
+
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-def storing_check_quantity(request):
+def storing(request):
     goods = Good.objects.all()
-    return render(request, 'storing_check_quantity.html', {
+    return render(request, 'storing.html', {
                 'goods': goods,
             })
 
@@ -440,7 +441,8 @@ def edit_good(request):
             pass
     else:
         pass
-    
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])   
 def add_good_to_store(request):
     if not request.method == "POST":
         raise Http404()

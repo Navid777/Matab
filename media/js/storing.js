@@ -84,7 +84,6 @@ $(document).ready(function(){
             dataType: 'json',
             success: function(data) {
                 if (data.success) {
-                	alert("hoy");
                 	$goodIdSelect.find("option:selected").prop('selected', false);
                 	//TODO: goh nakhor chera eshtebah mishe?!
                 	$goodIdSelect.append("<option value='"+data.good.id+"' selected>"+data.good.name+"</option>");

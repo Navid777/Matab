@@ -36,7 +36,6 @@ urlpatterns = patterns('',
     
     
     url(r'^storing$', views.storing),
-    url(r'^storing/check_quantity', views.storing_check_quantity),
 
 
     url(r'^register/patient/$', views.register_patient),
