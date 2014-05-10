@@ -73,9 +73,9 @@
                         <select  disabled="disabled" name="insurance_complementary" id="insuranceComplementarySelect"
                                 class="form-control chosen-select">
                             <option value="" selected></option>
-                            {%for t in complementary_insurance_types%}
-                            	<option value="{{t}}">{{t}}</option>
-                            {%endfor%}
+                            {% for t in complementary_insurance_types %}
+                            	<option value="{{ t }}">{{ t }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="form-group">
