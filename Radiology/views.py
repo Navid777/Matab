@@ -143,6 +143,12 @@ def accounting(request):
     return render(request, 'accounting.html')
 
 @user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+@exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.log_patient_in'))
+def patient_accounting(request):
+    pass
+
+@user_logged_in
 @user_type_conforms_or_404(lambda t: t.operation == UserType.MRI_OPERATION)
 @exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.waiting_list'))
 def print_medical_history(request):
