@@ -5,9 +5,11 @@ $(document).ready(function(){
 			$("#goodQuantity").html("");
 			$("#goodFee").html("");
 			$("#goodEditButton").attr("disabled", "disabled");
+			$("#addGoodToStoreButton").attr("disabled", "disabled");
 			return ;
 		}
 		$("#goodEditButton").removeAttr("disabled");
+		$("#addGoodToStoreButton").removeAttr("disabled");	
 		$.ajax({
             type: "POST",
             url: "/ajax/find_good/",
@@ -48,6 +50,31 @@ $(document).ready(function(){
             }
         });
     });
+    
+   	$addGoodToStoreForm = $("#addGoodToStoreModal").find("form");
+    $("#addGoodToStoreSubmit").on('click', function() {
+        $.ajax({
+            type: "POST",
+            url: $addGoodToStoreForm.attr('action'),
+            data: $addGoodToStoreForm.serialize(),
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                	$goodIdSelect.trigger('change');
+                    $("#addGoodToStoreModal").modal('hide');
+                } else {
+                    //TODO:
+                    alert(data.errors);
+                }
+            }
+        });
+
+    });
+        
+	$("#addGoodToStoreModal").on('shown.bs.modal', function(){
+		$("#addGoodToStoreNameInput").val($goodIdSelect.find(":selected").text());
+	});
+    
     var $registerGoodForm = $("#registerGoodModal").find("form");
     $("#registerGoodSubmit").on('click', function() {
         $.ajax({
@@ -57,8 +84,11 @@ $(document).ready(function(){
             dataType: 'json',
             success: function(data) {
                 if (data.success) {
-                	$goodIdSelect.append("option value='"+data.good.id+"' selected>"+data.good.name+"</option>");
-                	$goodIdSelect.trigger('change');
+                	alert("hoy");
+                	$goodIdSelect.find("option:selected").prop('selected', false);
+                	//TODO: goh nakhor chera eshtebah mishe?!
+                	$goodIdSelect.append("<option value='"+data.good.id+"' selected>"+data.good.name+"</option>");
+                	$goodIdSelect.trigger('change');	
                     $("#registerGoodModal").modal('hide');
                 } else {
                     //TODO:

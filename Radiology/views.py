@@ -425,7 +425,6 @@ def ajax_patient_pay_factor(request):
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def edit_good(request):
-    print "Hello"
     if not request.method == "POST":
         raise Http404()
     if 'name' in request.POST:
@@ -441,6 +440,18 @@ def edit_good(request):
             pass
     else:
         pass
+    
+def add_good_to_store(request):
+    if not request.method == "POST":
+        raise Http404()
+    try:
+        good = Good.objects.get(name=request.POST['name'])
+        good.quantity = good.quantity + int(request.POST['quantity'])
+        good.save()
+        return render(request, 'json/good.json')
+    except Good.DoesNotExist:
+        #TODO:
+        return render(request, 'json/error.json')
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
