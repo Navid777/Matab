@@ -210,6 +210,18 @@ class FactorForm(forms.Form):
 class MedicalHistoryForm(forms.ModelForm):
     class Meta:
         model = MedicalHistory
+        
+class GoodForm(forms.Form):
+    name = forms.CharField(max_length = 30)
+    fee = forms.FloatField()
+    quantity = forms.IntegerField()
+    
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        if Good.objects.filter(name=name):
+            raise ValidationError("Good already exists.")
+        return name
+        
 
 
 class PatientForm(forms.Form):

@@ -30,12 +30,12 @@ $(document).ready(function(){
 		$("#editGoodQuantityInput").val($("#goodQuantity").html()) ;
 	});
 	
-	$goodForm = $("#editGoodModal").find("form");
+	$editGoodForm = $("#editGoodModal").find("form");
     $("#editGoodSubmit").on('click', function() {
         $.ajax({
             type: "POST",
-            url: $goodForm.attr('action'),
-            data: $goodForm.serialize(),
+            url: $editGoodForm.attr('action'),
+            data: $editGoodForm.serialize(),
             dataType: 'json',
             success: function(data) {
                 if (data.success) {
@@ -47,6 +47,25 @@ $(document).ready(function(){
                 }
             }
         });
+    });
+    var $registerGoodForm = $("#registerGoodModal").find("form");
+    $("#registerGoodSubmit").on('click', function() {
+        $.ajax({
+            type: "POST",
+            url: $registerGoodForm.attr('action'),
+            data: $registerGoodForm.serialize(),
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                	$goodIdSelect.append("option value='"+data.good.id+"' selected>"+data.good.name+"</option>");
+                	$goodIdSelect.trigger('change');
+                    $("#registerGoodModal").modal('hide');
+                } else {
+                    //TODO:
+                    alert(data.errors);
+                }
+            }
         });
+    });
 });
 

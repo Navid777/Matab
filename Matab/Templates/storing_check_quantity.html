@@ -23,7 +23,12 @@
         <label for="goodQuantity" class="label label-primary">موجودی در انبار</label>
         <label id="goodQuantity"> </label>
       </form>
-      <button type="button" id="goodEditButton" class="btn btn-primary" data-toggle="modal" data-target="#editGoodModal" disabled="disabled">ویرایش کالا</button>
+      <button type="button" id="goodEditButton" class="btn btn-primary" data-toggle="modal" data-target="#editGoodModal" disabled="disabled">
+      	ویرایش کالا
+      	</button>
+      <button type="button" id="registerGoodButton" class="btn btn-primary" data-toggle="modal" data-target="#registerGoodModal">
+      	ثبت کالای جدید
+      </button>
       <a href="{% url "Radiology.views.storing" %}" class="btn btn-default">بازگشت</a>
       
       <div id="editGoodModal" class="modal fade">
@@ -54,6 +59,40 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" id="editGoodSubmit">ثبت</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">بازگشت</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+      <div id="registerGoodModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">ثبت کالای جدید</h4>
+                    <div class="modal-body">
+                        <form action="{% url 'Radiology.views.register_good' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="registerGoodNameInput">نام</label>
+                                <input type="text" name="name" class="form-control"
+                                        id="registerGoodNameInput"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerGoodFeeInput">قیمت</label>
+                                <input type="text" name="fee" class="form-control"
+                                        id="registerGoodFeeInput"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerGoodQuantityInput">موجودی</label>
+                                <input type="text" name="quantity" class="form-control"
+                                        id="registerGoodQuantityInput"/>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="registerGoodSubmit">ثبت</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">بازگشت</button>
                     </div>
                 </div>

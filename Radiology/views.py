@@ -442,6 +442,19 @@ def edit_good(request):
     else:
         pass
 
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def register_good(request):
+    if not request.method == "POST":
+        raise Http404()
+    form = GoodForm(request.POST)
+    if form.is_valid():
+        cd = form.cleaned_data
+        good = Good.objects.create(**cd)
+        return render(request, 'json/good.json', {'good':good})
+    return render(request, 'json/error.json', {'errors': form.errors})
+    
+
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])

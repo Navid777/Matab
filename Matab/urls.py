@@ -43,6 +43,7 @@ urlpatterns = patterns('',
     url(r'^register/therapist/$', views.register_therapist),
     url(r'^register/operation/$', views.register_operation),
     url(r'^register/complementary_insurance$', views.register_complementary_insurance),
+    url(r'^register/good$', views.register_good),
     
     url(r'^edit/good/$', views.edit_good),
 
