@@ -24,9 +24,9 @@ class MedicalHistory(models.Model):
     anemia = models.BooleanField(verbose_name=u"کم خونی")
     thyroid = models.BooleanField(verbose_name=u"تیرویید")
     #TODO: tarjomeye ina peida beshe!
-    history = models.CharField(null=True, blank=True,max_length=300, verbose_name=u"شرح حال")
-    comment = models.CharField(null=True, blank=True,max_length = 300, verbose_name=u"توضیحات")
-    special_disease = models.CharField(null=True, blank=True,max_length = 300, verbose_name="بیماری خاص")
+    history = models.CharField(null=True, blank=True, max_length=300, verbose_name=u"شرح حال")
+    comment = models.CharField(null=True, blank=True, max_length=300, verbose_name=u"توضیحات")
+    special_disease = models.CharField(null=True, blank=True, max_length=300, verbose_name="بیماری خاص")
     
     def medical_attrs(self):
         for attr, value in self.__dict__.iteritems():
