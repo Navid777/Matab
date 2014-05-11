@@ -78,11 +78,11 @@ def reception(request):
             factor = Factor.objects.create(**cd)
             if factor.operation_cloth:
                 cloth = Good.objects.get(name='لباس')
-                cloth.quantity = cloth.quantity - 1
+                cloth.quantity -= 1
                 cloth.save()
-            if factor.operation_film_quantity != 0 :
+            if factor.operation_film_quantity != 0:
                 film = Good.objects.get(name=factor.operation_film_name)
-                film.quantity = film.quantity - factor.operation_film_quantity
+                film.quantity -= factor.operation_film_quantity
                 film.save()
             patient = factor.get_patient()
             request.session['patient_id'] = patient.id
@@ -114,6 +114,22 @@ def show_factor(request, id):
     factor = get_object_or_404(Factor, id=id)
     return render(request, "show_factor.html", {
         'factor': factor,
+    })
+
+
+
+def test_calendar(request):
+    if request.method == "POST":
+        form = CalendarTestForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            return HttpResponse("selection: " + unicode(cd['start']) + " to " + unicode(cd['end']))
+        else:
+            print form.errors
+    else:
+        form = CalendarTestForm(request.POST)
+    return render(request, 'calendar_test.html', {
+        'form': form,
     })
 
 
@@ -150,6 +166,7 @@ def waiting_list(request):
 def accounting(request):
     return render(request, 'accounting.html')
 
+
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 @exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.log_patient_in'))
@@ -157,14 +174,14 @@ def accounting_patient(request):
     patient = Patient.objects.get(id=request.session['patient_id'])
     factors = Factor.objects.filter(patient_first_name=patient.first_name,
                                     patient_last_name=patient.last_name,
-                                    )
+    )
     total_debt = 0
     for factor in factors:
-        total_debt = total_debt + factor.total_fee
+        total_debt += factor.total_fee
     return render(request, 'accounting_patient.html', {
-                'factors':factors,
-                'total_debt':total_debt,
-            })
+        'factors': factors,
+        'total_debt': total_debt,
+    })
 
 
 @user_logged_in
@@ -173,8 +190,8 @@ def log_patient_in(request):
     if request.method == "POST":
         try:
             patient = Patient.objects.get(national_code=request.POST['national_code'],
-                                           first_name=request.POST['first_name'],
-                                            last_name=request.POST['last_name'])
+                                          first_name=request.POST['first_name'],
+                                          last_name=request.POST['last_name'])
             request.session['patient_id'] = patient.id
             return redirect(accounting_patient)
         except Patient.DoesNotExist:
@@ -187,8 +204,9 @@ def log_patient_in(request):
 def storing(request):
     goods = Good.objects.all()
     return render(request, 'storing.html', {
-                'goods': goods,
-            })
+        'goods': goods,
+    })
+
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.operation == UserType.MRI_OPERATION)
@@ -344,24 +362,23 @@ def ajax_find_therapists(request):
     return render(request, 'json/therapists.json', {'therapists': therapists})
 
 
-
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def ajax_find_good(request):
     if request.method != "POST":
         raise Http404()
     if 'id' in request.POST:
-        try: 
-            good = Good.objects.get(id = request.POST['id'])    
-            return render(request, 'json/good.json', { 'good': good })
+        try:
+            good = Good.objects.get(id=request.POST['id'])
+            return render(request, 'json/good.json', {'good': good})
         except Good.DoesNotExist:
             #TODO:
             pass
     else:
         #TODO:
         pass
-    
-    
+
+
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def ajax_find_insurances(request):
@@ -455,14 +472,16 @@ def edit_good(request):
             good.fee = request.POST['fee']
             good.quantity = request.POST['quantity']
             good.save()
-            return render(request, 'json/good.json', {'good':good})
+            return render(request, 'json/good.json', {'good': good})
         except Good.DoesNotExist:
             print "E"
             pass
     else:
         pass
+
+
 @user_logged_in
-@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])   
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def add_good_to_store(request):
     if not request.method == "POST":
         raise Http404()
@@ -475,6 +494,7 @@ def add_good_to_store(request):
         #TODO:
         return render(request, 'json/error.json')
 
+
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def register_good(request):
@@ -484,9 +504,8 @@ def register_good(request):
     if form.is_valid():
         cd = form.cleaned_data
         good = Good.objects.create(**cd)
-        return render(request, 'json/good.json', {'good':good})
+        return render(request, 'json/good.json', {'good': good})
     return render(request, 'json/error.json', {'errors': form.errors})
-    
 
 
 @user_logged_in

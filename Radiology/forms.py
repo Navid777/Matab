@@ -107,7 +107,7 @@ class AppointmentForm(forms.Form):
         st = cd['start_time']
         et = cd['end_time']
         if Appointment.objects.filter(day=self.day).filter(Q(start_time__lt=st, end_time__gt=st)
-                                            | Q(start_time__lt=et, end_time__gt=et)).count() > 0:
+                | Q(start_time__lt=et, end_time__gt=et)).count() > 0:
             raise forms.ValidationError(overlapping_appointments_error)
         print cd
         return cd
@@ -152,18 +152,18 @@ class FactorForm(forms.Form):
         except Patient.DoesNotExist:
             raise ValidationError('اطلاعات بیمار نادرست است')
         try:
-                operation = Operation.objects.get(
+            operation = Operation.objects.get(
                 type=cd.get('operation_type'),
-                codeography=cd.get('operation_codeography'),)
-                cd['operation_governmental_fee'] = operation.governmental_fee
-                cd['operation_individual_fee'] = operation.individual_fee
-                cd['operation_medical_fee'] = operation.medical_fee
-                if operation.film :
-                    cd['operation_film_name'] = Good.objects.get(id=operation.film_id).name
-                    cd['operation_film_fee'] = Good.objects.get(id=operation.film_id).fee
-                    cd['operation_film_quantity'] = operation.film_quantity
-                else:
-                    cd['operation_film_fee'] = 0
+                codeography=cd.get('operation_codeography'), )
+            cd['operation_governmental_fee'] = operation.governmental_fee
+            cd['operation_individual_fee'] = operation.individual_fee
+            cd['operation_medical_fee'] = operation.medical_fee
+            if operation.film:
+                cd['operation_film_name'] = Good.objects.get(id=operation.film_id).name
+                cd['operation_film_fee'] = Good.objects.get(id=operation.film_id).fee
+                cd['operation_film_quantity'] = operation.film_quantity
+            else:
+                cd['operation_film_fee'] = 0
         except Operation.DoesNotExist:
             raise ValidationError('خدمت نادرست است')
         except Good.DoesNotExist:
@@ -177,8 +177,8 @@ class FactorForm(forms.Form):
             cd['insurance_account_id'] = insurance.account_id
             if cd['insurance_has_complementary']:
                 cd['insurance_complementary_account_id'] = ComplementaryInsurance.objects.get(
-                                                                type = cd['insurance_complementary']
-                                                            ).account_id
+                    type=cd['insurance_complementary']
+                ).account_id
         except Insurance.DoesNotExist:
             raise ValidationError('بیمه نادرست است')
         except ComplementaryInsurance.DoesNotExist:
@@ -210,18 +210,18 @@ class FactorForm(forms.Form):
 class MedicalHistoryForm(forms.ModelForm):
     class Meta:
         model = MedicalHistory
-        
+
+
 class GoodForm(forms.Form):
-    name = forms.CharField(max_length = 30)
+    name = forms.CharField(max_length=30)
     fee = forms.FloatField()
     quantity = forms.IntegerField()
-    
+
     def clean_name(self):
         name = self.cleaned_data['name']
         if Good.objects.filter(name=name):
             raise ValidationError("Good already exists.")
         return name
-        
 
 
 class PatientForm(forms.Form):
@@ -234,22 +234,26 @@ class PatientForm(forms.Form):
         if Patient.objects.filter(national_code=national_code):
             raise ValidationError(national_code_duplicate_error)
         return national_code
-    
+
+
 class InsuranceForm(forms.Form):
     type = forms.CharField(max_length=100)
     category = forms.CharField(max_length=100)
     portion = forms.IntegerField()
-    
+
     def clean(self):
         super(InsuranceForm, self).clean()
         cd = self.cleaned_data
         if Insurance.objects.filter(
-            type=cd.get('type'),
-            category=cd.get('category'),):
+                type=cd.get('type'),
+                category=cd.get('category'), ):
             raise ValidationError('بیمه تکراری است.')
         return cd
+
+
 class ComplementaryInsuranceForm(forms.Form):
-    type = forms.CharField(max_length = 100)
+    type = forms.CharField(max_length=100)
+
 
 class TherapistForm(forms.Form):
     first_name = forms.CharField(max_length=30)
@@ -262,11 +266,17 @@ class TherapistForm(forms.Form):
             raise ValidationError(therapist_medical_duplicate_error)
         return medical_number
 
+
 class OperationForm(forms.Form):
-    type = forms.CharField(max_length = 30)
-    codeography = forms.CharField(max_length = 30)
+    type = forms.CharField(max_length=30)
+    codeography = forms.CharField(max_length=30)
     individual_fee = forms.FloatField()
     governmental_fee = forms.FloatField()
     medical_fee = forms.FloatField()
     film_id = forms.IntegerField()
     film_quantity = forms.IntegerField()
+
+
+class CalendarTestForm(forms.Form):
+    start = forms.DateField()
+    end = forms.DateField()
