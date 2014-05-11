@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+انتخاب بیمه تکمیلی
+{% endblock %}
+{% block extracss %}
+<link href="{{ MEDIA_URL }}css/monshi_signin.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+      <form class="form-signin" role="form" method="post" action="">
+          {% csrf_token %}
+        <h2 class="form-signin-heading">لطفا نام بیمه مکمل را انتخاب کنید</h2>
+        <select name="complementary_id" class="form-control" placeholder="نام بیمه مکمل" required autofocus>
+        	{% for c in complementary %}
+        	<option value="{{c.id}}">{{ c.type }}</option>
+        	{%endfor%}
+        </select>
+        
+        <button class="btn btn-lg btn-primary btn-block" type="submit">انتخاب</button>
+        <a href="{% url 'Radiology.views.accounting_complementary' %}" id="return" class="btn btn-default btn-block">بازگشت</a>
+      </form>
+{% endblock %}

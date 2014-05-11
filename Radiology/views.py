@@ -227,6 +227,33 @@ def accounting_insurance(request):
         'form':form,
         'insurance':insurance,
     })
+    
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+@exists_in_session_or_redirect('complementary_id', reverse_lazy('Radiology.views.choose_complementary'))
+def accounting_complementary(request):
+    complementary = ComplementaryInsurance.objects.get(id=request.session['complementary_id'])
+    factors = None
+    if request.method == "POST":
+        form = CalendarTestForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            start_date = cd['start']
+            end_date = cd['end']
+            factors = Factor.objects.filter(insurance_complementary=complementary.type,
+                                            factor_date__gte=start_date,
+                                            factor_date__lte=end_date
+            ).distinct()
+        else:
+            print request.POST
+            print form.errors
+    else:
+        form = CalendarTestForm()
+    return render(request, 'accounting_complementary.html', {
+        'factors': factors,
+        'form':form,
+        'complementary':complementary,
+    })
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
@@ -378,6 +405,21 @@ def choose_insurance(request):
         insurances = Insurance.objects.all()
         return render(request, 'choose_insurance.html', {
             'insurances': insurances,
+        })
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def choose_complementary(request):
+    if request.method == "POST":
+        if 'complementary_id' in request.POST:
+            request.session['complementary_id'] = request.POST['complementary_id']
+            return redirect(accounting_complementary)
+        else:
+            return redirect(choose_complementary)
+    else:
+        complementary = ComplementaryInsurance.objects.all()
+        return render(request, 'choose_complementary.html', {
+            'complementary': complementary,
         })
 
 
