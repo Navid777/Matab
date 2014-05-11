@@ -36,10 +36,18 @@ urlpatterns = patterns('',
     url(r'^log_patient_in/$', views.log_patient_in ),
     
     
-    url(r'^storing$', views.storing),
+    url(r'^choose/personnel/$', views.choose_personnel),
+    url(r'^choose/insurance$', views.choose_insurance),
+    url(r'^choose/complementary/$', views.choose_complementary),
+    
+    
+    url(r'^storing/$', views.storing),
     
     url(r'^accounting/$', views.accounting),
-    url(r'^accounting_patient/$', views.accounting_patient),
+    url(r'^accounting/patient$', views.accounting_patient),
+    url(r'^accounting/personnel$', views.accounting_personnel),
+    url(r'^accounting/insurance$', views.accounting_insurance),
+    url(r'^accounting/complementary$', views.accounting_complementary),
 
 
     url(r'^register/patient/$', views.register_patient),

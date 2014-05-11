@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 
 {% block title %}
-حسابداری بیماران
+حسابداری پرسنل 
 {% endblock %}
+
 
 {% block extracss %}
 <link rel="stylesheet" href="{{ MEDIA_URL }}css/calendar.css"/>
@@ -51,10 +52,6 @@
 	
 	{% if factors%}
 	<table>
-		<tr>
-			<td>بدهی کلی</td>
-			<td>{{ total_debt }}</td>
-		</tr>
 		{% for factor in factors %}
 		<tr>
 			<td>فاکتور</td>
@@ -64,3 +61,4 @@
 	</table>
 	{% endif %}
 {% endblock %}
+
