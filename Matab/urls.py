@@ -34,12 +34,16 @@ urlpatterns = patterns('',
     url(r'^show_unpaid_factors/$', views.show_unpaid_factors),
     url(r'^add_good_to_store/$', views.add_good_to_store),
     url(r'^log_patient_in/$', views.log_patient_in ),
+    url(r'^choose_personnel/$', views.choose_personnel),
+    url(r'^choose_insurance$', views.choose_insurance),
     
     
-    url(r'^storing$', views.storing),
+    url(r'^storing/$', views.storing),
     
     url(r'^accounting/$', views.accounting),
-    url(r'^accounting_patient/$', views.accounting_patient),
+    url(r'^accounting/patient$', views.accounting_patient),
+    url(r'^accounting/personnel$', views.accounting_personnel),
+    url(r'^accounting/insurance$', views.accounting_insurance),
 
 
     url(r'^register/patient/$', views.register_patient),

@@ -166,21 +166,98 @@ def waiting_list(request):
 def accounting(request):
     return render(request, 'accounting.html')
 
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+@exists_in_session_or_redirect('personnel_id', reverse_lazy('Radiology.views.choose_personnel'))
+def accounting_personnel(request):
+    personnel = User.objects.get(id=request.session['personnel_id'])
+    total_debt = 0
+    factors = None
+    if request.method == "POST":
+        form = CalendarTestForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            start_date = cd['start']
+            end_date = cd['end']
+            factors = Factor.objects.filter((models.Q(technisian_first_name=personnel.first_name, technisian_last_name=personnel.last_name) 
+                                             | models.Q(operator_first_name=personnel.first_name, operator_last_name=personnel.last_name) 
+                                             | models.Q(receptor_first_name=personnel.first_name, receptor_last_name=personnel.last_name)),
+                                            factor_date__gte=start_date,
+                                            factor_date__lte=end_date
+            ).distinct()
+        else:
+            print request.POST
+            print form.errors
+    else:
+        form = CalendarTestForm()
+    if factors:
+        for factor in factors:
+            total_debt += factor.total_fee
+    return render(request, 'accounting_personnel.html', {
+        'factors': factors,
+        'form':form,
+        'personnel':personnel,
+    })
+
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+@exists_in_session_or_redirect('insurance_id', reverse_lazy('Radiology.views.choose_insurance'))
+def accounting_insurance(request):
+    insurance = Insurance.objects.get(id=request.session['insurance_id'])
+    factors = None
+    if request.method == "POST":
+        form = CalendarTestForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            start_date = cd['start']
+            end_date = cd['end']
+            factors = Factor.objects.filter(insurance_type=insurance.type,
+                                            insurance_category=insurance.category,
+                                            factor_date__gte=start_date,
+                                            factor_date__lte=end_date
+            ).distinct()
+        else:
+            print request.POST
+            print form.errors
+    else:
+        form = CalendarTestForm()
+    return render(request, 'accounting_insurance.html', {
+        'factors': factors,
+        'form':form,
+        'insurance':insurance,
+    })
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 @exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.log_patient_in'))
 def accounting_patient(request):
     patient = Patient.objects.get(id=request.session['patient_id'])
-    factors = Factor.objects.filter(patient_first_name=patient.first_name,
-                                    patient_last_name=patient.last_name,
-    )
     total_debt = 0
-    for factor in factors:
-        total_debt += factor.total_fee
+    factors = None
+    if request.method == "POST":
+        form = CalendarTestForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            start_date = cd['start']
+            end_date = cd['end']
+            factors = Factor.objects.filter(patient_first_name=patient.first_name,
+                                            patient_last_name=patient.last_name,
+                                            factor_date__gte=start_date,
+                                            factor_date__lte=end_date
+            )
+        else:
+            print request.POST
+            print form.errors
+    else:
+        form = CalendarTestForm()
+    if factors:
+        for factor in factors:
+            total_debt += factor.total_fee
     return render(request, 'accounting_patient.html', {
         'factors': factors,
         'total_debt': total_debt,
+        'form':form,
     })
 
 
@@ -270,6 +347,37 @@ def sign_technician_in(request):
         technicians = Technician.objects.filter(operation=request.user.usertype.operation)
         return render(request, 'sign_technician_in.html', {
             'technicians': technicians,
+        })
+
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def choose_personnel(request):
+    if request.method == "POST":
+        if 'personnel_id' in request.POST:
+            request.session['personnel_id'] = request.POST['personnel_id']
+            return redirect(accounting_personnel)
+        else:
+            return redirect(choose_personnel)
+    else:
+        personnel = User.objects.filter(is_staff=False)
+        return render(request, 'choose_personnel.html', {
+            'personnel': personnel,
+        })
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def choose_insurance(request):
+    if request.method == "POST":
+        if 'insurance_id' in request.POST:
+            request.session['insurance_id'] = request.POST['insurance_id']
+            return redirect(accounting_insurance)
+        else:
+            return redirect(choose_insurance)
+    else:
+        insurances = Insurance.objects.all()
+        return render(request, 'choose_insurance.html', {
+            'insurances': insurances,
         })
 
 

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}
+انتخاب بیمه
+{% endblock %}
+
+{% block extracss %}
+<link href="{{ MEDIA_URL }}css/monshi_signin.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+      <form class="form-signin" role="form" method="post" action="">
+          {% csrf_token %}
+        <h2 class="form-signin-heading">لطفا نام بیمه را انتخاب کنید</h2>
+        <select name="insurance_id" class="form-control" placeholder="نام بیمه" required autofocus>
+        	{% for i in insurances %}
+        	<option value="{{i.id}}">{{ i.type }}</option>
+        	{%endfor%}
+        </select>
+        
+        <button class="btn btn-lg btn-primary btn-block" type="submit">انتخاب</button>
+        <a href="{% url 'Radiology.views.accounting' %}" id="return" class="btn btn-default btn-block">بازگشت</a>
+      </form>
+{% endblock %}
