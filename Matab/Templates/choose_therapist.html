@@ -1,0 +1,25 @@
+{%extends 'base.html' %}
+
+{% block title %}
+انتخاب پزشک معالج
+{% endblock %}
+
+
+{% block extracss %}
+<link href="{{ MEDIA_URL }}css/monshi_signin.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+      <form class="form-signin" role="form" method="post" action="">
+          {% csrf_token %}
+        <h2 class="form-signin-heading">لطفا نام پزشک معالج را انتخاب کنید</h2>
+        <select name="therapist_id" class="form-control" placeholder="نام پزشک معالج" required autofocus>
+        	{% for t in therapists %}
+        	<option value="{{t.id}}">{{ t.first_name }} {{ t.last_name }}</option>
+        	{%endfor%}
+        </select>
+        
+        <button class="btn btn-lg btn-primary btn-block" type="submit">انتخاب</button>
+        <a href="{% url 'Radiology.views.accounting_therapist' %}" id="return" class="btn btn-default btn-block">بازگشت</a>
+      </form>
+{% endblock %}

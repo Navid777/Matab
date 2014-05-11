@@ -154,6 +154,7 @@ def show_unpaid_factors(request):
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['OPERATOR'])
+@exists_in_session_or_redirect('technisian_id', reverse_lazy('Radiology.views.sign_technisian_in'))
 def waiting_list(request):
     turns = PatientTurn.objects.filter(type=request.user.usertype.operation).order_by("-turn")
     return render(request, 'waiting_list.html', {
@@ -253,6 +254,35 @@ def accounting_complementary(request):
         'factors': factors,
         'form':form,
         'complementary':complementary,
+    })
+    
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+@exists_in_session_or_redirect('therapist_id', reverse_lazy('Radiology.views.choose_therapist'))
+def accounting_therapist(request):
+    therapist = Therapist.objects.get(id=request.session['therapist_id'])
+    factors = None
+    if request.method == "POST":
+        form = CalendarTestForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            start_date = cd['start']
+            end_date = cd['end']
+            factors = Factor.objects.filter(therapist_first_name=therapist.first_name,
+                                            therapist_last_name=therapist.last_name,
+                                            therapist_medical_number=therapist.medical_number,
+                                            factor_date__gte=start_date,
+                                            factor_date__lte=end_date
+            ).distinct()
+        else:
+            print request.POST
+            print form.errors
+    else:
+        form = CalendarTestForm()
+    return render(request, 'accounting_therapist.html', {
+        'factors': factors,
+        'form':form,
+        'therapist':therapist,
     })
 
 @user_logged_in
@@ -392,6 +422,22 @@ def choose_personnel(request):
             'personnel': personnel,
         })
 
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def choose_therapist(request):
+    if request.method == "POST":
+        if 'therapist_id' in request.POST:
+            request.session['therapist_id'] = request.POST['therapist_id']
+            return redirect(accounting_therapist)
+        else:
+            return redirect(choose_therapist)
+    else:
+        therapists = Therapist.objects.all()
+        return render(request, 'choose_therapist.html', {
+            'therapists': therapists,
+        })
+        
+        
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def choose_insurance(request):

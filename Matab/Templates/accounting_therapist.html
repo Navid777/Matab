@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}
+حسابداری پزشک معالج 
+{% endblock %}
+
+
+{% block extracss %}
+<link rel="stylesheet" href="{{ MEDIA_URL }}css/calendar.css"/>
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jalali.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-setup.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-fa.js"></script>
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+        <div class="form-group">
+            <div style="display: none;">{{ form.start }}</div>
+            <button type="button" id="start_button" class="btn btn-default">تاریخ شروع</button>
+            <script type="text/javascript">
+                Calendar.setup({
+                    inputField: "id_start",
+                    displayArea: "start_button",
+                    ifFormat: "%Y-%m-%d",
+                    dateType: "jalali",
+                    ifDateType: "gregorian",
+                    weekNumbers: false
+                });
+            </script>
+        </div>
+        <div class="form-group">
+            <div style="display: none;">{{ form.end }}</div>
+            <button type="button" id="end_button" class="btn btn-default">تاریخ پایان</button>
+            <script type="text/javascript">
+                Calendar.setup({
+                    inputField: "id_end",
+                    displayArea: "end_button",
+                    ifFormat: "%Y-%m-%d",
+                    dateType: "jalali",
+                    ifDateType: "gregorian",
+                    weekNumbers: false
+                });
+            </script>
+        </div>
+        {% csrf_token %}
+        <input class="btn btn-primary" type="submit" value="ثبت"/>
+    </form>
+	
+	{% if factors%}
+	<table>
+		{% for factor in factors %}
+		<tr>
+			<td>فاکتور</td>
+			<td> {{factor.total_fee}} </td>
+		</tr>
+		{% endfor %}
+	</table>
+	{% endif %}
+{% endblock %}

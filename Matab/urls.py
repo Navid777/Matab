@@ -37,8 +37,9 @@ urlpatterns = patterns('',
     
     
     url(r'^choose/personnel/$', views.choose_personnel),
-    url(r'^choose/insurance$', views.choose_insurance),
+    url(r'^choose/insurance/$', views.choose_insurance),
     url(r'^choose/complementary/$', views.choose_complementary),
+    url(r'^choose/therapist/$', views.choose_therapist),
     
     
     url(r'^storing/$', views.storing),
@@ -48,6 +49,7 @@ urlpatterns = patterns('',
     url(r'^accounting/personnel$', views.accounting_personnel),
     url(r'^accounting/insurance$', views.accounting_insurance),
     url(r'^accounting/complementary$', views.accounting_complementary),
+    url(r'^accounting/therapist/$', views.accounting_therapist),
 
 
     url(r'^register/patient/$', views.register_patient),
