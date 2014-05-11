@@ -77,15 +77,13 @@ class Therapist(models.Model):
 
 
 class Appointment(models.Model):
-    patient = models.ForeignKey(Patient)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    national_code = models.CharField(max_length=30, null=True, blank=True)
     day = models.DateField()
     start_time = models.TimeField()
-    end_time = models.TimeField()
+    visited = models.BooleanField(default=False)
 
-
-
-class Visit(models.Model):
-    appointment = models.OneToOneField(Appointment)
 
 
 class ComplementaryInsurance(models.Model):
@@ -113,11 +111,12 @@ class Factor(models.Model):
     receptor_last_name = models.CharField(max_length=50)
     operator_first_name = models.CharField(max_length=50, null=True, blank=True)
     operator_last_name = models.CharField(max_length=50, null=True, blank=True)
-    technisian_first_name = models.CharField(max_length=50, null=True, blank=True)
-    technisian_last_name = models.CharField(max_length=50, null=True, blank=True)
+    technician_first_name = models.CharField(max_length=50, null=True, blank=True)
+    technician_last_name = models.CharField(max_length=50, null=True, blank=True)
     therapist_first_name = models.CharField(max_length=30)
     therapist_last_name = models.CharField(max_length=50)
     therapist_medical_number = models.CharField(max_length=20)
+    therapist_visit_date = models.DateField(null=True, blank=True)
     operation_type = models.CharField(max_length=30)
     operation_codeography = models.CharField(max_length=30)
     operation_cloth = models.BooleanField()
@@ -137,17 +136,21 @@ class Factor(models.Model):
     insurance_page = models.CharField(max_length=20)
     insurance_account_id = models.IntegerField()
     insurance_complementary_account_id = models.IntegerField(null=True, blank=True)
+    insurance_exp_date = models.DateField()
     total_fee = models.FloatField()
     patient_share = models.FloatField()
     insurance_share = models.FloatField()
     insurance_complementary_share = models.FloatField()
     patient_paid = models.BooleanField(default=False)
+    patient_paid_ammount = models.FloatField(null=True, blank=True)
     insurance_paid = models.BooleanField(default=False)
     complementary_paid = models.BooleanField(default=False)
     factor_date = models.DateField()
     patient_pay_date = models.DateField(null=True, blank=True)
     insurance_pay_date = models.DateField(null=True, blank=True)
     complementary_pay_date = models.DateField(null=True, blank=True)
+    comment = models.CharField(null=True, blank=True, max_length=300)
+    discount = models.FloatField(null=True, blank=True)
 
     def get_patient(self):
         return Patient.objects.get(

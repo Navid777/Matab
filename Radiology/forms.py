@@ -92,31 +92,18 @@ class UserForm(forms.Form):
 
 
 class AppointmentForm(forms.Form):
+    first_name = forms.CharField(max_length = 30)
+    last_name = forms.CharField(max_length = 30)
+    national_code = forms.CharField(max_length = 30, required=False)
     start_time = forms.TimeField()
-    end_time = forms.TimeField()
-
-    def __init__(self, *args, **kwargs):
-        super(AppointmentForm, self).__init__(*args, **kwargs)
-        self.day = None
-
-    def set_day(self, day):
-        self.day = day
-
-    def clean(self):
-        cd = super(AppointmentForm, self).clean()
-        st = cd['start_time']
-        et = cd['end_time']
-        if Appointment.objects.filter(day=self.day).filter(Q(start_time__lt=st, end_time__gt=st)
-                | Q(start_time__lt=et, end_time__gt=et)).count() > 0:
-            raise forms.ValidationError(overlapping_appointments_error)
-        print cd
-        return cd
+    day = forms.DateField(required=False)
 
 
 class FactorForm(forms.Form):
     patient_first_name = forms.CharField(max_length=30)
     patient_last_name = forms.CharField(max_length=50)
     patient_national_code = forms.CharField(max_length=30)
+    patient_paid_amount = forms.FloatField(required=False)
     #patient_account_id = forms.IntegerField()
     #doctor_first_name = forms.CharField(max_length=30)
     #doctor_last_name = forms.CharField(max_length=50)
@@ -136,6 +123,10 @@ class FactorForm(forms.Form):
     #insurance_portion = forms.IntegerField()
     insurance_serial = forms.CharField(max_length=20)
     insurance_page = forms.CharField(max_length=20)
+    therapist_visit_date = forms.DateField(required=False)
+    comment = forms.CharField(max_length=300, required=False)
+    insurance_exp_date = forms.DateField()
+    discount = forms.FloatField(required=False)
     #insurance_account_id = forms.IntegerField()
     #insurance_complementary_account_id = forms.IntegerField()
     #total_fee = forms.FloatField()
@@ -144,6 +135,7 @@ class FactorForm(forms.Form):
     def clean(self):
         super(FactorForm, self).clean()
         cd = self.cleaned_data
+        cd['patient_paid_amount'] = 0
         try:
             cd['patient_account_id'] = Patient.objects.get(
                 first_name=cd.get('patient_first_name'),
@@ -191,8 +183,7 @@ class FactorForm(forms.Form):
             patient_share = 0
             insurance_share = cd['operation_governmental_fee'] * insurance.portion / 100
             complementary_share = cd['operation_governmental_fee'] - insurance_share
-            cd['patient_paid'] = True
-            cd['patient_pay_date'] = date.today()
+
         else:
             insurance_share = cd['operation_governmental_fee'] * insurance.portion / 100
             patient_share = cd['operation_individual_fee'] - insurance_share
@@ -204,6 +195,11 @@ class FactorForm(forms.Form):
         cd['insurance_complementary_share'] = complementary_share
         cd['total_fee'] = patient_share + cd['operation_cloth_fee'] + cd['operation_film_fee']
         cd['factor_date'] = date.today()
+        if cd['discount']:
+            cd['total_fee'] -= cd['discount']
+        if cd['total_fee'] == cd['patient_paid_amount']:
+            cd['patient_paid'] = True
+            cd['patient_pay_date'] = date.today()
         return cd
 
 
@@ -278,5 +274,5 @@ class OperationForm(forms.Form):
 
 
 class CalendarTestForm(forms.Form):
-    start = forms.DateField()
-    end = forms.DateField()
+    start = forms.DateField(required=False)
+    end = forms.DateField(required=False)

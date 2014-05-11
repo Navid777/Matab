@@ -25,7 +25,7 @@
         {% else %}
             {% url "Radiology.views.write_response" as u %}
         {% endif %}
-        <td><a href="{% url "Radiology.views.session_patient" p.id u %}"
+        <td><a href="{% url "Radiology.views.session_patient_and_set_factor" p.id u %}"
                  class="btn btn-default btn-block">ثبت ورود</a></td>
         </tr>
         {% endfor %}

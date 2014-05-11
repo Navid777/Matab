@@ -154,7 +154,7 @@ def show_unpaid_factors(request):
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['OPERATOR'])
-@exists_in_session_or_redirect('technisian_id', reverse_lazy('Radiology.views.sign_technisian_in'))
+@exists_in_session_or_redirect('technician_id', reverse_lazy('Radiology.views.sign_technician_in'))
 def waiting_list(request):
     turns = PatientTurn.objects.filter(type=request.user.usertype.operation).order_by("-turn")
     return render(request, 'waiting_list.html', {
@@ -180,7 +180,7 @@ def accounting_personnel(request):
             cd = form.cleaned_data
             start_date = cd['start']
             end_date = cd['end']
-            factors = Factor.objects.filter((models.Q(technisian_first_name=personnel.first_name, technisian_last_name=personnel.last_name) 
+            factors = Factor.objects.filter((models.Q(technician_first_name=personnel.first_name, technician_last_name=personnel.last_name) 
                                              | models.Q(operator_first_name=personnel.first_name, operator_last_name=personnel.last_name) 
                                              | models.Q(receptor_first_name=personnel.first_name, receptor_last_name=personnel.last_name)),
                                             factor_date__gte=start_date,
@@ -476,35 +476,34 @@ def sign_technician_out(request):
     return redirect(sign_technician_in)
 
 
-@user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['OPERATOR'])
 def write_response(request):
     pass
 
 
-def appointment_day(request):
-    return render(request, 'appointment_day.html', {})
-
-
-def appointment(request, day):
-    if request.method == "POST":
-        form = AppointmentForm(request.POST)
-        form.set_day(datetime.strptime(day, '%Y-%m-%d'))
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def appointment(request):
+    appointment_day = None 
+    appointments = None
+    if request.method == 'POST':
+        form = CalendarTestForm(request.POST)
         if form.is_valid():
-            app = Appointment.objects.create(
-                patient=Patient.objects.get(id=request.session['patient_id']),
-                day=datetime.strptime(day, '%Y-%m-%d'),
-                start_time=form.cleaned_data['start_time'],
-                end_time=form.cleaned_data['end_time'],
-            )
-            return HttpResponseRedirect('/appointment/')
+            cd = form.cleaned_data
+            appointments = Appointment.objects.filter(day=cd['start'])
+            request.session['appointment_day'] = cd['start']
+        else:
+            form = CalendarTestForm()
+    elif 'appointment_day' in request.session:
+        form = CalendarTestForm()
+        appointments = Appointment.objects.filter(day=request.session['appointment_day'], visited=False)
     else:
-        form = AppointmentForm()
+        form = CalendarTestForm()
     return render(request, 'appointment.html', {
-        'day': day,
-        'form': form,
-        'apps': Appointment.objects.filter(day=datetime.strptime(day, '%Y-%m-%d'))
-    })
+                'form':form,
+                'appointments': appointments,
+                'appointment_day': appointment_day
+            })
 
 
 @user_logged_in
@@ -513,6 +512,28 @@ def session_patient(request, id, next):
     request.session['patient_id'] = turn.patient.id
     turn.delete()
     return redirect(next)
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def session_appointment(request, id, next):
+    pass
+
+@user_logged_in
+@exists_in_session_or_redirect("technician_id", reverse_lazy("Radiology.views.sign_technician_in"))
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['OPERATOR'])
+def session_patient_and_set_factor(request, id, next):
+    turn = get_object_or_404(PatientTurn, id=id)
+    factor = turn.factor
+    factor.operator_first_name = request.user.first_name
+    factor.operator_last_name = request.user.last_name
+    technician = Technician.objects.get(id=request.session['technician_id'])
+    factor.technician_first_name = technician.first_name
+    factor.technician_last_name = technician.last_name
+    factor.save()
+    request.session['patient_id'] = turn.patient.id
+    turn.delete()
+    return redirect(next)
+
 
 
 @user_logged_in
@@ -648,11 +669,15 @@ def ajax_patient_pay_factor(request):
         return render(request, 'json/error.json', {
             'errors': ['پرداخت شده است.'],
         })
-    if not factor.insurance_has_complementary:
+    if not factor.total_fee == 0:
         accounting.move_credit(factor.patient_account_id, accounting.get_static_account("office"),
-                               factor.patient_share, "", "", "", datetime.now(), factor.id)
+                               factor.total_fee, "", "", "", datetime.now(), factor.id)
         factor.patient_paid = True
-        factor.save()
+        factor.patient_paid_amount = factor.total_fee
+    else:
+        factor.patient_paid = True
+        factor.patient_paid_amount = factor.total_fee
+    factor.save()
     return render(request, 'json/patient_paid.json', {})
 
 
@@ -703,6 +728,26 @@ def register_good(request):
         return render(request, 'json/good.json', {'good': good})
     return render(request, 'json/error.json', {'errors': form.errors})
 
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+@exists_in_session_or_redirect('appointment_day', reverse_lazy("Radiology.views.appointment"))
+def register_appointment(request):
+    if not request.method == "POST":
+        raise Http404()
+    form = AppointmentForm(request.POST)
+    if form.is_valid():
+        cd = form.cleaned_data
+        cd['day'] = request.session['appointment_day']
+        appointment = Appointment.objects.create(**cd)
+        return render(request, 'json/appointment.json', {
+                    'appointment': appointment,
+                })
+    else :
+        print form.errors
+    return render(request, 'json/error.json',{
+                'errors': form.errors,
+            })
+
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
@@ -721,7 +766,8 @@ def register_patient(request):
         'errors': form.errors,
     })
 
-
+    
+    
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def register_therapist(request):

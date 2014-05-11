@@ -6,10 +6,16 @@
 
 {% block extrajs %}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/reception.js"></script>
+
+        <script type="text/javascript" src="{{ MEDIA_URL }}js/jalali.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-setup.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-fa.js"></script>
 {% endblock %}
 
 {% block extracss %}
     <link href="{{ MEDIA_URL }}css/reception.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/calendar.css"/>
 {% endblock %}
 
 {% block content %}
@@ -87,7 +93,22 @@
                         <label for="insurancePageInput">شماره‌ی صفحه</label>
                         <input type="text" name="insurance_page" class="form-control"
                                id="insurancePageInput" />
+                    </div>  
+                    <div class="form-group">
+                        <label for="insuranceExpDateInput">تاریخ اعتبار دفترچه</label>
+                        <input type="text" name="insurance_exp_date" class="form-control"
+                               id="insuranceExpDateInput" />
                     </div>
+					<script type="text/javascript">
+						Calendar.setup({
+						inputField: "insuranceExpDateInput",
+						displayArea: "insuranceExpDateInput",
+						ifFormat: "%Y-%m-%d",
+						dateType: "jalali",
+						ifDateType: "gregorian",
+						weekNumbers: false
+							});
+					</script>
                 </div>
 
             </div>
@@ -113,6 +134,21 @@
                         <input name="therapist_last_name" type='text' class='form-control'
                                id='therapistLastNameInput'/>
                     </div>
+                    <div class='form-group'>
+                        <label for='therapistVisitDateInput'>تاریخ ویزیت</label>
+                        <input name="therapist_visit_date" type='text' class='form-control'
+                               id='therapistVisitDateInput'/>
+						<script type="text/javascript">
+							Calendar.setup({
+							inputField: "therapistVisitDateInput",
+							displayArea: "therapistVisitDateInput",
+							ifFormat: "%Y-%m-%d",
+							dateType: "jalali",
+							ifDateType: "gregorian",
+							weekNumbers: false
+							});
+						</script>
+                    </div>
                 </div>
             </div>
             <div class='col-md-3 form-part panel panel-success'>
@@ -135,9 +171,21 @@
                         <label for='operationCodeographySelect'>کدگرافی خدمت</label>
                         <select name="operation_codeography" class="form-control chosen-select"
                                 id="operationCodeographySelect">
-                            <option value="" selected></option>
+                            <option value="" selected> </option>
                         </select>
                     </div>
+                    </div>
+                    <div class='form-group'>
+                        <label for='operationCommentInput'>توضیحات</label>
+                        <input type="text" name="comment" class="form-control"
+                                id="operationCommentInput"/>
+                    </div>
+                    <div class='form-group'>
+                        <label for='discountInput'>تخفیف</label>
+                        <input name="discount" type='number' class='form-control'
+                               id='discountInput'/>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="operationClothCheckbox"> لباس نیاز دارد</label>
                         <input type="checkbox" name="operation_cloth"

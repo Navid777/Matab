@@ -345,4 +345,10 @@ $(document).ready(function() {
 
     	});
     });
+    $("#therapistVisitDateInput").on('focus', function(){
+    	$("#therapistVisitDateInput").trigger('click');
+    });
+    $("#insuranceExpDateInput").on('focus', function() {
+    	$("#insuranceExpDateInput").trigger('click');
+    });
 });

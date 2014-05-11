@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}
+وقت دهی
+{% endblock %}
+
+{% block extracss %}
+<link rel="stylesheet" href="{{ MEDIA_URL }}css/calendar.css"/>
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jalali.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-setup.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-fa.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/appointment.js"></script>
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+        <div class="form-group">
+            <div style="display: none;">{{ form.start }}</div>
+            <button type="button" id="start_button" class="btn btn-default">تاریخ</button>
+            <script type="text/javascript">
+                Calendar.setup({
+                    inputField: "id_start",
+                    displayArea: "start_button",
+                    ifFormat: "%Y-%m-%d",
+                    dateType: "jalali",
+                    ifDateType: "gregorian",
+                    weekNumbers: false
+                });
+            </script>
+        </div>
+        {% csrf_token %}
+        <input class="btn btn-primary" type="submit" value="ثبت"/>
+    </form>
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#registerAppointmentModal">ثبت نوبت</button>
+<table class="table table-hover table-condensed table-bordered">
+    <thead>
+    <tr>
+        <th>نام</th>
+        <th>نام خانوادگی</th>
+        <th>شماره‌ی ملی</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody id="patient_list">
+        {% for a in appointments %}
+        <tr>
+        <td>{{ a.first_name }}</td>
+        <td>{{ a.last_name }}</td>
+        <td>{{ a.national_code }}</td>
+        <td>{{ a.start_time }}</td>
+        <td><a href="{% url "Radiology.views.reception"%}"
+                 class="btn btn-default btn-block">پذیرش بیمار</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+    <div id="registerAppointmentModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">اختصاص وقت</h4>
+                    <div class="modal-body">
+                        <form action="{% url 'Radiology.views.register_appointment' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="registerAppointmentFirstNameInput">نام</label>
+                                <input type="text" name="first_name" class="form-control"
+                                        id="registerAppointmentFirstNameInput"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerAppointmentLastNameInput">نام خانوادگی</label>
+                                <input type="text" name="last_name" class="form-control"
+                                        id="registerAppointmentLastNameInput"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerAppointmentNationalCodeInput">شماره‌ی ملی</label>
+                                <input type="text" name="national_code" class="form-control"
+                                       id="registerAppointmentNationalCodeInput"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="registerAppointmentTimeInput">زمان</label>
+                                <input type="text" name="start_time" class="form-control"
+                                       id="registerAppointmentTimeInput"/>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="registerAppointmentSubmit">ثبت</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">بازگشت</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/html" id="row-template">
+<tr>
+<td>###first_name###</td>
+<td>###last_name###</td>
+<td>###national_code###</td>
+<td>###start_time###</td>
+<td><a href="###url###"
+         class="btn btn-default btn-block">پذیرش بیمار</a></td>
+</tr>
+</script>
+{% endblock %}

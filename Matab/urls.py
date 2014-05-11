@@ -23,8 +23,6 @@ urlpatterns = patterns('',
     url(r'logout/$', views.logout_view),
     url(r'^reception/$', views.reception),
     url(r'^waitingList/$', views.waiting_list),
-    url(r'appointment/$', views.appointment_day),
-    url(r'appointment/([^/]+)/$', views.appointment),
     url(r'^fill_medical_history/$', views.fill_medical_history),
     url(r'^write_response/$', views.write_response),
     url(r'^factor/(\d+)/$', views.show_factor),
@@ -50,7 +48,8 @@ urlpatterns = patterns('',
     url(r'^accounting/insurance$', views.accounting_insurance),
     url(r'^accounting/complementary$', views.accounting_complementary),
     url(r'^accounting/therapist/$', views.accounting_therapist),
-
+    
+    url(r'^appointment/$', views.appointment),
 
     url(r'^register/patient/$', views.register_patient),
     url(r'^register/insurance/$', views.register_insurance),
@@ -58,12 +57,14 @@ urlpatterns = patterns('',
     url(r'^register/operation/$', views.register_operation),
     url(r'^register/complementary_insurance$', views.register_complementary_insurance),
     url(r'^register/good$', views.register_good),
+    url(r'^register/appointment$', views.register_appointment),
     
     url(r'^edit/good/$', views.edit_good),
 
 
     url(r'^session/patient/(\d+)/(.*)$', views.session_patient),
     url(r'^session/clear_patient$', views.session_clear_patient),
+    url(r'^session/patient_and_set_factor/(\d+)(.*)$', views.session_patient_and_set_factor),
 
     url(r'^ajax/find_patients/$', views.ajax_find_patients),
     url(r'^ajax/find_insurances/$', views.ajax_find_insurances),

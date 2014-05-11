@@ -1,0 +1,9 @@
+{
+    "success": true,
+    "appointment": {
+    	"first_name": "{{ appointment.first_name}}",
+        "last_name": "{{ appointment.last_name }}",
+        "national_code": "{{ appointment.national_code }}",
+        "start_time": "{{ appointment.start_time }}"
+    }
+}
