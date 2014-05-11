@@ -111,9 +111,10 @@ class Factor(models.Model):
     patient_account_id = models.IntegerField()
     receptor_first_name = models.CharField(max_length=50)
     receptor_last_name = models.CharField(max_length=50)
-    MRI_operator_first_name = models.CharField(max_length=50, null=True, blank=True)
-    MRI_operator_last_name = models.CharField(max_length=50, null=True, blank=True)
-    MRI_prepare_first_name = models.CharField(max_length=50, null=True, blank=True)
+    operator_first_name = models.CharField(max_length=50, null=True, blank=True)
+    operator_last_name = models.CharField(max_length=50, null=True, blank=True)
+    technisian_first_name = models.CharField(max_length=50, null=True, blank=True)
+    technisian_last_name = models.CharField(max_length=50, null=True, blank=True)
     therapist_first_name = models.CharField(max_length=30)
     therapist_last_name = models.CharField(max_length=50)
     therapist_medical_number = models.CharField(max_length=20)
@@ -143,6 +144,10 @@ class Factor(models.Model):
     patient_paid = models.BooleanField(default=False)
     insurance_paid = models.BooleanField(default=False)
     complementary_paid = models.BooleanField(default=False)
+    factor_date = models.DateField()
+    patient_pay_date = models.DateField(null=True, blank=True)
+    insurance_pay_date = models.DateField(null=True, blank=True)
+    complementary_pay_date = models.DateField(null=True, blank=True)
 
     def get_patient(self):
         return Patient.objects.get(

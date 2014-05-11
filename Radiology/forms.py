@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models.query_utils import Q
+from django.utils.datetime_safe import date
 
 
 username_label = "نامِ کاربری"
@@ -191,21 +192,36 @@ class FactorForm(forms.Form):
             insurance_share = cd['operation_governmental_fee'] * insurance.portion / 100
             complementary_share = cd['operation_governmental_fee'] - insurance_share
             cd['patient_paid'] = True
+            cd['patient_pay_date'] = date.today()
         else:
             insurance_share = cd['operation_governmental_fee'] * insurance.portion / 100
             patient_share = cd['operation_individual_fee'] - insurance_share
             complementary_share = 0
             cd['complementary_paid'] = True
+            cd['complementary_pay_date'] = date.today()
         cd['patient_share'] = patient_share
         cd['insurance_share'] = insurance_share
         cd['insurance_complementary_share'] = complementary_share
         cd['total_fee'] = patient_share + cd['operation_cloth_fee'] + cd['operation_film_fee']
+        cd['factor_date'] = date.today()
         return cd
 
 
 class MedicalHistoryForm(forms.ModelForm):
     class Meta:
         model = MedicalHistory
+        
+class GoodForm(forms.Form):
+    name = forms.CharField(max_length = 30)
+    fee = forms.FloatField()
+    quantity = forms.IntegerField()
+    
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        if Good.objects.filter(name=name):
+            raise ValidationError("Good already exists.")
+        return name
+        
 
 
 class PatientForm(forms.Form):
