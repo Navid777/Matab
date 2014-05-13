@@ -7,3 +7,15 @@ body{
     margin-right: auto;
     margin-left: auto;
 }
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.modal-footer button, .modal-footer a {
+    float: left;
+}
