@@ -2,8 +2,8 @@ $(document).ready(function(){
 	var $goodIdSelect = $("#goodIdSelect");
 	$goodIdSelect.on('change', function(){
 		if(!$goodIdSelect.val()) {
-			$("#goodQuantity").html("");
-			$("#goodFee").html("");
+			$("#goodQuantity").val("");
+			$("#goodFee").val("");
 			$("#goodEditButton").attr("disabled", "disabled");
 			$("#addGoodToStoreButton").attr("disabled", "disabled");
 			return ;
@@ -17,8 +17,8 @@ $(document).ready(function(){
             dataType: 'json',
             success: function(data) {
                 if (data.success) {
-                	$("#goodQuantity").html(data.good.quantity);
-                	$("#goodFee").html(data.good.fee);
+                	$("#goodQuantity").val(data.good.quantity);
+                	$("#goodFee").val(data.good.fee);
                 } else {
                     //TODO
                 }
@@ -28,8 +28,8 @@ $(document).ready(function(){
 	
 	$("#editGoodModal").on('shown.bs.modal', function() {
 		$("#editGoodNameInput").val($goodIdSelect.find(":selected").text());
-		$("#editGoodFeeInput").val($("#goodFee").html());
-		$("#editGoodQuantityInput").val($("#goodQuantity").html()) ;
+		$("#editGoodFeeInput").val($("#goodFee").val());
+		$("#editGoodQuantityInput").val($("#goodQuantity").val()) ;
 	});
 	
 	$editGoodForm = $("#editGoodModal").find("form");

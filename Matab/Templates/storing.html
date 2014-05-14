@@ -9,31 +9,35 @@
 {% endblock %}
 
 {% block content %}
-      <form class="form-signin" role="form" method="post" action="">
-          {% csrf_token %}
+<div class="col-md-6 col-md-offset-3">
         <h2 class="form-signin-heading">لطفا نام کالا را انتخاب کنید</h2>
+      <div class="form-group">
         <select name="good_id" id="goodIdSelect" class="form-control" placeholder="نام کالا" required autofocus>
         	<option value=""> </option>
         	{%for g in goods%}
         	<option value="{{g.id}}">{{g.name}}</option>
         	{%endfor%}
         </select>
+</div>
+      <div class="form-group">
         <label for="goodFee" class="label label-primary">قیمت محصول</label>
-        <label id="goodFee"> </label>
+        <input type="text" class="form-control" readonly id="goodFee" />
+          </div>
+      <div class="form-group">
         <label for="goodQuantity" class="label label-primary">موجودی در انبار</label>
-        <label id="goodQuantity"> </label>
-      </form>
-      <button type="button" id="goodEditButton" class="btn btn-primary" data-toggle="modal" data-target="#editGoodModal" disabled="disabled">
+        <input type="text" class="form-control" readonly id="goodQuantity" />
+       </div>
+      <a href="{% url "Radiology.views.reception" %}" class="btn btn-default">بازگشت</a>
+      <button type="button" id="goodEditButton" class="btn btn-primary float-left" data-toggle="modal" data-target="#editGoodModal" disabled="disabled">
       	ویرایش کالا
       	</button>
-      <button type="button" id="registerGoodButton" class="btn btn-primary" data-toggle="modal" data-target="#registerGoodModal">
+      <button type="button" id="registerGoodButton" class="btn btn-primary float-left" data-toggle="modal" data-target="#registerGoodModal">
       	ثبت کالای جدید
       </button>
-      <button type="button" id="addGoodToStoreButton" class="btn btn-primary" data-toggle="modal" data-target="#addGoodToStoreModal" disabled="disabled">
+      <button type="button" id="addGoodToStoreButton" class="btn btn-primary float-left" data-toggle="modal" data-target="#addGoodToStoreModal" disabled="disabled">
       	افزودن به موجودی انبار
       </button>
-      <a href="{% url "Radiology.views.reception" %}" class="btn btn-default">بازگشت</a>
-      
+      </div>
       <div id="registerGoodModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
