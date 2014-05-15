@@ -52,20 +52,6 @@
 			<td>مبلغ کل</td>
 			<td>{{factor.total_fee}}</td>
 		</tr>
-		<tr>
-			<td>سهم بیمه</td>
-			<td>{{factor.insurance_share}}</td>
-		</tr>
-		<tr>
-			<td>سهم بیمار</td>
-			<td>{{factor.patient_share}}</td>
-		</tr>
-		{%if factor.has_complementary%}
-		<tr>
-			<td>سهم بیمه تکمیلی</td>
-			<td>{{factor.complementary_share}}</td>
-		</tr>
-		{%endif%}
 	</table>
     <hr class="no-printable"/>
 	<div class="no-printable factor_buttons">
@@ -73,6 +59,42 @@
 	<a href="{% url 'Radiology.views.reception' %}" class="btn btn-default">افزودن به بدهکاری</a>
 	<button id="factorPaid" data-id="{{ factor.id }}" class="btn btn-primary"
             data-url="{% url 'Radiology.views.ajax_patient_pay_factor' %}">پرداخت و چاپ</button>
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#payFactorModal">پرداخت بخشی از فاکتور </button>
     <a href="{% url 'Radiology.views.reception' %}" id="return" class="btn btn-primary hide">بازگشت</a>
 	</div>
+    <div id="payFactorModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">پرداخت فاکتور</h4>
+                    <div class="modal-body">
+                        <form action="{% url 'Radiology.views.ajax_patient_pay_partial_factor' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                            	<input type="number" name="id" value="{{factor.id}}" hidden="hidden"/>
+                                <label for="payFactorTotalInput">مبلغ کل</label>
+                                <input type="number" name="total_fee" class="form-control"
+                                        id="payFactorTotalInput" readonly="readonly" value="{{ factor.total_fee }}"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="payFactorDebtInput">مبلغ بدهی</label>
+                                <input type="number" name="debt_amount" class="form-control"
+                                        id="payFactorDebtInput" readonly="readonly" value="{{factor.patient_debt_amount}}"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="payFactorPayAmountInput">مبلغ پرداختی</label>
+                                <input type="number" name="pay_amount" class="form-control"
+                                        id="payFactorPayAmountInput"/>
+                            </div>
+                           </form>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="payFactorSubmit">پرداخت فاکتور</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">بازگشت</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+       </div>
+      </div>
 {%endblock%}

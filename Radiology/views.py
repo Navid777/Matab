@@ -6,6 +6,7 @@ from accounting import interface as accounting
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.db.models.sql.datastructures import Date
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -164,7 +165,7 @@ def waiting_list(request):
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-def accounting(request):
+def accounting_page(request):
     return render(request, 'accounting.html')
 
 @user_logged_in
@@ -207,6 +208,8 @@ def accounting_personnel(request):
 def accounting_insurance(request):
     insurance = Insurance.objects.get(id=request.session['insurance_id'])
     factors = None
+    start_date = None
+    end_date = None
     if request.method == "POST":
         form = CalendarTestForm(request.POST)
         if form.is_valid():
@@ -216,17 +219,31 @@ def accounting_insurance(request):
             factors = Factor.objects.filter(insurance_type=insurance.type,
                                             insurance_category=insurance.category,
                                             factor_date__gte=start_date,
-                                            factor_date__lte=end_date
+                                            factor_date__lte=end_date,
+                                            insurance_paid=False,
             ).distinct()
         else:
             print request.POST
             print form.errors
     else:
         form = CalendarTestForm()
+    total_governmental_fee = 0
+    total_share = 0
+    factor_count = 0
+    if factors:
+        for factor in factors:
+            total_share += factor.insurance_share
+            total_governmental_fee += factor.operation_governmental_fee
+            factor_count += 1
     return render(request, 'accounting_insurance.html', {
         'factors': factors,
         'form':form,
         'insurance':insurance,
+        'total_governmental_fee':total_governmental_fee,
+        'total_share': total_share,
+        'factor_count': factor_count,
+        'start_date': start_date,
+        'end_date': end_date,
     })
     
 @user_logged_in
@@ -235,6 +252,8 @@ def accounting_insurance(request):
 def accounting_complementary(request):
     complementary = ComplementaryInsurance.objects.get(id=request.session['complementary_id'])
     factors = None
+    start_date = None
+    end_date = None
     if request.method == "POST":
         form = CalendarTestForm(request.POST)
         if form.is_valid():
@@ -243,17 +262,31 @@ def accounting_complementary(request):
             end_date = cd['end']
             factors = Factor.objects.filter(insurance_complementary=complementary.type,
                                             factor_date__gte=start_date,
-                                            factor_date__lte=end_date
+                                            factor_date__lte=end_date,
+                                            complementary_paid=False,
             ).distinct()
         else:
             print request.POST
             print form.errors
     else:
         form = CalendarTestForm()
+    total_governmental_fee = 0
+    total_share = 0
+    factor_count = 0
+    if factors:
+        for factor in factors:
+            total_governmental_fee += factor.operation_governmental_fee
+            total_share += factor.insurance_complementary_share
+            factor_count += 1
     return render(request, 'accounting_complementary.html', {
         'factors': factors,
         'form':form,
         'complementary':complementary,
+        'total_governmental_fee':total_governmental_fee,
+        'total_share': total_share,
+        'factor_count': factor_count,
+        'start_date':start_date,
+        'end_date': end_date,
     })
     
 @user_logged_in
@@ -287,11 +320,16 @@ def accounting_therapist(request):
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-@exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.log_patient_in'))
+@exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.choose_patient'))
 def accounting_patient(request):
     patient = Patient.objects.get(id=request.session['patient_id'])
     total_debt = 0
     factors = None
+    start_date = datetime.now()
+    end_date = datetime.now()
+    total_fee = 0
+    total_paid = 0
+    factor_count = 0
     if request.method == "POST":
         form = CalendarTestForm(request.POST)
         if form.is_valid():
@@ -310,17 +348,26 @@ def accounting_patient(request):
         form = CalendarTestForm()
     if factors:
         for factor in factors:
-            total_debt += factor.total_fee
+            total_debt += factor.patient_debt_amount
+            total_fee += factor.total_fee
+            total_paid += factor.patient_paid_amount
+            factor_count += 1
     return render(request, 'accounting_patient.html', {
         'factors': factors,
         'total_debt': total_debt,
         'form':form,
+        'start_date':start_date,
+        'end_date':end_date, 
+        'total_debt':total_debt,
+        'total_fee': total_fee,
+        'total_paid':total_paid,
+        'factor_count': factor_count,
     })
 
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-def log_patient_in(request):
+def choose_patient(request):
     if request.method == "POST":
         try:
             patient = Patient.objects.get(national_code=request.POST['national_code'],
@@ -329,8 +376,8 @@ def log_patient_in(request):
             request.session['patient_id'] = patient.id
             return redirect(accounting_patient)
         except Patient.DoesNotExist:
-            return redirect(log_patient_in)
-    return render(request, 'log_patient_in.html')
+            return redirect(choose_patient)
+    return render(request, 'choose_patient.html')
 
 
 @user_logged_in
@@ -677,6 +724,32 @@ def ajax_patient_pay_factor(request):
     else:
         factor.patient_paid = True
         factor.patient_paid_amount = factor.total_fee
+    factor.save()
+    return render(request, 'json/patient_paid.json', {})
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def ajax_patient_pay_partial_factor(request):
+    if request.method != "POST":
+        raise Http404
+    factor = get_object_or_404(Factor, id=request.POST['id'])
+    pay_amount = float(request.POST['pay_amount'])
+    #TODO: descriptions
+    if factor.patient_paid:
+        return render(request, 'json/error.json', {
+            'errors': ['پرداخت شده است.'],
+        })
+    if factor.patient_debt_amount > pay_amount :
+        accounting.move_credit(factor.patient_account_id, accounting.get_static_account("office"),
+                               pay_amount, "", "", "", datetime.now(), factor.id)
+        if factor.patient_debt_amount == pay_amount:
+            factor.patient_paid = True
+        factor.patient_paid_amount += pay_amount
+        factor.patient_debt_amount -= pay_amount
+    else:
+        return render(request, 'json/error.json', {
+                    'errors':['مبلغ پرداختی از بدهی بیشتر است']
+                })
     factor.save()
     return render(request, 'json/patient_paid.json', {})
 

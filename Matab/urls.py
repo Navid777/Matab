@@ -31,18 +31,18 @@ urlpatterns = patterns('',
     url(r'^sign_technician_out/$', views.sign_technician_out),
     url(r'^show_unpaid_factors/$', views.show_unpaid_factors),
     url(r'^add_good_to_store/$', views.add_good_to_store),
-    url(r'^log_patient_in/$', views.log_patient_in ),
     
     
     url(r'^choose/personnel/$', views.choose_personnel),
     url(r'^choose/insurance/$', views.choose_insurance),
     url(r'^choose/complementary/$', views.choose_complementary),
     url(r'^choose/therapist/$', views.choose_therapist),
+    url(r'^choose/patient/$', views.choose_patient ),
     
     
     url(r'^storing/$', views.storing),
     
-    url(r'^accounting/$', views.accounting),
+    url(r'^accounting/$', views.accounting_page),
     url(r'^accounting/patient$', views.accounting_patient),
     url(r'^accounting/personnel$', views.accounting_personnel),
     url(r'^accounting/insurance$', views.accounting_insurance),
@@ -72,6 +72,7 @@ urlpatterns = patterns('',
     url(r'^ajax/find_operations/$', views.ajax_find_operations),
     url(r'^ajax/find_patients_list/$', views.ajax_find_patients_list),
     url(r'^ajax/patient_pay_factor/$', views.ajax_patient_pay_factor),
+    url(r'^ajax/patient_pay_partial_factor/$', views.ajax_patient_pay_partial_factor),
     url(r'^ajax/find_good/$', views.ajax_find_good),
 
     url(r'^test_calendar/$', views.test_calendar),

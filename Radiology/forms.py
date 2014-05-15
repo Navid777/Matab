@@ -197,7 +197,8 @@ class FactorForm(forms.Form):
         cd['factor_date'] = date.today()
         if cd['discount']:
             cd['total_fee'] -= cd['discount']
-        if cd['total_fee'] == cd['patient_paid_amount']:
+        cd['patient_debt_amount'] = cd['total_fee']
+        if cd['patient_debt_amount'] == 0:
             cd['patient_paid'] = True
             cd['patient_pay_date'] = date.today()
         return cd
