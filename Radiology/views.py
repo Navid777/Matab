@@ -675,13 +675,16 @@ def ajax_find_operations(request):
         raise Http404()
     filters = {}
     if 'codeography' in request.POST:
-        print "here"
         operations = Operation.objects.filter(codeography=request.POST['codeography'])
-        count = operations.count
+        count = operations.count()
         if count == 0:
             operation = None
         else:
             operation = operations[0]
+        print render(request, 'json/operation.json', {
+                    'count': count,
+                    'operation':operation,
+               })
         return render(request, 'json/operation.json', {
                     'count': count,
                     'operation':operation,
@@ -691,6 +694,7 @@ def ajax_find_operations(request):
     if 'name' in request.POST:
         filters['name'] = request.POST['name']
     operations = Operation.objects.filter(**filters)
+    print filters
     if 'type' in filters:
         types = None
     else:
@@ -699,9 +703,16 @@ def ajax_find_operations(request):
         names = None
     else:
         names = operations.values_list('name', flat=True).distinct()
+    if 'codeography' in request.POST:
+        codeographies = None
+    else:
+        print "Ey baba"
+        codeographies = operations.values_list('codeography', flat=True).distinct()
+        print codeographies
     return render(request, 'json/operations.json', {
         'types': types,
         'names': names,
+        'codeographies':codeographies,
     })
 
 

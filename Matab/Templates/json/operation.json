@@ -1,12 +1,12 @@
 {
     "success": true,
-    "count": {% if count %} {{ count }} {% else %} 0 {% endif %},
-    {% if operation %}
-    "operation": {
+    "count": {% if count %}{{ count }}{% else %}0{% endif %}    
+    {% if operation %},
+    "operation":{
         "type": "{{ operation.type }}",
         "codeography": "{{ operation.codeography }}",
         "name":"{{operation.name}}",
-        "individual_fee": "{{ operation.individual_fee }}",
+        "individual_fee": "{{operation.individual_fee}}",
         "governmental_fee": "{{operation.governmental_fee}}",
         "medical_fee":"{{operation.medical_fee}}",
         "film_id": "{{operation.film_id}}",

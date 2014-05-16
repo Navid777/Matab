@@ -152,6 +152,7 @@ $(document).ready(function() {
                         $therapistMedicalNumber.parent().removeClass('has-error').addClass('has-success');
                         $therapistFirstName.val(data.therapists[0].first_name);
                         $therapistLastName.val(data.therapists[0].last_name);
+                        $("#therapistVisitDateInput").focus();
                     }
                 } else {
                     //TODO
@@ -213,6 +214,24 @@ $(document).ready(function() {
         });
     });
     
+    $operationName.on('change',function(){
+    	$operationCodeography.val("");
+        $.ajax({
+            type: "POST",
+            url: "/ajax/find_operations/",
+            data: {name: $operationName.val()},
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    $operationCodeography.val(data.codeographies[0]);
+                } else {
+                    //TODO
+                }
+            }
+        });
+    	
+    });
+    
     $operationCodeography.on('blur', function(){	
         if (!$operationCodeography.val()) return;
         $.ajax({
@@ -223,7 +242,8 @@ $(document).ready(function() {
             success: function(data) {
                 if (data.success) {
                     if (data.count === 0) {
-                    	operationCodeography.val("");
+                    	$operationCodeography.val("");
+                    	$operationName.find("option:selected").prop("selected", false);
                     } else {
                     	if($operationType.find("option[value='"+data.operation.type+"']").length > 0) {
 						$operationType.find("option[value='"+data.operation.type+"']").prop("selected", true);
