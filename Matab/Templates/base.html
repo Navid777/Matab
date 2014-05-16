@@ -49,7 +49,7 @@
             {% if user.is_authenticated %}
                 {% if user.usertype.type == USER_TYPES.RECEPTOR %}
                 <li class="{% active 'Radiology.views.reception' %}"><a href="{% url "Radiology.views.reception" %}">پذیرش</a></li>
-                <li><a href="{% url "Radiology.views.accounting" %}">حساب‌داری</a></li>
+                <li><a href="{% url "Radiology.views.accounting_page" %}">حساب‌داری</a></li>
                 <li><a href="{% url "Radiology.views.storing" %}">انبارگردانی</a></li>
                 <li><a href="{% url "Radiology.views.appointment" %}">وقت دهی</a></li>
                 <li><a href=""></a></li>

@@ -29,6 +29,11 @@
                     </h3>
                 </div>
                 <div class='panel-body'>
+                    <div class="form-group">
+                        <label for="patientNationalCodeInput">شماره‌ی ملی</label>
+                        <input name="patient_national_code" type="number" class="form-control"
+                               id="patientNationalCodeInput"/>
+                    </div>
                     <div class='form-group'>
                         <label for='patientFirstNameInput'>نام</label>
                         <input name="patient_first_name" type='text' class='form-control'
@@ -38,11 +43,6 @@
                         <label for='patientLastNameInput'> نام خانوادگی</label>
                         <input name="patient_last_name" type='text' class='form-control'
                                id='patientLastNameInput'/>
-                    </div>
-                    <div class="form-group">
-                        <label for="patientNationalCodeInput">شماره‌ی ملی</label>
-                        <input name="patient_national_code" type="number" class="form-control"
-                               id="patientNationalCodeInput"/>
                     </div>
                 </div>
 
@@ -64,7 +64,7 @@
                         </select>
                     </div>
                     <div class='form-group'>
-                        <label for='insuranceCategorySelect'>گونه‌ی بیمه</label>
+                        <label for='insuranceCategorySelect'>دسته‌ی بیمه</label>
                         <select name="insurance_category" id="insuranceCategorySelect" class="form-control chosen-select">
                             <option value="" selected></option>
                         </select>
@@ -174,7 +174,7 @@
                             <option value="" selected> </option>
                         </select>
                     </div>
-                    </div>
+                    
                     <div class='form-group'>
                         <label for='operationCommentInput'>توضیحات</label>
                         <input type="text" name="comment" class="form-control"
@@ -192,7 +192,6 @@
                                id="operationClothCheckbox"/>
                     </div>
                 </div>
-
             </div>
         </div>
         <input type='submit' class='btn btn-primary btn-lg center-block' value="ثبت اطلاعات">
@@ -217,9 +216,9 @@
                                         id="registerPatientLastNameInput"/>
                             </div>
                             <div class="form-group">
-                                <label for="registerPatientNationalCode">شماره‌ی ملی</label>
+                                <label for="registerPatientNationalCodeInput">شماره‌ی ملی</label>
                                 <input type="text" name="national_code" class="form-control"
-                                       id="registerPatientNationalCode"/>
+                                       id="registerPatientNationalCodeInput"/>
                             </div>
                         </form>
                     </div>

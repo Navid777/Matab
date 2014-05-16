@@ -15,8 +15,7 @@ $(document).ready(function() {
                         $patientFirstName.parent().removeClass('has-success');
                         $patientLastName.parent().removeClass('has-success');
                         $patientNationalCode.parent().removeClass('has-success').addClass('has-error');
-                        $patientFirstName.val("");
-                        $patientLastName.val("");
+                        $("#registerPatientModal").modal('show');
                     } else {
                         $patientFirstName.parent().removeClass('has-error');
                         $patientLastName.parent().removeClass('has-error');
@@ -213,6 +212,9 @@ $(document).ready(function() {
     var $patientForm = $("#registerPatientModal").find('form');
     var $patientModal = $("#registerPatientModal");
     $patientModal.on('shown.bs.modal', function() {
+    	$patientModal.find("#registerPatientFirstNameInput").val($patientFirstName.val());
+    	$patientModal.find("#registerPatientLastNameInput").val($patientLastName.val());
+    	$patientModal.find("#registerPatientNationalCodeInput").val($patientNationalCode.val());
     	$patientModal.find("#registerPatientFirstNameInput").focus();
     });
     $("#registerPatientSubmit").on('click', function() {

@@ -14,9 +14,15 @@
     <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-setup.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-fa.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/accounting.js"></script>
 {% endblock %}
 
 {% block content %}
+<a href="{% url "Radiology.views.choose_therapist" %}">
+	<label class="label label-info">
+		{{ therapist.first_name }} {{ therapist.last_name }}
+		</label>
+	</a>
     <form action="" method="post">
         <div class="form-group">
             <div style="display: none;">{{ form.start }}</div>
@@ -51,13 +57,69 @@
     </form>
 	
 	{% if factors%}
-	<table>
+		<div class="panel panel-default">
+		<div class="panel panel-heading">
+			اطلاعات کلی فاکتورها
+		</div>
+	<table class="table table-bordered table-condensed table-hover">
+		<thead>
+		<tr>
+			<td>تعداد فاکتور</td>
+			<td>مجموع پرداختی بیمار</td>
+			<td>مجموع سهم بیمه</td>
+			<td>مجموع سهم بیمه مکمل</td>
+			<td>تاریخ شروع فاکتورها</td>
+			<td>تاریخ پایان فاکتورها</td>
+		</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>{{ factor_count }}</td>
+				<td> {{ total_fee }}</td>
+				<td> {{ total_insurance_share }}</td>
+				<td> {{ total_complementary_share }}</td>
+				<td> {{ start_date }}</td>
+				<td> {{ end_date }}</td>
+			</tr>
+		</tbody>
+	</table>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel panel-heading">
+			اطلاعات جزیی فاکتورها
+		</div>
+	<table id="factors_table" class="table table-bordered table-condensed table-hover">
+		<thead>
+		<tr>
+			<td><a href="#" class="delete label label-danger">#</a></td>
+			<td><a href="#" class="delete label label-danger">تاریخ</a></td>
+			<td><a href="#" class="delete label label-danger">مبلغ پرداختی بیمار</a></td>
+			<td><a href="#" class="delete label label-danger">سهم بیمه</a></td>
+			<td><a href="#" class="delete label label-danger">سهم بیمه مکمل</a></td>
+			<td><a href="#" class="delete label label-danger">نوع خدمت</a></td>
+			<td><a href="#" class="delete label label-danger">کدگرافی خدمت</a></td>
+			<td><a href="#" class="delete label label-danger">نام بیمار</a></td>
+			<td><a href="#" class="delete label label-danger">کد ملی بیمار</a></td>
+		</tr>
+		</thead>
+		<tbody>
 		{% for factor in factors %}
 		<tr>
-			<td>فاکتور</td>
-			<td> {{factor.total_fee}} </td>
+			<td>{{ forloop.counter }}</td>
+			<td> {{factor.factor_date}} </td>
+			<td> {{ factor.total_fee}} </td>
+			<td> {{ factor.insurance_share }}</td>
+			<td> {{ factor.insurance_complementary_share }}</td>
+			<td> {{ factor.operation_type }}</td>
+			<td> {{ factor.operation_codeography }}</td>
+			<td> {{ factor.patient_first_name}} {{ factor.patient_last_name }}</td>
+			<td> {{factor.patient_national_code }} </td>
 		</tr>
 		{% endfor %}
+		</tbody>
 	</table>
+	</div>
+	<button id="factorsPrint">چاپ گزارش</button>
+	
 	{% endif %}
 {% endblock %}
