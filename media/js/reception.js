@@ -22,6 +22,7 @@ $(document).ready(function() {
                         $patientNationalCode.parent().removeClass('has-error').addClass('has-success');
                         $patientFirstName.val(data.patients[0].first_name);
                         $patientLastName.val(data.patients[0].last_name);
+                        $("#insuranceTypeSelect").focus();
                     }
                 } else {
                     //TODO
