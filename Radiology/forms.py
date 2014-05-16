@@ -266,7 +266,8 @@ class TherapistForm(forms.Form):
 
 class OperationForm(forms.Form):
     type = forms.CharField(max_length=30)
-    codeography = forms.CharField(max_length=30)
+    name = forms.CharField(max_length=30)
+    codeography = forms.IntegerField()
     individual_fee = forms.FloatField()
     governmental_fee = forms.FloatField()
     medical_fee = forms.FloatField()

@@ -118,7 +118,8 @@ class Factor(models.Model):
     therapist_medical_number = models.CharField(max_length=20)
     therapist_visit_date = models.DateField(null=True, blank=True)
     operation_type = models.CharField(max_length=30)
-    operation_codeography = models.CharField(max_length=30)
+    operation_name = models.CharField(max_length=30)
+    operation_codeography = models.IntegerField()
     operation_cloth = models.BooleanField()
     operation_governmental_fee = models.FloatField()
     operation_individual_fee = models.FloatField()
@@ -170,7 +171,8 @@ class Factor(models.Model):
     def get_operation(self):
         return Operation.objects.get(
             type=self.operation_type,
-            codeography=self.operation_codeography
+            codeography=self.operation_codeography,
+            name=self.operation_name,
         )
 
     def get_insurance(self):
@@ -194,7 +196,8 @@ class Good(models.Model):
     
 class Operation(models.Model):
     type = models.CharField(max_length=30)
-    codeography = models.CharField(max_length=30)
+    name = models.CharField(max_length=30)
+    codeography = models.IntegerField()
     individual_fee = models.FloatField()
     governmental_fee = models.FloatField()
     medical_fee = models.FloatField()

@@ -6,8 +6,7 @@
 
 {% block extrajs %}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/reception.js"></script>
-
-        <script type="text/javascript" src="{{ MEDIA_URL }}js/jalali.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jalali.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-setup.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-fa.js"></script>
@@ -168,9 +167,14 @@
                         </select>
                     </div>
                     <div class='form-group'>
-                        <label for='operationCodeographySelect'>کدگرافی خدمت</label>
-                        <select name="operation_codeography" class="form-control chosen-select"
-                                id="operationCodeographySelect">
+                        <label for='operationCodeographyInput'>کدگرافی خدمت</label>
+                        <input name="operation_codeography" class="form-control"
+                                id="operationCodeographyInput" type="number"/>
+                    </div>
+                    <div class='form-group'>
+                        <label for='operationNameSelect'>نام خدمت</label>
+                        <select name="operation_name" class="form-control chosen-select"
+                                id="operationNameSelect">
                             <option value="" selected> </option>
                         </select>
                     </div>
@@ -298,40 +302,6 @@
             </div>
         </div>
     </div>
-    <div id="registerInsuranceModal" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">ثبت بیمه جدید</h4>
-                    <div class="modal-body">
-                        <form action="{% url 'Radiology.views.register_insurance' %}" method="post">
-                            {% csrf_token %}
-                            <div class="form-group">
-                                <label for="registerInsuranceTypeInput">نوع بیمه</label>
-                                <input type="text" name="type" class="form-control"
-                                        id="registerInsuranceTypeInput"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="registerInsuranceCategoryInput"> دسته بیمه</label>
-                                <input type="text" name="category" class="form-control"
-                                        id="registerInsuranceCategoryInput"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="registerInsurancePortionInput">سهم بیمه</label>
-                                <input type="text" name="portion" class="form-control"
-                                       id="registerInsurancePortionInput"/>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="registerInsuranceSubmit">ثبت</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">بازگشت</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-       </div>
     <div id="registerComplementaryInsuranceModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -371,6 +341,11 @@
                                         id="registerOperationTypeInput"/>
                             </div>
                             <div class="form-group">
+                                <label for="registerOperationNameInput">نام</label>
+                                <input type="text" name="name" class="form-control"
+                                        id="registerOperationNameInput"/>
+                            </div>
+                            <div class="form-group">
                                 <label for="registerOperationCodeographyInput">کدگرافی</label>
                                 <input type="text" name="codeography" class="form-control"
                                         id="registerOperationCodeographyInput"/>
@@ -393,7 +368,7 @@
                     		<div class='form-group'>
                       		  <label for='registerOperationFilm'>نوع فیلم</label>
                       		  <select name="film_id" id='registerOperationFilm' class='form-control chosen-select'>
-                           	  <option value="" selected></option>
+                           	  <option value="" selected> </option>
                           	  	{% for f in film_types %}
                             	    <option value="{{ f.id }}">{{ f.name }}</option>
                            	 	{% endfor %}

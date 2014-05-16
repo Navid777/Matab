@@ -674,22 +674,34 @@ def ajax_find_operations(request):
     if request.method != "POST":
         raise Http404()
     filters = {}
+    if 'codeography' in request.POST:
+        print "here"
+        operations = Operation.objects.filter(codeography=request.POST['codeography'])
+        count = operations.count
+        if count == 0:
+            operation = None
+        else:
+            operation = operations[0]
+        return render(request, 'json/operation.json', {
+                    'count': count,
+                    'operation':operation,
+               })
     if 'type' in request.POST:
         filters['type'] = request.POST['type']
-    if 'codeography' in request.POST:
-        filters['codeography'] = request.POST['codeography']
+    if 'name' in request.POST:
+        filters['name'] = request.POST['name']
     operations = Operation.objects.filter(**filters)
     if 'type' in filters:
         types = None
     else:
         types = operations.values_list('type', flat=True).distinct()
-    if 'codeography' in request.POST:
-        codeographies = None
+    if 'name' in request.POST:
+        names = None
     else:
-        codeographies = operations.values_list('codeography', flat=True).distinct()
+        names = operations.values_list('name', flat=True).distinct()
     return render(request, 'json/operations.json', {
         'types': types,
-        'codeographies': codeographies,
+        'names': names,
     })
 
 
@@ -897,6 +909,6 @@ def register_operation(request):
     if form.is_valid():
         cd = form.cleaned_data
         operation = Operation.objects.create(**cd)
-        return render(request, 'json/insurance.json', {
+        return render(request, 'json/operation.json', {
             'operation': operation,
         })

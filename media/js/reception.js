@@ -187,10 +187,12 @@ $(document).ready(function() {
     });
 
     var $operationType = $("#operationTypeSelect");
-    var $operationCodeography = $("#operationCodeographySelect");
+    var $operationCodeography = $("#operationCodeographyInput");
+    var $operationName = $("#operationNameSelect");
 
     $operationType.on('change', function() {
-        $operationCodeography.html("<option value='' selected></option>");
+        $operationName.html("<option value='' selected></option>");
+        $operationCodeography.val("");
         $.ajax({
             type: "POST",
             url: "/ajax/find_operations/",
@@ -198,10 +200,10 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(data) {
                 if (data.success) {
-                    for (var i in data.codeographies) {
-                        $operationCodeography.append(
-                            '<option value="' + data.codeographies[i] + '">'
-                                + data.codeographies[i] + '</option>'
+                    for (var i in data.names) {
+                        $operationName.append(
+                            '<option value="' + data.names[i] + '">'
+                                + data.names[i] + '</option>'
                         );
                     }
                 } else {
@@ -210,6 +212,37 @@ $(document).ready(function() {
             }
         });
     });
+    
+    $operationCodeography.on('blur', function(){	
+        if (!$operationCodeography.val()) return;
+        $.ajax({
+            type: "POST",
+            url: "/ajax/find_operations/",
+            data: {codeography: $operationCodeography.val()},
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    if (data.count === 0) {
+                    	operationCodeography.val("");
+                    } else {
+                    	if($operationType.find("option[value='"+data.operation.type+"']").length > 0) {
+						$operationType.find("option[value='"+data.operation.type+"']").prop("selected", true);
+						}
+                    	if($operationName.find("option[value='"+data.operation.name+"']").length > 0) {
+						$operationName.find("option[value='"+data.operation.name+"']").prop("selected", true);
+						}
+						else{
+							$operationName.append("<option value='"+data.operation.name+"'>"+data.operation.name+"</option>");
+							$operationName.find("option[value='"+data.operation.name+"']").prop('selected',true);
+						}
+                    }
+                } else {
+                    //TODO
+                }
+            }
+        });
+    });
+    
     var $patientForm = $("#registerPatientModal").find('form');
     var $patientModal = $("#registerPatientModal");
     $patientModal.on('shown.bs.modal', function() {
@@ -253,8 +286,8 @@ $(document).ready(function() {
     		success: function(data){
     			if(data.success) {
     				$insuranceComplementary.find("option:selected").prop("selected", false);
-					if($insuranceComplementary.find("option [value='"+data.complementary_insurance.type+"']").length > 0) {
-						$insuranceComplementary.find("option [value='"+data.complementary_insurance.type+"']").prop("selected", true);
+					if($insuranceComplementary.find("option[value='"+data.complementary_insurance.type+"']").length > 0) {
+						$insuranceComplementary.find("option[value='"+data.complementary_insurance.type+"']").prop("selected", true);
 					} else {
 						$insuranceComplementary.append("<option value='"+data.complementary_insurance.type+"' selected>"+ data.complementary_insurance.type+"</option>");
 						$insuranceComplementary.focus();
