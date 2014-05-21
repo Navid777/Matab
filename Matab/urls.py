@@ -38,6 +38,7 @@ urlpatterns = patterns('',
     url(r'^choose/complementary/$', views.choose_complementary),
     url(r'^choose/therapist/$', views.choose_therapist),
     url(r'^choose/patient/$', views.choose_patient ),
+    url(r'^choose/operation/$', views.choose_operation),
     
     
     url(r'^storing/$', views.storing),
@@ -59,7 +60,14 @@ urlpatterns = patterns('',
     url(r'^register/good$', views.register_good),
     url(r'^register/appointment$', views.register_appointment),
     
-    url(r'^edit/good/$', views.edit_good),
+
+    url(r'^edit$', views.edit ),
+    url(r'^edit/patient$', views.edit_patient),
+    url(r'^edit/therapist$', views.edit_therapist),
+    url(r'^edit/insurance$', views.edit_insurance),
+    url(r'^edit/complementary$', views.edit_complementary),
+    url(r'^edit/personnel$', views.edit_personnel),
+    url(r'^edit/operation/$', views.edit_operation),
 
 
     url(r'^session/patient/(\d+)/(.*)$', views.session_patient),
@@ -74,6 +82,12 @@ urlpatterns = patterns('',
     url(r'^ajax/patient_pay_factor/$', views.ajax_patient_pay_factor),
     url(r'^ajax/patient_pay_partial_factor/$', views.ajax_patient_pay_partial_factor),
     url(r'^ajax/find_good/$', views.ajax_find_good),
+    url(r'^ajax/edit/good/$', views.ajax_edit_good),
+    url(r'^ajax/edit/patient/$', views.ajax_edit_patient),
+    url(r'^ajax/edit/therapist/$', views.ajax_edit_therapist),
+    url(r'^ajax/edit/insurance/$', views.ajax_edit_insurance),
+    url(r'^ajax/edit/complementary/$', views.ajax_edit_complementary),
+    url(r'^ajax/edit/operation/$', views.ajax_edit_operation),
 
     url(r'^test_calendar/$', views.test_calendar),
 )

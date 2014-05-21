@@ -108,7 +108,7 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">ویرایش کالا</h4>
                     <div class="modal-body">
-                        <form action="{% url 'Radiology.views.edit_good' %}" method="post">
+                        <form action="{% url 'Radiology.views.ajax_edit_good' %}" method="post">
                             {% csrf_token %}
                             <div class="form-group">
                                 <label for="editGoodNameInput">نام</label>

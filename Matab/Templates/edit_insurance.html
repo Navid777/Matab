@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}
+ویرایش اطلاعات بیمه 
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/edit_insurance.js"></script>
+{% endblock %}
+
+{% block content %}
+	<form action="{% url 'Radiology.views.ajax_edit_insurance' %}"  id="editInsuranceForm" method="post">
+	{% csrf_token %}
+		<div class="form-group">
+			<label for="editInsuranceIdInput">شماره</label>
+			<input type="text" name="id" class="form-control"
+			 	id="editInsuranceIdInput" readonly="readonly" value="{{insurance.id}}"/>
+		</div>
+		<div class="form-group">
+			<label for="editInsuranceTypeInput">نوع</label>
+			<input type="text" name="type" class="form-control"
+			 	id="editInsuranceTypeInput" value="{{insurance.type}}"/>
+		</div>
+		<div class="form-group">
+			<label for="editInsuranceCategoryInput">دسته</label>
+			<input type="text" name="category" class="form-control"
+			 	id="editInsuranceCategoryInput" value="{{insurance.category}}"/>
+		</div>
+		<div class="form-group">
+			<label for="editInsurancePortionInput">سهم پرداختی</label>
+			<input type="text" name="portion" class="form-control"
+			 	id="editInsurancePortionInput" value="{{insurance.portion}}"/>
+		</div>
+	</form>
+    <button type="button" class="btn btn-primary" id="editInsuranceSubmit">ویرایش اطلاعات بیمه</button>
+
+
+{% endblock %}
+

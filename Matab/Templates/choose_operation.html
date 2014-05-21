@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}
+انتخاب خدمت
+{% endblock %}
+
+{% block extracss %}
+<link href="{{ MEDIA_URL }}css/monshi_signin.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+      <form class="form-signin" role="form" method="post" action="">
+          {% csrf_token %}
+        <h2 class="form-signin-heading">لطفا نام خدمت را انتخاب کنید</h2>
+        <select name="operation_id" class="form-control" placeholder="نام خدمت" required autofocus>
+        	{% for o in operations %}
+        	<option value="{{o.id}}">{{ o.type }} {{o.codeography}}</option>
+        	{%endfor%}
+        </select>
+        
+        <button class="btn btn-lg btn-primary btn-block" type="submit">انتخاب</button>
+        <a href="{% url 'Radiology.views.accounting_page' %}" id="return" class="btn btn-default btn-block">بازگشت</a>
+      </form>
+{% endblock %}

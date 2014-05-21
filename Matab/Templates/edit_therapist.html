@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}
+ویرایش اطلاعات پزشک معالج 
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/edit_therapist.js"></script>
+{% endblock %}
+
+{% block content %}
+	<form action="{% url 'Radiology.views.ajax_edit_therapist' %}"  id="editTherapistForm" method="post">
+	{% csrf_token %}
+		<div class="form-group">
+			<label for="editTherapistIdInput">شماره</label>
+			<input type="text" name="id" class="form-control"
+			 	id="editTherapistIdInput" readonly="readonly" value="{{therapist.id}}"/>
+		</div>
+		<div class="form-group">
+			<label for="editTherapistFirstNameInput">نام</label>
+			<input type="text" name="first_name" class="form-control"
+			 	id="editTherapistFirstNameInput" value="{{therapist.first_name}}"/>
+		</div>
+		<div class="form-group">
+			<label for="editTherapistLastNameInput">نام خانوادگی</label>
+			<input type="text" name="last_name" class="form-control"
+			 	id="editTherapistLastNameInput" value="{{therapist.last_name}}"/>
+		</div>
+		<div class="form-group">
+			<label for="editTherapistMedicalNumberInput">شماره نظام پزشکی</label>
+			<input type="text" name="medical_number" class="form-control"
+			 	id="editTherapistMedicalNumberInput" value="{{therapist.medical_number}}"/>
+		</div>
+	</form>
+    <button type="button" class="btn btn-primary" id="editTherapistSubmit">ویرایش اطلاعات پزشک معالج</button>
+
+
+{% endblock %}
+

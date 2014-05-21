@@ -379,6 +379,20 @@ def choose_patient(request):
             return redirect(choose_patient)
     return render(request, 'choose_patient.html')
 
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def choose_operation(request):
+    if request.method == "POST":
+        if 'operation_id' in request.POST:
+            request.session['operation_id'] = request.POST['operation_id']
+            return redirect(edit_operation)
+        else:
+            return redirect(choose_operation)
+    else:
+        operations = Operation.objects.all()
+        return render(request, 'choose_operation.html', {
+            'operations': operations,
+        })
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
@@ -776,25 +790,131 @@ def ajax_patient_pay_partial_factor(request):
     factor.save()
     return render(request, 'json/patient_paid.json', {})
 
-
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-def edit_good(request):
+def ajax_edit_good(request):
     if not request.method == "POST":
         raise Http404()
     if 'name' in request.POST:
         try:
-            print "Here"
             good = Good.objects.get(name=request.POST['name'])
             good.fee = request.POST['fee']
             good.quantity = request.POST['quantity']
             good.save()
             return render(request, 'json/good.json', {'good': good})
         except Good.DoesNotExist:
-            print "E"
             pass
     else:
         pass
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def ajax_edit_patient(request):
+    if not request.method == "POST":
+        raise Http404()
+    if 'id' in request.POST:
+        try:
+            patient = Patient.objects.get(id=request.POST['id'])
+            patient.first_name = request.POST['first_name']
+            patient.last_name = request.POST['last_name']
+            patient.national_code = request.POST['national_code']
+            #TODO: agar kode melli tekrari bood
+            patient.save()
+            return render(request, 'json/patient.json', {'patient': patient})
+        except Patient.DoesNotExist:
+            #TODO:
+            print "Does Not Exist"
+    else:
+        #TODO:
+        print "id nabood"
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def ajax_edit_operation(request):
+    if not request.method == "POST":
+        raise Http404()
+    if 'id' in request.POST:
+        try:
+            operation = get_object_or_404(Operation, id=request.POST['id'])
+            operation.type = request.POST['type']
+            operation.name = request.POST['name']
+            operation.codeography = request.POST['codeography']
+            operation.film_id = int(request.POST['film'])
+            operation.film_quantity = request.POST['film_quantity']
+            operation.individual_fee = request.POST['individual_fee']
+            operation.governmental_fee = request.POST['governmental_fee']
+            operation.medical_fee = request.POST['medical_fee']
+            #TODO: agar kode melli tekrari bood
+            operation.save()
+            return render(request, 'json/operation.json', {'operation': operation})
+        except Patient.DoesNotExist:
+            #TODO:
+            print "Does Not Exist"
+    else:
+        #TODO:
+        print "id nabood"
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def ajax_edit_therapist(request):
+    if not request.method == "POST":
+        raise Http404()
+    if 'id' in request.POST:
+        try:
+            therapist = get_object_or_404(Therapist, id=request.POST['id'])
+            therapist.first_name = request.POST['first_name']
+            therapist.last_name = request.POST['last_name']
+            therapist.medical_number = request.POST['medical_number']
+            #TODO: agar nezam pezeshki
+            therapist.save()
+            return render(request, 'json/therapist.json', {'therapist': therapist})
+        except Therapist.DoesNotExist:
+            #TODO:
+            return Http404()
+    else:
+        #TODO:
+        return Http404()
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def ajax_edit_insurance(request):
+    if not request.method == "POST":
+        raise Http404()
+    if 'id' in request.POST:
+        try:
+            insurance = get_object_or_404(Insurance, id=request.POST['id'])
+            insurance.type = request.POST['type']
+            insurance.category = request.POST['category']
+            insurance.portion = request.POST['portion']
+            #TODO: agar nezam pezeshki
+            insurance.save()
+            return render(request, 'json/insurance.json', {'insurance': insurance})
+        except Insurance.DoesNotExist:
+            #TODO:
+            return Http404()
+    else:
+        #TODO:
+        return Http404()
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def ajax_edit_complementary(request):
+    if not request.method == "POST":
+        raise Http404()
+    if 'id' in request.POST:
+        try:
+            complementary = get_object_or_404(ComplementaryInsurance, id=request.POST['id'])
+            complementary.type = request.POST['type']
+            #TODO: agar nezam pezeshki
+            complementary.save()
+            return render(request, 'json/complementary_insurance.json', {'complementary': complementary})
+        except ComplementaryInsurance.DoesNotExist:
+            #TODO:
+            return Http404()
+    else:
+        #TODO:
+        return Http404()
+
 
 
 @user_logged_in
@@ -923,3 +1043,55 @@ def register_operation(request):
         return render(request, 'json/operation.json', {
             'operation': operation,
         })
+        
+  
+  
+        
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def edit(request):
+    return render(request, 'edit.html')
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+@exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.choose_patient'))
+def edit_patient(request):
+    patient = get_object_or_404(Patient,id=request.session['patient_id'])
+    return render(request, 'edit_patient.html', {'patient':patient})
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+@exists_in_session_or_redirect('therapist_id', reverse_lazy('Radiology.views.choose_therapist'))
+def edit_therapist(request):
+    therapist = get_object_or_404(Therapist, id=request.session['therapist_id'])
+    return render(request, 'edit_therapist.html', {'therapist':therapist})
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def edit_personnel(request):
+    return render(request, 'edit.html')
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+@exists_in_session_or_redirect('insurance_id', reverse_lazy('Radiology.views.choose_insurance'))
+def edit_insurance(request):
+    insurance = get_object_or_404(Insurance, id=request.session['insurance_id'])
+    return render(request, 'edit_insurance.html', {'insurance':insurance})
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+@exists_in_session_or_redirect('complementary_id', reverse_lazy('Radiology.views.choose_complementary'))
+def edit_complementary(request):
+    complementary = get_object_or_404(ComplementaryInsurance, id=request.session['complementary_id'])
+    return render(request, 'edit_complementary.html', {'complementary':complementary})
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+@exists_in_session_or_redirect('operation_id', reverse_lazy('Radiology.views.choose_operation'))
+def edit_operation(request):
+    operation = get_object_or_404(Operation, id=request.session['operation_id'])
+    film_types = Good.objects.all()
+    return render(request, 'edit_operation.html', {'operation':operation,
+                                                   'film_types':film_types,
+                                                   'film':operation.film,
+                                                   })

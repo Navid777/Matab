@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}
+ویرایش اطلاعات
+{% endblock %}
+
+{% block content%}
+	<a href="{% url "Radiology.views.edit_patient" %}" class="btn btn-primary">ویرایش بیماران</a>
+	<a href="{% url "Radiology.views.edit_insurance" %}" class="btn btn-primary">ویرایش بیمه ها</a>
+	<a href="{% url "Radiology.views.edit_complementary" %}" class="btn btn-primary">ویرایش بیمه های مکمل</a>
+	<a href="{% url "Radiology.views.edit_therapist" %}" class="btn btn-primary">ویرایش پزشک های معالج</a>
+	<a href=" {% url "Radiology.views.edit_personnel" %}" class="btn btn-primary">ویرایش پرسنل</a>
+	<a href=" {% url "Radiology.views.edit_operation" %}" class="btn btn-primary">ویرایش خدمت</a>
+{% endblock %}

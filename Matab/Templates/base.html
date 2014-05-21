@@ -52,6 +52,7 @@
                 <li><a href="{% url "Radiology.views.accounting_page" %}">حساب‌داری</a></li>
                 <li><a href="{% url "Radiology.views.storing" %}">انبارگردانی</a></li>
                 <li><a href="{% url "Radiology.views.appointment" %}">وقت دهی</a></li>
+                <li><a href="{% url "Radiology.views.edit" %}">ویرایش اطلاعات</a></li>
                 <li><a href=""></a></li>
                 {% elif user.usertype.type == USER_TYPES.OPERATOR %}
                 <li class="{% active 'Radiology.views.waiting_list' %}"><a href="{% url "Radiology.views.waiting_list" %}">لیست بیماران</a></li>
