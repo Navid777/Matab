@@ -6,10 +6,12 @@ $(document).ready(function(){
 			$("#goodFee").val("");
 			$("#goodEditButton").attr("disabled", "disabled");
 			$("#addGoodToStoreButton").attr("disabled", "disabled");
+			$("#storingDetailedButton").attr("disabled", "disabled");
 			return ;
 		}
 		$("#goodEditButton").removeAttr("disabled");
 		$("#addGoodToStoreButton").removeAttr("disabled");	
+		$("#storingDetailedButton").removeAttr("disabled");
 		$.ajax({
             type: "POST",
             url: "/ajax/find_good/",

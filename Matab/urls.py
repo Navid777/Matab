@@ -42,6 +42,7 @@ urlpatterns = patterns('',
     
     
     url(r'^storing/$', views.storing),
+    url(r'^storing/detailed/$', views.storing_detailed),
     
     url(r'^accounting/$', views.accounting_page),
     url(r'^accounting/patient$', views.accounting_patient),

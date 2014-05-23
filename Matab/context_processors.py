@@ -1,4 +1,4 @@
-from Radiology.models import Patient, UserType, Technician
+from Radiology.models import Patient, UserType, Technician, Good
 
 
 def fetch_static_types(request):
@@ -25,4 +25,9 @@ def fetch_technician(request):
         }
     return {
         'technician': None
+    }
+
+def fetch_limited_goods(request):
+    return {
+            'limited_goods': Good.objects.filter(quantity__lte=30)
     }

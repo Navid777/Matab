@@ -89,10 +89,17 @@
             {% endif %}
             </ul>
         </div><!--/.nav-collapse -->
+
     </div>
 </div>
-
 <div class="container" id='mainContainer'>
+   		{% if user.is_authenticated%}
+   		{% for g in limited_goods%}
+   		<div class="alert alert-warning">
+   			تعداد {{ g.name }} از 30 کمتر شده است.
+   		</div>
+   		{%endfor%}
+   		{% endif%}
     {% block content %}{% endblock %}
 </div> <!-- /container -->
 

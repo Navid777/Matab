@@ -2,6 +2,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.template.defaultfilters import default
+from datetime import datetime
 
 # Create your models here.
 
@@ -19,7 +20,7 @@ class MedicalHistory(models.Model):
     uncontrolable_tension = models.BooleanField(verbose_name=u"تشنج غیرقابل کنترل")
     pregnancy = models.BooleanField(verbose_name=u"بارداری")
     surgery = models.BooleanField(verbose_name=u"جراحی")
-    trauma = models.BooleanField(verbose_name=u"زخم")
+    trauma = models.BooleanField(verbose_name=u"تروما")
     malt_fever = models.BooleanField(verbose_name=u"تب مالت")
     anemia = models.BooleanField(verbose_name=u"کم خونی")
     thyroid = models.BooleanField(verbose_name=u"تیرویید")
@@ -194,6 +195,32 @@ class Good(models.Model):
     quantity = models.IntegerField()
     fee = models.FloatField()
     
+    def add_good_to_store(self, quantity):
+        factor = GoodFactor()
+        factor.good_name = self.name
+        factor.good_id = self.id
+        factor.good_fee=  self.fee
+        factor.quantity = quantity
+        factor.date = datetime.now()
+        factor.store_quantity_before = self.quantity
+        factor.store_quantity_after = self.quantity + quantity
+        factor.save()
+        self.quantity += quantity
+        self.save()
+        
+    def get_good_from_store(self, quantity):
+        factor = GoodFactor()
+        factor.good_name = self.name
+        factor.good_id = self.id
+        factor.good_fee=  self.fee
+        factor.quantity = -1 * quantity
+        factor.date = datetime.now()
+        factor.store_quantity_before = self.quantity
+        factor.store_quantity_after = self.quantity + quantity
+        factor.save()
+        self.quantity += quantity
+        self.save()
+    
 class Operation(models.Model):
     type = models.CharField(max_length=30)
     name = models.CharField(max_length=30)
@@ -206,3 +233,13 @@ class Operation(models.Model):
 
     def __unicode__(self):
         return self.type
+
+#TODO:Systeme anbardari dorost shavad!
+class GoodFactor(models.Model): 
+    good_id = models.IntegerField()
+    good_name = models.CharField(max_length = 30)
+    good_fee = models.FloatField()
+    quantity = models.IntegerField()
+    store_quantity_before = models.IntegerField()
+    store_quantity_after = models.IntegerField()
+    date = models.DateTimeField()

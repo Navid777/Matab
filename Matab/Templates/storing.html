@@ -37,6 +37,9 @@
       <button type="button" id="addGoodToStoreButton" class="btn btn-primary float-left" data-toggle="modal" data-target="#addGoodToStoreModal" disabled="disabled">
       	افزودن به موجودی انبار
       </button>
+      <a href="{% url "Radiology.views.storing_detailed" %}"><button type="button" id="storingDetailedButton" class="btn btn-primary float-left" disabled="disabled">
+      	جزییات جنس
+      </button></a>
       </div>
       <div id="registerGoodModal" class="modal fade">
         <div class="modal-dialog">
@@ -135,4 +138,21 @@
             </div>
         </div>
     </div>
+	<table class="table table-hover table-condensed table-bordered">
+   	 <thead>
+   	 <tr>
+   	     <th>نام جنس</th>
+   	     <th>قیمت</th>
+   	     <th>تعداد</th>
+  	  </tr>
+  	  </thead>
+  	  <tbody id="good_list">
+  	      {% for g in goods %}
+  	      <tr>
+  	      <td>{{ g.name }}</td>
+  	      <td>{{ g.fee }}</td>
+  	      <td>{{ g.quantity }}</td>
+  	      {% endfor %}
+  	  </tbody>
+	</table>
 {% endblock %}

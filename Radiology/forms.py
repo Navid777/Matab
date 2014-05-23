@@ -113,6 +113,7 @@ class FactorForm(forms.Form):
     therapist_last_name = forms.CharField(max_length=50)
     therapist_medical_number = forms.CharField(max_length=20)
     operation_type = forms.CharField(max_length=30)
+    operation_name = forms.CharField(max_length=30)
     operation_codeography = forms.CharField(max_length=30)
     operation_cloth = forms.BooleanField(required=False)
     #operation_fee = forms.FloatField()

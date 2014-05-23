@@ -3,7 +3,7 @@ from Matab.decorators import *
 from Radiology.forms import *
 from Radiology.models import *
 from accounting import interface as accounting
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db.models.sql.datastructures import Date
@@ -79,11 +79,13 @@ def reception(request):
             factor = Factor.objects.create(**cd)
             if factor.operation_cloth:
                 cloth = Good.objects.get(name='لباس')
-                cloth.quantity -= 1
+                #cloth.quantity -= 1
+                cloth.get_good_from_store(1)
                 cloth.save()
             if factor.operation_film_quantity != 0:
                 film = Good.objects.get(name=factor.operation_film_name)
-                film.quantity -= factor.operation_film_quantity
+                #film.quantity -= factor.operation_film_quantity
+                film.get_good_from_store(factor.operation_film_quantity)
                 film.save()
             patient = factor.get_patient()
             request.session['patient_id'] = patient.id
@@ -173,8 +175,11 @@ def accounting_page(request):
 @exists_in_session_or_redirect('personnel_id', reverse_lazy('Radiology.views.choose_personnel'))
 def accounting_personnel(request):
     personnel = User.objects.get(id=request.session['personnel_id'])
-    total_debt = 0
+    total_fee = 0
     factors = None
+    codeographies = None
+    factor_count = 0
+    patient_count = 0
     if request.method == "POST":
         form = CalendarTestForm(request.POST)
         if form.is_valid():
@@ -194,11 +199,19 @@ def accounting_personnel(request):
         form = CalendarTestForm()
     if factors:
         for factor in factors:
-            total_debt += factor.total_fee
+            total_fee += factor.total_fee
+        codeographies = factors.values_list('operation_codeography', flat=True).distinct()
+        operations = Operation.objects.filter(codeography__in=codeographies)
+        factor_count = factors.count()
+        patient_count = factors.values_list('patient_national_code', flat=True).distinct().count()
     return render(request, 'accounting_personnel.html', {
         'factors': factors,
         'form':form,
         'personnel':personnel,
+        'total_fee':total_fee,
+        'factor_count':factor_count,
+        'patient_count':patient_count, 
+        'operations':operations,
     })
 
 
@@ -648,6 +661,7 @@ def ajax_find_good(request):
     if 'id' in request.POST:
         try:
             good = Good.objects.get(id=request.POST['id'])
+            request.session['good_id'] = good.id
             return render(request, 'json/good.json', {'good': good})
         except Good.DoesNotExist:
             #TODO:
@@ -924,7 +938,8 @@ def add_good_to_store(request):
         raise Http404()
     try:
         good = Good.objects.get(name=request.POST['name'])
-        good.quantity = good.quantity + int(request.POST['quantity'])
+        good.add_good_to_store(int(request.POST['quantity']))
+       # good.quantity = good.quantity + int(request.POST['quantity'])
         good.save()
         return render(request, 'json/good.json')
     except Good.DoesNotExist:
@@ -1095,3 +1110,35 @@ def edit_operation(request):
                                                    'film_types':film_types,
                                                    'film':operation.film,
                                                    })
+
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+@exists_in_session_or_redirect('good_id', reverse_lazy('Radiology.views.storing'))
+def storing_detailed(request):
+    good = Good.objects.get(id=request.session['good_id'])
+    factors = None
+    start_date = None
+    end_date = None
+    if request.method == "POST":
+        form = CalendarTestForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            start_date = cd['start']
+            end_date = cd['end']
+            end_date += timedelta(days=1, )
+            factors = GoodFactor.objects.filter(good_id=good.id,
+                                            date__gte=start_date,
+                                            date__lte=end_date,
+            ).distinct()
+        else:
+            print request.POST
+            print form.errors
+    else:
+        form = CalendarTestForm()
+    return render(request, 'storing_detailed.html', {
+        'factors': factors,
+        'form':form,
+        'good':good,
+        'start_date': start_date,
+        'end_date': end_date,
+    })

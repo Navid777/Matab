@@ -103,6 +103,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "Matab.context_processors.fetch_patient",
     "Matab.context_processors.fetch_technician",
     "Matab.context_processors.fetch_static_types",
+    "Matab.context_processors.fetch_limited_goods",
 )
 
 MIDDLEWARE_CLASSES = (

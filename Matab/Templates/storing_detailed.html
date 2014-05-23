@@ -1,10 +1,8 @@
 {% extends 'base.html' %}
 
 {% block title %}
-حسابداری پرسنل 
+جزییات جنس
 {% endblock %}
-
-
 {% block extracss %}
 <link rel="stylesheet" href="{{ MEDIA_URL }}css/calendar.css"/>
 {% endblock %}
@@ -15,10 +13,7 @@
     <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-setup.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-fa.js"></script>
 {% endblock %}
-
 {% block content %}
-    
-    <a href="{% url "Radiology.views.choose_personnel" %}"><label class="label label-info">{{personnel.first_name}} {{personnel.last_name}}</label></a>
     <form action="" method="post">
         <div class="form-group">
             <div style="display: none;">{{ form.start }}</div>
@@ -51,54 +46,28 @@
         {% csrf_token %}
         <input class="btn btn-primary" type="submit" value="ثبت"/>
     </form>
-	{% if factors%}
-	<div class="alert alert-info">
-		<div>
-		قیمت کل: {{total_fee}}
-		</div>
-		<div>
-			تعداد بیماران: {{patient_count}}
-		</div>
-		<div>
-			تعداد فاکتورها: {{factor_count}}
-		</div>
-	</div>
-	{% for o in operations%}
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne{{o.id}}">
-				{{o.type}} {{o.name}}
-			</a>
-		</div>
-		<div id="collapseOne{{o.id}}" class="panel-collapse collapse">	
-			<div class="panel-body">	
-				<table class="table table-bordered table-condensed table-hover">
-					<thead>
-						<tr>
-							<th>تاریخ</th>
-							<th>خدمت</th>
-							<th>قیمت پرداختی</th>
-							<th>نام پرسنل</th>
-							<th>نام بیمار</th>
-						</tr>
-					</thead>
-					{% for factor in factors %}
-					{% ifequal factor.operation_codeography o.codeography%}
-					<tr>
-						<td> {{factor.factor_date}} </td>
-						<td> {{factor.operation_type}}-{{factor.operation_name}} </td>
-						<td> {{factor.total_fee}}</td>
-						<td> {{personnel.first_name}} {{personnel.last_name}}</td>
-						<td> {{factor.patient_first_name}} {{factor.patient_last_name}}</td>
-					</tr>
-					{% endifequal %}
-					{% endfor %}
-				</table>
-			</div>
-		</div>
-	</div>
-	{% endfor %}
 
-	{% endif %}
+	<table class="table">
+		<thead>
+		<tr>
+			<th>تاریخ</th>
+			<th>نام جنس</th>
+			<th>تعداد</th>
+			<th>موجودی نهایی انبار</th>
+		</tr>
+		</thead>
+		{% for f in factors%}
+		<tr>
+			<td>{{f.date}}</td>
+			<td>{{f.good_name}}</td>
+			<td class="{% if f.quantity > 0%}label label-success{% else %}label label-danger{% endif %}">
+				{% if f.quantity > 0%}
+				+
+				{% endif %}
+				{{f.quantity}}
+			</td>
+			<td>{{f.store_quantity_after}}</td>
+		</tr>
+		{% endfor %}
+	</table>
 {% endblock %}
-
