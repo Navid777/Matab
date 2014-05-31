@@ -144,6 +144,8 @@ $(document).ready(function() {
                         $therapistFirstName.parent().removeClass('has-success');
                         $therapistLastName.parent().removeClass('has-success');
                         $therapistMedicalNumber.parent().removeClass('has-success').addClass('has-error');
+                        $therapistModal.modal('show');
+                        $("#registerTherapistMedicalNumber").val($therapistMedicalNumber.val());
                         $therapistFirstName.val("");
                         $therapistLastName.val("");
                     } else {
@@ -255,6 +257,7 @@ $(document).ready(function() {
 							$operationName.append("<option value='"+data.operation.name+"'>"+data.operation.name+"</option>");
 							$operationName.find("option[value='"+data.operation.name+"']").prop('selected',true);
 						}
+						$("#operationCommentInput").focus();
                     }
                 } else {
                     //TODO
@@ -283,6 +286,7 @@ $(document).ready(function() {
                     $patientLastName.val(data.patient.last_name);
                     $patientNationalCode.val(data.patient.national_code);
                     $("#registerPatientModal").modal('hide');
+                    $insuranceType.focus();
                 } else {
                     //TODO:
                     alert(data.errors);

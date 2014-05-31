@@ -177,7 +177,7 @@ def accounting_personnel(request):
     personnel = User.objects.get(id=request.session['personnel_id'])
     total_fee = 0
     factors = None
-    codeographies = None
+    operations = None
     factor_count = 0
     patient_count = 0
     if request.method == "POST":
