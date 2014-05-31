@@ -94,14 +94,16 @@
                                id="insurancePageInput" />
                     </div>  
                     <div class="form-group">
-                        <label for="insuranceExpDateInput">تاریخ اعتبار دفترچه</label>
-                        <input type="text" name="insurance_exp_date" class="form-control"
-                               id="insuranceExpDateInput" />
+                        <label for="insuranceExpDateDisplay">تاریخ اعتبار دفترچه</label>
+                        <input type="hidden" name="insurance_exp_date" class="form-control"
+                               id="insuranceExpDateInput"/>
+                        <button name="insurance_exp_date_display" class="form-control"
+                               id="insuranceExpDateDisplay"> </button>
                     </div>
 					<script type="text/javascript">
 						Calendar.setup({
 						inputField: "insuranceExpDateInput",
-						displayArea: "insuranceExpDateInput",
+						displayArea: "insuranceExpDateDisplay",
 						ifFormat: "%Y-%m-%d",
 						dateType: "jalali",
 						ifDateType: "gregorian",
@@ -135,12 +137,13 @@
                     </div>
                     <div class='form-group'>
                         <label for='therapistVisitDateInput'>تاریخ ویزیت</label>
-                        <input name="therapist_visit_date" type='text' class='form-control'
+                        <input name="therapist_visit_date" type='hidden' class='form-control'
                                id='therapistVisitDateInput'/>
+                        <button name="therapist_visit_date_display" class='form-control' id="therapistVisitDateDisplay"> </button>
 						<script type="text/javascript">
 							Calendar.setup({
 							inputField: "therapistVisitDateInput",
-							displayArea: "therapistVisitDateInput",
+							displayArea: "therapistVisitDateDisplay",
 							ifFormat: "%Y-%m-%d",
 							dateType: "jalali",
 							ifDateType: "gregorian",

@@ -154,7 +154,7 @@ $(document).ready(function() {
                         $therapistMedicalNumber.parent().removeClass('has-error').addClass('has-success');
                         $therapistFirstName.val(data.therapists[0].first_name);
                         $therapistLastName.val(data.therapists[0].last_name);
-                        $("#therapistVisitDateInput").focus();
+                        $("#therapistVisitDateDisplay").focus();
                     }
                 } else {
                     //TODO
@@ -405,10 +405,10 @@ $(document).ready(function() {
 
     	});
     });
-    $("#therapistVisitDateInput").on('focus', function(){
-    	$("#therapistVisitDateInput").trigger('click');
+    $("#therapistVisitDateDisplay").on('focus', function(){
+    	$("#therapistVisitDateDisplay").trigger('click');
     });
-    $("#insuranceExpDateInput").on('focus', function() {
-    	$("#insuranceExpDateInput").trigger('click');
+    $("#insuranceExpDateDisplay").on('focus', function() {
+    	$("#insuranceExpDateDisplay").trigger('click');
     });
 });
