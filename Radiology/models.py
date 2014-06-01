@@ -216,9 +216,9 @@ class Good(models.Model):
         factor.quantity = -1 * quantity
         factor.date = datetime.now()
         factor.store_quantity_before = self.quantity
-        factor.store_quantity_after = self.quantity + quantity
+        factor.store_quantity_after = self.quantity - quantity
         factor.save()
-        self.quantity += quantity
+        self.quantity -= quantity
         self.save()
     
 class Operation(models.Model):

@@ -734,9 +734,7 @@ def ajax_find_operations(request):
     if 'codeography' in request.POST:
         codeographies = None
     else:
-        print "Ey baba"
         codeographies = operations.values_list('codeography', flat=True).distinct()
-        print codeographies
     return render(request, 'json/operations.json', {
         'types': types,
         'names': names,
