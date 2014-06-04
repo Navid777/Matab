@@ -3,6 +3,7 @@
     "count": {% if count %}{{ count }}{% else %}0{% endif %}    
     {% if operation %},
     "operation":{
+    	"id": "{{operation.id}}",
         "type": "{{ operation.type }}",
         "codeography": "{{ operation.codeography }}",
         "name":"{{operation.name}}",

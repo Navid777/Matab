@@ -112,9 +112,10 @@ class FactorForm(forms.Form):
     therapist_first_name = forms.CharField(max_length=30)
     therapist_last_name = forms.CharField(max_length=50)
     therapist_medical_number = forms.CharField(max_length=20)
-    operation_type = forms.CharField(max_length=30)
-    operation_name = forms.CharField(max_length=30)
-    operation_codeography = forms.CharField(max_length=30)
+    operation_id = forms.IntegerField()
+    #operation_type = forms.CharField(max_length=30)
+    #operation_name = forms.CharField(max_length=30)
+    #operation_codeography = forms.CharField(max_length=30)
     operation_cloth = forms.BooleanField(required=False)
     #operation_fee = forms.FloatField()
     insurance_type = forms.CharField(max_length=100)
@@ -146,8 +147,11 @@ class FactorForm(forms.Form):
             raise ValidationError('اطلاعات بیمار نادرست است')
         try:
             operation = Operation.objects.get(
-                type=cd.get('operation_type'),
-                codeography=cd.get('operation_codeography'), )
+                id=cd.get('operation_id'),
+                )
+            cd['operation_type'] = operation.type
+            cd['operation_codeography'] = operation.codeography
+            cd['operation_name'] = operation.name
             cd['operation_governmental_fee'] = operation.governmental_fee
             cd['operation_individual_fee'] = operation.individual_fee
             cd['operation_medical_fee'] = operation.medical_fee
@@ -158,7 +162,7 @@ class FactorForm(forms.Form):
             else:
                 cd['operation_film_fee'] = 0
         except Operation.DoesNotExist:
-            raise ValidationError('خدمت نادرست است')
+            raise ValidationError('invalid operation')
         except Good.DoesNotExist:
             raise ValidationError('Film Type is invalid')
         try:

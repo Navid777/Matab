@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.db.models.sql.datastructures import Date
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
+import Radiology
 
 
 #TODO: alan dar majmoo 4 ta naghsh hast, yeki monshi, yeki operatore MRI, yeki AmadeSaz, yeki ham Pezeshk! ke ina
@@ -71,53 +72,75 @@ def add_users(request):
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def reception(request):
     if request.method == "POST":
-        form = FactorForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            cd['receptor_first_name'] = request.user.first_name
-            cd['receptor_last_name'] = request.user.last_name
-            factor = Factor.objects.create(**cd)
-            if factor.operation_cloth:
-                cloth = Good.objects.get(name='لباس')
-                #cloth.quantity -= 1
-                cloth.get_good_from_store(1)
-                cloth.save()
-            if factor.operation_film_quantity != 0:
-                film = Good.objects.get(name=factor.operation_film_name)
-                #film.quantity -= factor.operation_film_quantity
-                film.get_good_from_store(factor.operation_film_quantity)
-                film.save()
-            patient = factor.get_patient()
-            request.session['patient_id'] = patient.id
-            PatientTurn.objects.create(
-                patient=patient,
-                type=factor.operation_type,
-                turn=datetime.now(),
-                factor_id=factor.id,
-            )
-            return redirect(reverse(show_factor, args=(factor.id,)))
-        else:
-            print form.errors
+        post = request.POST.copy()
+        operation_ids = post.getlist('operation_id')
+        request.session['factors'] = []
+        for o in operation_ids :
+            post['operation_id'] = o
+            form = FactorForm(post)
+            if form.is_valid():
+                cd = form.cleaned_data
+                cd['receptor_first_name'] = request.user.first_name
+                cd['receptor_last_name'] = request.user.last_name
+                factor = Factor.objects.create(**cd)
+                request.session['factors'].append(factor.id)
+                if factor.operation_cloth:
+                    cloth = Good.objects.get(name='لباس')
+                    #cloth.quantity -= 1
+                    cloth.get_good_from_store(1)
+                    cloth.save()
+                if factor.operation_film_quantity != 0:
+                    film = Good.objects.get(name=factor.operation_film_name)
+                    #film.quantity -= factor.operation_film_quantity
+                    film.get_good_from_store(factor.operation_film_quantity)
+                    film.save()
+                patient = factor.get_patient()
+                request.session['patient_id'] = patient.id
+                PatientTurn.objects.create(
+                    patient=patient,
+                    type=factor.operation_type,
+                    turn=datetime.now(),
+                    factor_id=factor.id,
+                )
+            
+            else:
+                print form.errors
+        if len(request.session['factors']) > 0:
+            return redirect(reverse_lazy(show_factors))
     insurance_types = Insurance.objects.values_list('type', flat=True).distinct()
     operation_types = Operation.objects.values_list('type', flat=True).distinct()
     complementary_insurance_types = ComplementaryInsurance.objects.values_list('type', flat=True).distinct()
+    operations = Operation.objects.all()
     #TODO: faghat betavanad az film ha entekhab konad
     film_types = Good.objects.all()
     return render(request, 'reception.html', {
         "insurance_types": insurance_types,
         "operation_types": operation_types,
+        "operations": operations,
         "film_types": film_types,
         "complementary_insurance_types": complementary_insurance_types,
     })
 
 
+#@user_logged_in
+#@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+#def show_factor(request, id):
+#    factor = get_object_or_404(Factor, id=id)
+#    return render(request, "show_factor.html", {
+#        'factor': factor,
+#    })
+    
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-def show_factor(request, id):
-    factor = get_object_or_404(Factor, id=id)
-    return render(request, "show_factor.html", {
-        'factor': factor,
-    })
+@exists_in_session_or_redirect('factors', reverse_lazy('Radiology.views.reception'))
+def show_factors(request):
+    try:
+        factors = Factor.objects.filter(id__in=request.session['factors'])
+        return render(request, "show_factors.html", {
+                'factors': factors,
+                })
+    except Factor.DoesNotExist:
+        return Http404()
 
 
 

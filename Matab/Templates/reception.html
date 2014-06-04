@@ -10,11 +10,13 @@
     <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-setup.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-fa.js"></script>
+    <script type="text/javascript" src=" {{ MEDIA_URL }}js/bootstrap-multiselect.js"></script>
 {% endblock %}
 
 {% block extracss %}
     <link href="{{ MEDIA_URL }}css/reception.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ MEDIA_URL }}css/calendar.css"/>
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/bootstrap-multiselect.css"/>
 {% endblock %}
 
 {% block content %}
@@ -160,7 +162,7 @@
                     </h3>
                 </div>
                 <div class='panel-body'>
-                    <div class='form-group'>
+                  <!--  <div class='form-group'>
                         <label for='operationTypeSelect'>نوع خدمت</label>
                         <select name="operation_type" id='operationTypeSelect' class='form-control chosen-select'>
                             <option value="" selected></option>
@@ -168,17 +170,19 @@
                                 <option value="{{ t }}">{{ t }}</option>
                             {% endfor %}
                         </select>
-                    </div>
-                    <div class='form-group'>
+                    </div> -->
+                   <div class='form-group'>
                         <label for='operationCodeographyInput'>کدگرافی خدمت</label>
                         <input name="operation_codeography" class="form-control"
                                 id="operationCodeographyInput" type="number"/>
-                    </div>
+                		 </div> 
                     <div class='form-group'>
                         <label for='operationNameSelect'>نام خدمت</label>
-                        <select name="operation_name" class="form-control chosen-select"
+                        <select name="operation_id" multiple="multiple" class="form-control chosen-select multiselect"
                                 id="operationNameSelect">
-                            <option value="" selected> </option>
+                            {% for o in operations %}
+                            <option value="{{o.id}}">{{ o.type }} {{ o.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class='form-group'>
@@ -196,19 +200,6 @@
                         <input type="checkbox" name="operation_cloth"
                                id="operationClothCheckbox"/>
                     </div>
-                	<div class="well">
-                		<div class="list-group">
-                			<div class="list-group-item">
-                				<label class="label label-warning">مبلغ کل</label>
-                			</div>
-                			<div class="list-group-item">
-                				<label class="label label-warning">تخفیف</label>
-                			</div>
-                			<div class="list-group-item">
-                				<label class="label label-warning">مبلغ پرداختی</label>
-                			</div>
-                		</div>
-                	</div>
                 </div>
             </div>
         </div>
