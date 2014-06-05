@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="fa">
-<head>
-    <meta charset="utf8">
-    <link rel="shortcut icon" href="{{ MEDIA_URL }}ico/favicon.png"/>
+	<head>
+		<meta charset="utf8">
+		<link rel="shortcut icon" href="{{ MEDIA_URL }}ico/favicon.png"/>
+		<title>{% block title %}{% endblock %}</title>
 
-    <title>{% block title %}{% endblock %}</title>
+		<link rel="stylesheet" href="{{ MEDIA_URL }}css/bootstrap.min.css"/>
+		<link rel="stylesheet" href="{{ MEDIA_URL }}css/bootstrap-rtl.min.css"/>
+		<link rel="stylesheet" href="{{ MEDIA_URL }}css/printable.css"/>
+		{% block extracss %}{% endblock %}
 
-    <link rel="stylesheet" href="{{ MEDIA_URL }}css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="{{ MEDIA_URL }}css/bootstrap-rtl.min.css"/>
-    <link rel="stylesheet" href="{{ MEDIA_URL }}css/printable.css"/>
-    {% block extracss %}{% endblock %}
-
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/ajax_csrf_fix.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/bootstrap.min.js"></script>
-    {% block extrajs %}%{% endblock %}
-</head>
-<body>
-{% block content %}{% endblock %}
-</body>
+		<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.min.js"></script>
+		<script type="text/javascript" src="{{ MEDIA_URL }}js/ajax_csrf_fix.js"></script>
+		<script type="text/javascript" src="{{ MEDIA_URL }}js/bootstrap.min.js"></script>
+		{% block extrajs %}%{% endblock %}
+	</head>
+	<body>
+		<div class="page-header well">
+			رادیولوژی آروند اینا
+		</div>
+		{% block content %}{% endblock %}
+	</body>
 </html>

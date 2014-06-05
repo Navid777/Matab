@@ -3,7 +3,13 @@
         display: none !important;
     }
 }
+@font-face{
+	font-family: BNazanin;
+    src: url('/media/fonts/BNazanin.ttf');
+}
 
 body {
     direction: rtl;
+    font-family: BNazanin;
+    margin: 5px;
 }

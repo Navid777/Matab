@@ -136,8 +136,12 @@ def reception(request):
 def show_factors(request):
     try:
         factors = Factor.objects.filter(id__in=request.session['factors'])
+        total_fee = 0
+        for factor in factors:
+            total_fee += factor.total_fee
         return render(request, "show_factors.html", {
                 'factors': factors,
+                'total_fee': total_fee,
                 })
     except Factor.DoesNotExist:
         return Http404()

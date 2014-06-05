@@ -1,103 +1,142 @@
 {% extends 'printable_base.html' %}
 
 {% block title %}
-    چاپ فاکتور
+چاپ فاکتور
 {% endblock %}
 
 {% block extracss %}
-	<link rel="stylesheet" href="{{MEDIA_URL}}css/show_factor.css"/>
+<link rel="stylesheet" href="{{MEDIA_URL}}css/show_factor.css"/>
 {% endblock %}
 
 {% block extrajs %}
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/show_factor.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/show_factor.js"></script>
 {% endblock %}
 
 {% block content %}
-	{% for factor in factors%}
-		<table class="factor_table">
-			<tr>
-				<td>نام بیمار</td>
-				<td>{{factor.patient_first_name}} {{factor.patient_last_name}}</td>
-			</tr>
-			<tr>
-				<td>کد ملی بیمار</td>
-				<td>{{factor.patient_national_code}}</td>
-			</tr>
-			<tr>
-				<td>پزشک معالج</td>
-				<td>{{factor.therapist_first_name}} {{factor.therapist_last_name}}</td>
-			</tr>
-			<tr>
-				<td>نوع خدمت</td>
-				<td>{{factor.operation_type}}-{{factor.operation_name}}</td>
-			</tr>
-			<tr>
-				<td>بیمه</td>
-				<td>{{factor.insurance_type}}-{{factor.insurance_category}}</td>
-			</tr>
-			{%if factor.insurance_has_complementary%}
-			<tr>
-				<td>بیمه تکمیلی</td>
-				<td>{{factor.insurance_complementary}}</td>
-			</tr>
-			{%endif%}
-			<tr>
-				<td>سریال دفترچه</td>
-				<td>{{factor.insurance_serial}}</td>
-			</tr>
-			<tr>
-				<td>شماره صفحه دفترچه</td>
-				<td>{{factor.insurance_page}}</td>
-			</tr>
-			<tr>
-				<td>مبلغ کل</td>
-				<td>{{factor.total_fee}}</td>
-			</tr>
-		</table>
+<div class="panel panel-info">
+	<div class="panel-heading">
+		مشخصات بیمار
+	</div>
+<table class="table">
+	<tr>
+		<td>نام بیمار</td>
+		<td>{{factors.0.patient_first_name}} {{factors.0.patient_last_name}}</td>
+	</tr>
+	<tr>
+		<td>کد ملی بیمار</td>
+		<td>{{factors.0.patient_national_code}}</td>
+	</tr>
+	<tr>
+		<td>پزشک معالج</td>
+		<td>{{factors.0.therapist_first_name}} {{factors.0.therapist_last_name}}</td>
+	</tr>
+	<tr>
+		<td>بیمه</td>
+		<td>{{factors.0.insurance_type}} - {{factors.0.insurance_category}}</td>
+	</tr>
+	{%if factors.0.insurance_has_complementary%}
+	<tr>
+		<td>بیمه تکمیلی</td>
+		<td>{{factors.0.insurance_complementary}}</td>
+	</tr>
+	{%endif%}
+	<tr>
+		<td>سریال دفترچه</td>
+		<td>{{factors.0.insurance_serial}}</td>
+	</tr>
+	<tr>
+		<td>شماره صفحه دفترچه</td>
+		<td>{{factors.0.insurance_page}}</td>
+	</tr>
+</table>
+</div>
+<div class = "panel panel-info">
+	<div class="panel-heading">
+		خدمات انجام شده
+	</div>
+<table class="table">
+		<tr>
+		<th>نوع خدمت</th>
+		<th>مبلغ قابل پرداخت</th>
+	</tr>
+{% for factor in factors%}
 
-	    <hr class="no-printable"/>
-		<div class="no-printable factor_buttons">
-	    <button type="button" id="print" class="btn btn-default">چاپ</button>
-		<a href="{% url 'Radiology.views.reception' %}" class="btn btn-default">افزودن به بدهکاری</a>
-		<button id="factorPaid" data-id="{{ factor.id }}" class="btn btn-primary"
-	            data-url="{% url 'Radiology.views.ajax_patient_pay_factor' %}">پرداخت و چاپ</button>
-	    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#payFactorModal{{factor.id}}">پرداخت بخشی از فاکتور </button>
-	    <a href="{% url 'Radiology.views.reception' %}" id="return" class="btn btn-primary hide">بازگشت</a>
+
+	<tr>
+		<td>{{factor.operation_type}} - {{factor.operation_name}}</td>
+		<td>{{factor.total_fee}}</td>
+	</tr>
+{% endfor%}
+
+</table>
+</div>
+<div class="panel panel-info">
+	<div class="panel-heading">
+		مبلغ کل
+	</div>
+	<table class="table">
+		<tr>
+			<td>
+				  {{ total_fee }} 
+			</td>
+		</tr>
+	</table>
+	
+</div>
+{% for factor in factors %}
+<div id="payFactorModal{{factor.id}}" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">
+					&times;
+				</button>
+				<h4 class="modal-title">پرداخت فاکتور</h4>
+				<div class="modal-body">
+					<form action="{% url 'Radiology.views.ajax_patient_pay_partial_factor' %}" method="post">
+						{% csrf_token %}
+						<div class="form-group">
+							<input type="number" name="id" value="{{factor.id}}" hidden="hidden"/>
+							<label for="payFactorTotalInput">مبلغ کل</label>
+							<input type="number" name="total_fee" class="form-control"
+							id="payFactorTotalInput" readonly="readonly" value="{{ factor.total_fee }}"/>
+						</div>
+						<div class="form-group">
+							<label for="payFactorDebtInput">مبلغ بدهی</label>
+							<input type="number" name="debt_amount" class="form-control"
+							id="payFactorDebtInput" readonly="readonly" value="{{factor.patient_debt_amount}}"/>
+						</div>
+						<div class="form-group">
+							<label for="payFactorPayAmountInput">مبلغ پرداختی</label>
+							<input type="number" name="pay_amount" class="form-control"
+							id="payFactorPayAmountInput"/>
+						</div>
+					</form>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" id="payFactorSubmit">
+							پرداخت فاکتور
+						</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">
+							بازگشت
+						</button>
+					</div>
+				</div>
+			</div>
 		</div>
-	    <div id="payFactorModal{{factor.id}}" class="modal fade">
-	        <div class="modal-dialog">
-	            <div class="modal-content">
-	                <div class="modal-header">
-	                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-	                    <h4 class="modal-title">پرداخت فاکتور</h4>
-	                    <div class="modal-body">
-	                        <form action="{% url 'Radiology.views.ajax_patient_pay_partial_factor' %}" method="post">
-	                            {% csrf_token %}
-	                            <div class="form-group">
-	                            	<input type="number" name="id" value="{{factor.id}}" hidden="hidden"/>
-	                                <label for="payFactorTotalInput">مبلغ کل</label>
-	                                <input type="number" name="total_fee" class="form-control"
-	                                        id="payFactorTotalInput" readonly="readonly" value="{{ factor.total_fee }}"/>
-	                            </div>
-	                            <div class="form-group">
-	                                <label for="payFactorDebtInput">مبلغ بدهی</label>
-	                                <input type="number" name="debt_amount" class="form-control"
-	                                        id="payFactorDebtInput" readonly="readonly" value="{{factor.patient_debt_amount}}"/>
-	                            </div>
-	                            <div class="form-group">
-	                                <label for="payFactorPayAmountInput">مبلغ پرداختی</label>
-	                                <input type="number" name="pay_amount" class="form-control"
-	                                        id="payFactorPayAmountInput"/>
-	                            </div>
-	                           </form>
-	                    <div class="modal-footer">
-	                        <button type="button" class="btn btn-primary" id="payFactorSubmit">پرداخت فاکتور</button>
-	                        <button type="button" class="btn btn-default" data-dismiss="modal">بازگشت</button>
-	                    </div>
-	                </div>
-	            </div>
-	        </div>
-	       </div>
-	      </div>
-	{% endfor %}
+	</div>
+</div>
+{% endfor %}
+
+<hr class="no-printable"/>
+<div class="no-printable factor_buttons">
+	<button type="button" id="print" class="btn btn-default">
+		چاپ
+	</button>
+	<a href="{% url 'Radiology.views.reception' %}" class="btn btn-default">افزودن به بدهکاری</a>
+	<button id="factorPaid" data-id="{{ factor.id }}" class="btn btn-primary"
+	data-url="{% url 'Radiology.views.ajax_patient_pay_factor' %}">
+		پرداخت و چاپ
+	</button>
+	<a href="{% url 'Radiology.views.reception' %}" id="return" class="btn btn-primary hide">بازگشت</a>
+</div>
 {%endblock%}
