@@ -229,8 +229,8 @@ class Operation(models.Model):
     individual_fee = models.FloatField()
     governmental_fee = models.FloatField()
     medical_fee = models.FloatField()
-    film = models.ForeignKey(Good)
-    film_quantity = models.IntegerField()
+    film = models.ForeignKey(Good, null=True, blank=True)
+    film_quantity = models.IntegerField(null=True, blank=True)
 
     def __unicode__(self):
         return self.type
