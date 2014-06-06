@@ -276,8 +276,8 @@ class OperationForm(forms.Form):
     individual_fee = forms.FloatField()
     governmental_fee = forms.FloatField()
     medical_fee = forms.FloatField()
-    film_id = forms.IntegerField(null=True, blank=True)
-    film_quantity = forms.IntegerField(null=True, blank=True)
+    film_id = forms.IntegerField(required=False)
+    film_quantity = forms.IntegerField(required=False)
 
 
 class CalendarTestForm(forms.Form):
