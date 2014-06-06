@@ -89,7 +89,7 @@ def reception(request):
                     #cloth.quantity -= 1
                     cloth.get_good_from_store(1)
                     cloth.save()
-                if factor.operation_film_quantity != 0:
+                if factor.operation_film_quantity:
                     film = Good.objects.get(name=factor.operation_film_name)
                     #film.quantity -= factor.operation_film_quantity
                     film.get_good_from_store(factor.operation_film_quantity)
