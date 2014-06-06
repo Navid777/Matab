@@ -4,9 +4,11 @@
 
 *.pydevproject
 .project
+dat
 .metadata
 bin/
 tmp/
+database
 *.tmp
 *.bak
 *.swp
