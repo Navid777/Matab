@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-s
+from datetime import datetime
 from django.contrib.auth.models import User
 from django.db import models
 from django.template.defaultfilters import default
-from datetime import datetime
+from accounting import interface as accounting
 
 # Create your models here.
 
@@ -20,7 +21,7 @@ class MedicalHistory(models.Model):
     uncontrolable_tension = models.BooleanField(verbose_name=u"تشنج غیرقابل کنترل")
     pregnancy = models.BooleanField(verbose_name=u"بارداری")
     surgery = models.BooleanField(verbose_name=u"جراحی")
-    trauma = models.BooleanField(verbose_name=u"تروما")
+    trauma = models.BooleanField(verbose_name=u"زخم")
     malt_fever = models.BooleanField(verbose_name=u"تب مالت")
     anemia = models.BooleanField(verbose_name=u"کم خونی")
     thyroid = models.BooleanField(verbose_name=u"تیرویید")
@@ -104,10 +105,13 @@ class Insurance(models.Model):
 
 
 class Factor(models.Model):
+    #patient information
     patient_first_name = models.CharField(max_length=30)
     patient_last_name = models.CharField(max_length=50)
     patient_national_code = models.IntegerField()
     patient_account_id = models.IntegerField()
+    
+    #personnel information
     receptor_first_name = models.CharField(max_length=50)
     receptor_last_name = models.CharField(max_length=50)
     operator_first_name = models.CharField(max_length=50, null=True, blank=True)
@@ -118,6 +122,8 @@ class Factor(models.Model):
     therapist_last_name = models.CharField(max_length=50)
     therapist_medical_number = models.CharField(max_length=20)
     therapist_visit_date = models.DateField(null=True, blank=True)
+    
+    #operation information
     operation_id = models.IntegerField()
     operation_type = models.CharField(max_length=30)
     operation_name = models.CharField(max_length=30)
@@ -130,6 +136,8 @@ class Factor(models.Model):
     operation_film_quantity = models.CharField(max_length=100, null=True, blank=True)
     operation_film_fee = models.FloatField()
     operation_cloth_fee = models.FloatField()
+    
+    #insurance information
     insurance_type = models.CharField(max_length=100)
     insurance_category = models.CharField(max_length=100)
     insurance_has_complementary = models.BooleanField()
@@ -140,7 +148,10 @@ class Factor(models.Model):
     insurance_account_id = models.IntegerField()
     insurance_complementary_account_id = models.IntegerField(null=True, blank=True)
     insurance_exp_date = models.DateField()
-    total_fee = models.FloatField()
+    
+    #payment information
+    patient_payable = models.FloatField()
+    discount = models.FloatField(null=True, blank=True)
     patient_share = models.FloatField()
     insurance_share = models.FloatField()
     insurance_complementary_share = models.FloatField()
@@ -149,12 +160,16 @@ class Factor(models.Model):
     patient_debt_amount = models.FloatField(null=True, blank=True)
     insurance_paid = models.BooleanField(default=False)
     complementary_paid = models.BooleanField(default=False)
-    factor_date = models.DateField()
-    patient_pay_date = models.DateField(null=True, blank=True)
-    insurance_pay_date = models.DateField(null=True, blank=True)
-    complementary_pay_date = models.DateField(null=True, blank=True)
     comment = models.CharField(null=True, blank=True, max_length=300)
-    discount = models.FloatField(null=True, blank=True)
+    payment_type = models.IntegerField(null=True, blank=True)
+    PAYMENT_TYPES = {
+        "CASH": 1,
+        "CARD": 2,
+    }
+
+    
+    #date
+    factor_date = models.DateField()
 
     def get_patient(self):
         return Patient.objects.get(
@@ -184,7 +199,33 @@ class Factor(models.Model):
             has_complementary=self.insurance_has_complementary,
             complementary=self.insurance_complementary,
         )
-
+        
+    def add_discount(self, discount):
+        if self.patient_payable < discount:
+            self.discount = self.patient_payable
+            discount -= self.patient_payable
+            self.patient_payable = 0
+        else:
+            self.discount = discount
+            self.patient_payable -= discount
+            discount = 0
+        self.save()
+        print "dis"
+        print discount
+        return discount
+    
+    def pay_factor(self, amount):
+        if amount > self.patient_debt_amount:
+            return "Pay amount is more than patient debt."
+        accounting.move_credit(self.get_patient().account_id, accounting.get_static_account("office"), 
+                               amount, "", "", "", datetime.now(), self.id)
+        self.patient_debt_amount -= amount
+        self.patient_paid_amount += amount
+        if self.patient_debt_amount == 0 :
+            self.patient_paid = True
+        self.save()
+        return 0
+        
 class PatientTurn(models.Model):
     type = models.CharField(max_length=30)
     patient = models.ForeignKey(Patient)
@@ -195,6 +236,8 @@ class Good(models.Model):
     name = models.CharField(max_length=40)
     quantity = models.IntegerField()
     fee = models.FloatField()
+    
+    CLOTH = u"لباس";
     
     def add_good_to_store(self, quantity):
         factor = GoodFactor()

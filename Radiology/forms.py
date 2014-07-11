@@ -138,13 +138,17 @@ class FactorForm(forms.Form):
         super(FactorForm, self).clean()
         cd = self.cleaned_data
         cd['patient_paid_amount'] = 0
+        
+        #Patient information
         try:
             cd['patient_account_id'] = Patient.objects.get(
                 first_name=cd.get('patient_first_name'),
                 last_name=cd.get('patient_last_name'),
                 national_code=cd.get('patient_national_code')).account_id
         except Patient.DoesNotExist:
-            raise ValidationError('اطلاعات بیمار نادرست است')
+            raise ValidationError('Invalid Patient')
+        
+        #Operation information
         try:
             operation = Operation.objects.get(
                 id=cd.get('operation_id'),
@@ -162,9 +166,15 @@ class FactorForm(forms.Form):
             else:
                 cd['operation_film_fee'] = 0
         except Operation.DoesNotExist:
-            raise ValidationError('invalid operation')
+            raise ValidationError('Invalid operation')
         except Good.DoesNotExist:
-            raise ValidationError('Film Type is invalid')
+            raise ValidationError('Invalid film type')  
+        if cd['operation_cloth']:
+            cd['operation_cloth_fee'] = Good.objects.get(name=Good.CLOTH).fee
+        else:
+            cd['operation_cloth_fee'] = 0
+        
+        #Insurance information
         try:
             insurance = Insurance.objects.get(
                 type=cd.get('insurance_type'),
@@ -177,37 +187,33 @@ class FactorForm(forms.Form):
                     type=cd['insurance_complementary']
                 ).account_id
         except Insurance.DoesNotExist:
-            raise ValidationError('بیمه نادرست است')
+            raise ValidationError('Invalid insurance')
         except ComplementaryInsurance.DoesNotExist:
-            raise ValidationError('Complementary Insurance is invalid')
-        if cd['operation_cloth']:
-            cd['operation_cloth_fee'] = Good.objects.get(name='لباس').fee
-        else:
-            cd['operation_cloth_fee'] = 0
+            raise ValidationError('Invalid complementary insurance')
+        
+        #Payment information
         if cd['insurance_has_complementary']:
             patient_share = 0
             insurance_share = cd['operation_governmental_fee'] * insurance.portion / 100
             complementary_share = cd['operation_governmental_fee'] - insurance_share
-
         else:
             insurance_share = cd['operation_governmental_fee'] * insurance.portion / 100
             patient_share = cd['operation_individual_fee'] - insurance_share
             complementary_share = 0
             cd['complementary_paid'] = True
-            cd['complementary_pay_date'] = date.today()
         cd['patient_share'] = patient_share
         cd['insurance_share'] = insurance_share
         cd['insurance_complementary_share'] = complementary_share
-        cd['total_fee'] = patient_share + cd['operation_cloth_fee'] + cd['operation_film_fee']
-        cd['factor_date'] = date.today()
-        if cd['discount']:
-            cd['total_fee'] -= cd['discount']
-        cd['patient_debt_amount'] = cd['total_fee']
+        cd['patient_payable'] = patient_share + cd['operation_cloth_fee'] + cd['operation_film_fee']
+        cd['patient_debt_amount'] = cd['patient_payable']
         if cd['patient_debt_amount'] == 0:
             cd['patient_paid'] = True
-            cd['patient_pay_date'] = date.today()
+            
+        #Date information
+        cd['factor_date'] = date.today()
+        
+        
         return cd
-
 
 class MedicalHistoryForm(forms.ModelForm):
     class Meta:

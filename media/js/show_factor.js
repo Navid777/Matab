@@ -1,10 +1,54 @@
 $(document).ready(function() {
     var $button = $("#factorPaid");
+    var $discount = $("#discount");
+    var $totalPayable = $("#totalPayable");
+    var $totalPayableWithDiscount = $("#totalPayableWithDiscount");
+    var $finalPayable = $("#finalPayable");
+    $totalPayableWithDiscount.val($totalPayable.val());
+    $finalPayable.val($totalPayable.val());
+    $discount.val("0");
+    $factors = $(".factorId").map(function(){
+    	return $(this).val();
+    }).get();
+
+    $discount.on('change', function(){
+    	if( Number($discount.val()) > Number($totalPayable.val()) ) {
+    		$totalPayableWithDiscount.val("0");
+    		$finalPayable.val("0");
+    	}
+    	else{
+    		$totalPayableWithDiscount.val(
+    			Number($totalPayable.val()) - Number($discount.val())
+    		);
+    		$finalPayable.val($totalPayableWithDiscount.val());
+    	}
+    	$button.focus();	
+    });
+    
     $button.on('click', function() {
+    	alert("ahoy");
+    	$.ajax({
+            type: "POST",
+            url: $button.attr('discount_url'),
+            data: { factors: $factors, 
+            		discount:$discount.val()
+            		},
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                	alert("Hi");
+                } else {
+                    //TODO error
+                    alert(data.errors);
+                    alert("Bye");
+                }
+            }
+        });
         $.ajax({
             type: "POST",
             url: $button.attr('data-url'),
-            data: {id: $button.attr('data-id')},
+            data: {id: $button.attr('data-id')
+            		},
             dataType: 'json',
             success: function(data) {
                 if (data.success) {

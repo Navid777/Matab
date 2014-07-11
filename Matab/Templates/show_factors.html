@@ -19,7 +19,7 @@
 	</div>
 <table class="table">
 	<tr>
-		<td>نام بیمار</td>
+		<td>نام بیمار</td>	
 		<td>{{factors.0.patient_first_name}} {{factors.0.patient_last_name}}</td>
 	</tr>
 	<tr>
@@ -61,10 +61,10 @@
 	</tr>
 {% for factor in factors%}
 
-
+	<input hidden="hidden" class="factorId" value="{{factor.id}}"/>
 	<tr>
 		<td>{{factor.operation_type}} - {{factor.operation_name}}</td>
-		<td>{{factor.total_fee}}</td>
+		<td>{{factor.patient_payable}}</td>
 	</tr>
 {% endfor%}
 
@@ -72,12 +72,39 @@
 </div>
 <div class="panel panel-info">
 	<div class="panel-heading">
-		مبلغ کل
+		مشخصاتِ پرداخت
 	</div>
 	<table class="table">
 		<tr>
 			<td>
-				  {{ total_fee }} 
+				مبلغ کل
+			</td>
+			<td>
+				<input type="text" id="totalPayable" value="{{total_patient_payable}}" class="form-control" disabled="disabled"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				مبلغ کل با تخفیف
+			</td>
+			<td>
+				<input type="text" id="totalPayableWithDiscount" readonly="readonly" class="form-control"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				تخفیف
+			</td>
+			<td>
+				<input type="text" id="discount" class="form-control"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				مبلغ پرداختی
+			</td>
+			<td>
+				<input type="text" id="finalPayable" class="form-control"/>
 			</td>
 		</tr>
 	</table>
@@ -134,7 +161,8 @@
 	</button>
 	<a href="{% url 'Radiology.views.reception' %}" class="btn btn-default">افزودن به بدهکاری</a>
 	<button id="factorPaid" data-id="{{ factor.id }}" class="btn btn-primary"
-	data-url="{% url 'Radiology.views.ajax_patient_pay_factor' %}">
+	pay-url="{% url 'Radiology.views.ajax_patient_pay_factor' %}"
+	discount_url="{% url 'Radiology.views.ajax_add_discount_to_factors' %}">
 		پرداخت و چاپ
 	</button>
 	<a href="{% url 'Radiology.views.reception' %}" id="return" class="btn btn-primary hide">بازگشت</a>

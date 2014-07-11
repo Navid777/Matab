@@ -90,6 +90,7 @@ urlpatterns = patterns('',
     url(r'^ajax/edit/insurance/$', views.ajax_edit_insurance),
     url(r'^ajax/edit/complementary/$', views.ajax_edit_complementary),
     url(r'^ajax/edit/operation/$', views.ajax_edit_operation),
+    url(r'^ajax/add/discount_to_factors$', views.ajax_add_discount_to_factors),
 
     url(r'^test_calendar/$', views.test_calendar),
 )

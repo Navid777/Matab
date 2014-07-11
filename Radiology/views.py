@@ -136,12 +136,12 @@ def reception(request):
 def show_factors(request):
     try:
         factors = Factor.objects.filter(id__in=request.session['factors'])
-        total_fee = 0
+        total_patient_payable = 0
         for factor in factors:
-            total_fee += factor.total_fee
+            total_patient_payable += factor.patient_payable
         return render(request, "show_factors.html", {
                 'factors': factors,
-                'total_fee': total_fee,
+                'total_patient_payable': total_patient_payable,
                 })
     except Factor.DoesNotExist:
         return Http404()
@@ -202,7 +202,7 @@ def accounting_page(request):
 @exists_in_session_or_redirect('personnel_id', reverse_lazy('Radiology.views.choose_personnel'))
 def accounting_personnel(request):
     personnel = User.objects.get(id=request.session['personnel_id'])
-    total_fee = 0
+    patient_payable = 0
     factors = None
     operations = None
     factor_count = 0
@@ -226,7 +226,7 @@ def accounting_personnel(request):
         form = CalendarTestForm()
     if factors:
         for factor in factors:
-            total_fee += factor.total_fee
+            patient_payable += factor.patient_payable
         codeographies = factors.values_list('operation_codeography', flat=True).distinct()
         operations = Operation.objects.filter(codeography__in=codeographies)
         factor_count = factors.count()
@@ -235,7 +235,7 @@ def accounting_personnel(request):
         'factors': factors,
         'form':form,
         'personnel':personnel,
-        'total_fee':total_fee,
+        'patient_payable':patient_payable,
         'factor_count':factor_count,
         'patient_count':patient_count, 
         'operations':operations,
@@ -367,7 +367,7 @@ def accounting_patient(request):
     factors = None
     start_date = datetime.now()
     end_date = datetime.now()
-    total_fee = 0
+    patient_payable = 0
     total_paid = 0
     factor_count = 0
     if request.method == "POST":
@@ -389,7 +389,7 @@ def accounting_patient(request):
     if factors:
         for factor in factors:
             total_debt += factor.patient_debt_amount
-            total_fee += factor.total_fee
+            patient_payable += factor.patient_payable
             total_paid += factor.patient_paid_amount
             factor_count += 1
     return render(request, 'accounting_patient.html', {
@@ -399,7 +399,7 @@ def accounting_patient(request):
         'start_date':start_date,
         'end_date':end_date, 
         'total_debt':total_debt,
-        'total_fee': total_fee,
+        'patient_payable': patient_payable,
         'total_paid':total_paid,
         'factor_count': factor_count,
     })
@@ -788,21 +788,39 @@ def ajax_patient_pay_factor(request):
         raise Http404
     factor = get_object_or_404(Factor, id=request.POST['id'])
     #TODO: descriptions
-    if factor.patient_paid:
-        return render(request, 'json/error.json', {
-            'errors': ['پرداخت شده است.'],
-        })
-    if not factor.total_fee == 0:
-        accounting.move_credit(factor.patient_account_id, accounting.get_static_account("office"),
-                               factor.total_fee, "", "", "", datetime.now(), factor.id)
-        factor.patient_paid = True
-        factor.patient_paid_amount = factor.total_fee
-    else:
-        factor.patient_paid = True
-        factor.patient_paid_amount = factor.total_fee
-    factor.save()
+    #if factor.patient_paid:
+    #    return render(request, 'json/error.json', {
+    #        'errors': ['Factor is paid.'],
+    #    })
+    #if not factor.patient_payable == 0:
+    #    accounting.move_credit(factor.patient_account_id, accounting.get_static_account("office"),
+    #                           factor.patient_payable, "", "", "", datetime.now(), factor.id)
+    #    factor.patient_paid = True
+    #    factor.patient_paid_amount = factor.patient_payable
+    #else:
+    #    factor.patient_paid = True
+    #    factor.patient_paid_amount = factor.patient_payable
+    #factor.save()
+    #return render(request, 'json/patient_paid.json', {})
+    amount = request.POST['amount']
+    status = factor.pay_factor(amount)
+    if status:
+        return render(request, 'json/error.json', {'errors':[status]})
     return render(request, 'json/patient_paid.json', {})
 
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def ajax_add_discount_to_factors(request):
+    if request.method != "POST":
+        raise Http404
+    factors = Factor.objects.filter(id__in=request.POST.getlist('factors[]'))
+    discount = float(request.POST['discount'])
+    i = 0 
+    while (discount > 0 and i < len(factors)) :
+        discount = factors[i].add_discount(discount)
+        i += 1
+    return render(request, 'json/discount_added.json', {})
+    
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
 def ajax_patient_pay_partial_factor(request):
