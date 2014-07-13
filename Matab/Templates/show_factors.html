@@ -57,14 +57,14 @@
 <table class="table">
 		<tr>
 		<th>نوع خدمت</th>
-		<th>مبلغ قابل پرداخت</th>
+		<th>مبلغ قابل پرداخت(تومان)</th>
 	</tr>
 {% for factor in factors%}
 
 	<input hidden="hidden" class="factorId" value="{{factor.id}}"/>
 	<tr>
 		<td>{{factor.operation_type}} - {{factor.operation_name}}</td>
-		<td>{{factor.patient_payable}}</td>
+		<td>{{factor.patient_payable|floatformat:0 }}</td>
 	</tr>
 {% endfor%}
 
@@ -80,7 +80,7 @@
 				مبلغ کل
 			</td>
 			<td>
-				<input type="text" id="totalPayable" value="{{total_patient_payable}}" class="form-control" disabled="disabled"/>
+				<input type="text" id="totalPayable" value="{{total_patient_payable|floatformat:0}}" class="form-control" disabled="disabled"/>
 			</td>
 		</tr>
 		<tr>
@@ -101,16 +101,32 @@
 		</tr>
 		<tr>
 			<td>
+				توضیحات
+			</td>
+			<td>
+				<input type="text" id="comment" class="form-control"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
 				مبلغ پرداختی
 			</td>
 			<td>
 				<input type="text" id="finalPayable" class="form-control"/>
 			</td>
 		</tr>
+		<tr>
+			<td>
+				مبلغ بدهی
+			</td>
+			<td>
+				<input type="text" id="debt" class="form-control" disabled="disabled"/>
+			</td>
+		</tr>
 	</table>
 	
 </div>
-{% for factor in factors %}
+<!--{% for factor in factors %}
 <div id="payFactorModal{{factor.id}}" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -152,14 +168,14 @@
 		</div>
 	</div>
 </div>
-{% endfor %}
+{% endfor %}-->
 
 <hr class="no-printable"/>
 <div class="no-printable factor_buttons">
 	<button type="button" id="print" class="btn btn-default">
 		چاپ
 	</button>
-	<a href="{% url 'Radiology.views.reception' %}" class="btn btn-default">افزودن به بدهکاری</a>
+	<!--<a href="{% url 'Radiology.views.reception' %}" class="btn btn-default">افزودن به بدهکاری</a> -->
 	<button id="factorPaid" data-id="{{ factor.id }}" class="btn btn-primary"
 	pay-url="{% url 'Radiology.views.ajax_patient_pay_factor' %}"
 	discount_url="{% url 'Radiology.views.ajax_add_discount_to_factors' %}">

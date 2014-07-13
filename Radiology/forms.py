@@ -205,9 +205,6 @@ class FactorForm(forms.Form):
         cd['insurance_share'] = insurance_share
         cd['insurance_complementary_share'] = complementary_share
         cd['patient_payable'] = patient_share + cd['operation_cloth_fee'] + cd['operation_film_fee']
-        cd['patient_debt_amount'] = cd['patient_payable']
-        if cd['patient_debt_amount'] == 0:
-            cd['patient_paid'] = True
             
         #Date information
         cd['factor_date'] = date.today()

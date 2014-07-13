@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-s
 from Matab.decorators import *
 from Radiology.forms import *
 from Radiology.models import *
@@ -786,7 +786,8 @@ def ajax_find_patients_list(request):
 def ajax_patient_pay_factor(request):
     if request.method != "POST":
         raise Http404
-    factor = get_object_or_404(Factor, id=request.POST['id'])
+    factors = Factor.objects.filter(id__in = request.POST.getlist('factors[]'))
+    amount = float(request.POST['amount'])
     #TODO: descriptions
     #if factor.patient_paid:
     #    return render(request, 'json/error.json', {
@@ -802,10 +803,10 @@ def ajax_patient_pay_factor(request):
     #    factor.patient_paid_amount = factor.patient_payable
     #factor.save()
     #return render(request, 'json/patient_paid.json', {})
-    amount = request.POST['amount']
-    status = factor.pay_factor(amount)
-    if status:
-        return render(request, 'json/error.json', {'errors':[status]})
+    i = 0
+    while (amount > 0 and i < len(factors)):
+        amount = factors[i].pay_factor(amount)
+        i += 1
     return render(request, 'json/patient_paid.json', {})
 
 @user_logged_in
@@ -815,11 +816,14 @@ def ajax_add_discount_to_factors(request):
         raise Http404
     factors = Factor.objects.filter(id__in=request.POST.getlist('factors[]'))
     discount = float(request.POST['discount'])
+    comment = request.POST['comment']
     i = 0 
     while (discount > 0 and i < len(factors)) :
         discount = factors[i].add_discount(discount)
+        factors[i].add_comment(comment)
         i += 1
     return render(request, 'json/discount_added.json', {})
+
     
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])

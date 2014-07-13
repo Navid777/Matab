@@ -155,9 +155,7 @@ class Factor(models.Model):
     patient_share = models.FloatField()
     insurance_share = models.FloatField()
     insurance_complementary_share = models.FloatField()
-    patient_paid = models.BooleanField(default=False)
     patient_paid_amount = models.FloatField(null=True, blank=True)
-    patient_debt_amount = models.FloatField(null=True, blank=True)
     insurance_paid = models.BooleanField(default=False)
     complementary_paid = models.BooleanField(default=False)
     comment = models.CharField(null=True, blank=True, max_length=300)
@@ -166,11 +164,10 @@ class Factor(models.Model):
         "CASH": 1,
         "CARD": 2,
     }
-
     
     #date
     factor_date = models.DateField()
-
+    
     def get_patient(self):
         return Patient.objects.get(
             first_name=self.patient_first_name,
@@ -199,32 +196,47 @@ class Factor(models.Model):
             has_complementary=self.insurance_has_complementary,
             complementary=self.insurance_complementary,
         )
+    
+    def patient_debt_amount(self):
+        return self.patient_payable-self.patient_paid_amount
+    
+    def patient_paid(self):
+        if self.patient_debt_amount():
+            return False
+        return True
         
+    #Adds a discount to factor and returns the remaining amount of discount(if discount is more than factor payable amount
     def add_discount(self, discount):
+        if not self.discount :
+            self.discount = 0
         if self.patient_payable < discount:
-            self.discount = self.patient_payable
+            self.discount += self.patient_payable
             discount -= self.patient_payable
             self.patient_payable = 0
         else:
-            self.discount = discount
+            self.discount += discount
             self.patient_payable -= discount
             discount = 0
         self.save()
-        print "dis"
-        print discount
         return discount
     
     def pay_factor(self, amount):
-        if amount > self.patient_debt_amount:
-            return "Pay amount is more than patient debt."
-        accounting.move_credit(self.get_patient().account_id, accounting.get_static_account("office"), 
-                               amount, "", "", "", datetime.now(), self.id)
-        self.patient_debt_amount -= amount
-        self.patient_paid_amount += amount
-        if self.patient_debt_amount == 0 :
-            self.patient_paid = True
+        if amount > self.patient_debt_amount():
+            amount -= self.patient_debt_amount()
+            accounting.move_credit(self.get_patient().account_id, accounting.get_static_account("office"), 
+                               self.patient_debt_amount(), "", "", "", datetime.now(), self.id)
+            self.patient_paid_amount += self.patient_debt_amount()
+        else:
+            self.patient_paid_amount += amount
+            accounting.move_credit(self.get_patient().account_id, accounting.get_static_account("office"),
+                                amount, "", "", "", datetime.now(), self.id)
+            amount = 0
         self.save()
-        return 0
+        return amount
+    
+    def add_comment(self, comment):
+        self.comment += "\n" + comment
+        self.save()
         
 class PatientTurn(models.Model):
     type = models.CharField(max_length=30)
