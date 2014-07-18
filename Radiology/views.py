@@ -202,11 +202,13 @@ def accounting_page(request):
 @exists_in_session_or_redirect('personnel_id', reverse_lazy('Radiology.views.choose_personnel'))
 def accounting_personnel(request):
     personnel = User.objects.get(id=request.session['personnel_id'])
-    patient_payable = 0
+    total_patient_payable = 0
     factors = None
     operations = None
     factor_count = 0
     patient_count = 0
+    start_date = None
+    end_date = None
     if request.method == "POST":
         form = CalendarTestForm(request.POST)
         if form.is_valid():
@@ -226,19 +228,21 @@ def accounting_personnel(request):
         form = CalendarTestForm()
     if factors:
         for factor in factors:
-            patient_payable += factor.patient_payable
+            total_patient_payable += factor.patient_payable
         codeographies = factors.values_list('operation_codeography', flat=True).distinct()
         operations = Operation.objects.filter(codeography__in=codeographies)
-        factor_count = factors.count()
-        patient_count = factors.values_list('patient_national_code', flat=True).distinct().count()
+        factor_count = len(factors)
+        patient_count = len(factors.values_list('patient_national_code', flat=True).distinct())
     return render(request, 'accounting_personnel.html', {
         'factors': factors,
         'form':form,
         'personnel':personnel,
-        'patient_payable':patient_payable,
+        'total_patient_payable':total_patient_payable,
         'factor_count':factor_count,
         'patient_count':patient_count, 
         'operations':operations,
+        'start_date':start_date,
+        'end_date':end_date,
     })
 
 
@@ -267,6 +271,10 @@ def accounting_insurance(request):
             print form.errors
     else:
         form = CalendarTestForm()
+        factors = Factor.objects.filter(insurance_type=insurance.type,
+                                            insurance_category=insurance.category,
+                                            insurance_paid=False,
+            ).distinct()
     total_governmental_fee = 0
     total_share = 0
     factor_count = 0
@@ -310,6 +318,10 @@ def accounting_complementary(request):
             print form.errors
     else:
         form = CalendarTestForm()
+        factors = Factor.objects.filter(insurance_complementary=complementary.type,
+                                        complementary_paid=False,
+        ).distinct()
+        
     total_governmental_fee = 0
     total_share = 0
     factor_count = 0
@@ -335,6 +347,9 @@ def accounting_complementary(request):
 def accounting_therapist(request):
     therapist = Therapist.objects.get(id=request.session['therapist_id'])
     factors = None
+    start_date = None
+    end_date = None
+    total_patient_payable = 0
     if request.method == "POST":
         form = CalendarTestForm(request.POST)
         if form.is_valid():
@@ -352,10 +367,27 @@ def accounting_therapist(request):
             print form.errors
     else:
         form = CalendarTestForm()
+        factors = Factor.objects.filter(therapist_first_name=therapist.first_name,
+                                            therapist_last_name=therapist.last_name,
+                                            therapist_medical_number=therapist.medical_number,
+            ).distinct()
+    if factors:
+        for factor in factors:
+            total_patient_payable += factor.patient_payable
+        codeographies = factors.values_list('operation_codeography', flat=True).distinct()
+        operations = Operation.objects.filter(codeography__in=codeographies)
+        factor_count = len(factors)
+        patient_count = len(factors.values_list('patient_national_code', flat=True).distinct())
     return render(request, 'accounting_therapist.html', {
         'factors': factors,
         'form':form,
         'therapist':therapist,
+        'total_patient_payable': total_patient_payable,
+        'patient_count': patient_count,
+        'operations': operations,
+        'factor_count': factor_count,
+        'start_date': start_date,
+        'end_date' : end_date,
     })
 
 @user_logged_in
@@ -365,9 +397,9 @@ def accounting_patient(request):
     patient = Patient.objects.get(id=request.session['patient_id'])
     total_debt = 0
     factors = None
-    start_date = datetime.now()
-    end_date = datetime.now()
-    patient_payable = 0
+    start_date = None
+    end_date = None
+    total_patient_payable = 0
     total_paid = 0
     factor_count = 0
     if request.method == "POST":
@@ -379,17 +411,21 @@ def accounting_patient(request):
             factors = Factor.objects.filter(patient_first_name=patient.first_name,
                                             patient_last_name=patient.last_name,
                                             factor_date__gte=start_date,
-                                            factor_date__lte=end_date
+                                            factor_date__lte=end_date,
             )
         else:
+            #TODO:
             print request.POST
             print form.errors
     else:
+        factors = Factor.objects.filter(patient_first_name=patient.first_name,
+                                        patient_last_name=patient.last_name,
+        )
         form = CalendarTestForm()
     if factors:
         for factor in factors:
-            total_debt += factor.patient_debt_amount
-            patient_payable += factor.patient_payable
+            total_debt += factor.patient_debt_amount()
+            total_patient_payable += factor.patient_payable
             total_paid += factor.patient_paid_amount
             factor_count += 1
     return render(request, 'accounting_patient.html', {
@@ -399,11 +435,56 @@ def accounting_patient(request):
         'start_date':start_date,
         'end_date':end_date, 
         'total_debt':total_debt,
-        'patient_payable': patient_payable,
+        'total_patient_payable': total_patient_payable,
         'total_paid':total_paid,
         'factor_count': factor_count,
     })
-
+    
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def accounting_discount(request):
+    factors = None
+    start_date = None
+    end_date = None
+    total_patient_payable = 0
+    total_discount = 0
+    patient_count = 0
+    operations = None
+    factor_count = 0
+    if request.method == "POST":
+        form = CalendarTestForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            start_date = cd['start']
+            end_date = cd['end']
+            factors = Factor.objects.filter(discount__gt = 0,
+                                            factor_date__gte=start_date,
+                                            factor_date__lte=end_date
+            ).distinct()
+        else:
+            print request.POST
+            print form.errors
+    else:
+        form = CalendarTestForm()
+    if factors:
+        for factor in factors:
+            total_patient_payable += factor.patient_payable
+            total_discount += factor.discount
+        codeographies = factors.values_list('operation_codeography', flat=True).distinct()
+        operations = Operation.objects.filter(codeography__in=codeographies)
+        factor_count = len(factors)
+        patient_count = len(factors.values_list('patient_national_code', flat=True).distinct())
+    return render(request, 'accounting_discount.html', {
+        'factors': factors,
+        'form':form,
+        'total_patient_payable': total_patient_payable,
+        'total_discount':total_discount,
+        'patient_count': patient_count,
+        'operations': operations,
+        'factor_count': factor_count,
+        'start_date': start_date,
+        'end_date' : end_date,
+    })
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
@@ -825,31 +906,30 @@ def ajax_add_discount_to_factors(request):
     return render(request, 'json/discount_added.json', {})
 
     
-@user_logged_in
-@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-def ajax_patient_pay_partial_factor(request):
-    if request.method != "POST":
-        raise Http404
-    factor = get_object_or_404(Factor, id=request.POST['id'])
-    pay_amount = float(request.POST['pay_amount'])
+#@user_logged_in
+#@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+#def ajax_patient_pay_partial_factor(request):
+#    if request.method != "POST":
+#        raise Http404
+#    factor = get_object_or_404(Factor, id=request.POST['id'])
+#    pay_amount = float(request.POST['pay_amount'])
     #TODO: descriptions
-    if factor.patient_paid:
-        return render(request, 'json/error.json', {
-            'errors': ['پرداخت شده است.'],
-        })
-    if factor.patient_debt_amount > pay_amount :
-        accounting.move_credit(factor.patient_account_id, accounting.get_static_account("office"),
-                               pay_amount, "", "", "", datetime.now(), factor.id)
-        if factor.patient_debt_amount == pay_amount:
-            factor.patient_paid = True
-        factor.patient_paid_amount += pay_amount
-        factor.patient_debt_amount -= pay_amount
-    else:
-        return render(request, 'json/error.json', {
-                    'errors':['مبلغ پرداختی از بدهی بیشتر است']
-                })
-    factor.save()
-    return render(request, 'json/patient_paid.json', {})
+#    if factor.patient_paid:
+#        return render(request, 'json/error.json', {
+#            'errors': ['پرداخت شده است.'],
+#        })
+#    if factor.patient_debt_amount() > pay_amount :
+#        accounting.move_credit(factor.patient_account_id, accounting.get_static_account("office"),
+#                               pay_amount, "", "", "", datetime.now(), factor.id)
+#        if factor.patient_debt_amount() == pay_amount:
+#            factor.patient_paid = True
+#        factor.patient_paid_amount += pay_amount
+#    else:
+#        return render(request, 'json/error.json', {
+#                    'errors':['مبلغ پرداختی از بدهی بیشتر است']
+#                })
+#    factor.save()
+#    return render(request, 'json/patient_paid.json', {})
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])

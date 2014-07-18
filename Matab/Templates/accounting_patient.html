@@ -70,9 +70,9 @@
 		<tbody>
 			<tr>
 				<td>{{ factor_count }}</td>
-				<td> {{ total_fee }}</td>
-				<td> {{ total_paid }}</td>
-				<td> {{ total_debt }}</td>
+				<td> {{ total_patient_payable|floatformat:0 }}</td>
+				<td> {{ total_paid|floatformat:0 }}</td>
+				<td> {{ total_debt|floatformat:0 }}</td>
 				<td> {{ start_date }}</td>
 				<td> {{ end_date }}</td>
 			</tr>
@@ -88,7 +88,7 @@
 		<tr>
 			<td><a href="#" class="delete label label-danger">#</a></td>
 			<td><a href="#" class="delete label label-danger">تاریخ</a></td>
-			<td><a href="#" class="delete label label-danger">مبلغ کل</a></td>
+			<td><a href="#" class="delete label label-danger">مبلغ قابل پرداخت بیمار</a></td>
 			<td><a href="#" class="delete label label-danger">پرداختی بیمار</a></td>
 			<td><a href="#" class="delete label label-danger">بدهی بیمار</a></td>
 			<td><a href="#" class="delete label label-danger">نوع خدمت</a></td>
@@ -102,9 +102,9 @@
 		<tr>
 			<td>{{ forloop.counter }}</td>
 			<td> {{factor.factor_date}} </td>
-			<td> {{ factor.total_fee}} </td>
-			<td> {{ factor.patient_paid_amount }}</td>
-			<td> {{ factor.patient_debt_amount }}</td>
+			<td> {{ factor.patient_payable|floatformat:0 }}</td>
+			<td> {{ factor.patient_paid_amount|floatformat:0 }}</td>
+			<td> {{ factor.patient_debt_amount|floatformat:0 }}</td>
 			<td> {{ factor.operation_type }}</td>
 			<td> {{ factor.operation_codeography }}</td>
 			<td> {{ factor.patient_first_name}} {{ factor.patient_last_name }}</td>

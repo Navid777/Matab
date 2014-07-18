@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-حسابداری پرسنل 
+حسابداری تخفیف 
 {% endblock %}
 
 
@@ -14,11 +14,10 @@
     <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-setup.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/calendar-fa.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/accounting.js"></script>
 {% endblock %}
 
 {% block content %}
-    
-    <a href="{% url "Radiology.views.choose_personnel" %}"><label class="label label-info">{{personnel.first_name}} {{personnel.last_name}}</label></a>
     <form action="" method="post">
         <div class="form-group">
             <div style="display: none;">{{ form.start }}</div>
@@ -51,10 +50,13 @@
         {% csrf_token %}
         <input class="btn btn-primary" type="submit" value="ثبت"/>
     </form>
-	{% if factors%}
+    {% if factors%}
 	<div class="alert alert-info">
 		<div>
 		قیمت کل: {{total_patient_payable|floatformat:0}}
+		</div>
+		<div>
+		مجموع تخفیف: {{total_discount|floatformat:0}}
 		</div>
 		<div>
 			تعداد بیماران: {{patient_count}}
@@ -69,42 +71,37 @@
 			تاریخ پایان: {{end_date}}
 		</div>
 	</div>
-	{% for o in operations%}
 	<div class="panel panel-default">
-		<div class="panel-heading">
-			<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne{{o.id}}">
-				{{o.type}} {{o.name}}
-			</a>
+		<div class="panel panel-heading">
+			اطلاعات جزیی فاکتورها
 		</div>
-		<div id="collapseOne{{o.id}}" class="panel-collapse collapse">	
-			<div class="panel-body">	
-				<table class="table table-bordered table-condensed table-hover">
-					<thead>
-						<tr>
-							<th>تاریخ</th>
-							<th>خدمت</th>
-							<th>پرداختی بیمار</th>
-							<th>نام پرسنل</th>
-							<th>نام بیمار</th>
-						</tr>
-					</thead>
-					{% for factor in factors %}
-					{% ifequal factor.operation_codeography o.codeography%}
-					<tr>
-						<td> {{factor.factor_date}} </td>
-						<td> {{factor.operation_type}}-{{factor.operation_name}} </td>
-						<td> {{factor.patient_payable|floatformat:0}}</td>
-						<td> {{personnel.first_name}} {{personnel.last_name}}</td>
-						<td> {{factor.patient_first_name}} {{factor.patient_last_name}}</td>
-					</tr>
-					{% endifequal %}
-					{% endfor %}
-				</table>
-			</div>
-		</div>
+	<table id="factors_table" class="table table-bordered table-condensed table-hover">
+		<thead>
+		<tr>
+			<td><a href="#" class="delete label label-danger">#</a></td>
+			<td><a href="#" class="delete label label-danger">تاریخ</a></td>
+			<td><a href="#" class="delete label label-danger">خدمت</a></td>
+			<td><a href="#" class="delete label label-danger">مبلغ بعد از تخفیف</a></td>
+			<td><a href="#" class="delete label label-danger">میزان تخفیف</a></td>
+			<td><a href="#" class="delete label label-danger">نام بیمار</a></td>
+			<td><a href="#" class="delete label label-danger">کد ملی بیمار</a></td>
+		</tr>
+		</thead>
+		<tbody>
+		{% for factor in factors %}
+		<tr>
+			<td>{{ forloop.counter }}</td>
+			<td> {{factor.factor_date}} </td>
+			<td> {{ factor.operation_type }}-{{factor.operation_name}}</td>
+			<td> {{ factor.patient_payable|floatformat:0 }}</td>
+			<td> {{ factor.discount|floatformat:0 }} </td>
+			<td> {{ factor.patient_first_name}} {{ factor.patient_last_name }}</td>
+			<td> {{factor.patient_national_code }} </td>
+		</tr>
+		{% endfor %}
+		</tbody>
+	</table>
 	</div>
-	{% endfor %}
 
-	{% endif %}
+{% endif %}
 {% endblock %}
-

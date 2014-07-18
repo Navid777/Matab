@@ -70,8 +70,8 @@
 		<tbody>
 			<tr>
 				<td>{{ factor_count }}</td>
-				<td> {{ total_governmental_fee }}</td>
-				<td> {{ total_share }}</td>
+				<td> {{ total_governmental_fee|floatformat:0 }}</td>
+				<td> {{ total_share|floatformat:0 }}</td>
 				<td> {{ start_date }}</td>
 				<td> {{ end_date }}</td>
 			</tr>
@@ -102,11 +102,11 @@
 		<tr>
 			<td>{{ forloop.counter }}</td>
 			<td> {{factor.factor_date}} </td>
-			<td> {{ factor.operation_governmental_fee}}</td>
-			<td> {{ factor.insurance_share }}</td>
+			<td> {{ factor.operation_governmental_fee|floatformat:0}}</td>
+			<td> {{ factor.insurance_share|floatformat:0 }}</td>
 			<td> {{ factor.insurance_page }}</td>
 			<td> {{ factor.insurance_exp_date}} </td>
-			<td> {{ factor.operation_type }}</td>
+			<td> {{ factor.operation_type }}-{{factor.operation_name}}</td>
 			<td> {{ factor.operation_codeography }}</td>
 			<td> {{ factor.patient_first_name}} {{ factor.patient_last_name }}</td>
 			<td> {{factor.patient_national_code }} </td>

@@ -55,71 +55,59 @@
         {% csrf_token %}
         <input class="btn btn-primary" type="submit" value="ثبت"/>
     </form>
-	
-	{% if factors%}
-		<div class="panel panel-default">
-		<div class="panel panel-heading">
-			اطلاعات کلی فاکتورها
+    {% if factors%}
+	<div class="alert alert-info">
+		<div>
+		قیمت کل: {{total_patient_payable|floatformat:0}}
 		</div>
-	<table class="table table-bordered table-condensed table-hover">
-		<thead>
-		<tr>
-			<td>تعداد فاکتور</td>
-			<td>مجموع پرداختی بیمار</td>
-			<td>مجموع سهم بیمه</td>
-			<td>مجموع سهم بیمه مکمل</td>
-			<td>تاریخ شروع فاکتورها</td>
-			<td>تاریخ پایان فاکتورها</td>
-		</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>{{ factor_count }}</td>
-				<td> {{ total_fee }}</td>
-				<td> {{ total_insurance_share }}</td>
-				<td> {{ total_complementary_share }}</td>
-				<td> {{ start_date }}</td>
-				<td> {{ end_date }}</td>
-			</tr>
-		</tbody>
-	</table>
+		<div>
+			تعداد بیماران: {{patient_count}}
+		</div>
+		<div>
+			تعداد فاکتورها: {{factor_count}}
+		</div>
+		<div>
+			تاریخ شروع: {{start_date}}
+		</div>
+		<div>
+			تاریخ پایان: {{end_date}}
+		</div>
 	</div>
+	{% for o in operations%}
 	<div class="panel panel-default">
-		<div class="panel panel-heading">
-			اطلاعات جزیی فاکتورها
+		<div class="panel-heading">
+			<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne{{o.id}}">
+				{{o.type}} {{o.name}}
+			</a>
 		</div>
-	<table id="factors_table" class="table table-bordered table-condensed table-hover">
-		<thead>
-		<tr>
-			<td><a href="#" class="delete label label-danger">#</a></td>
-			<td><a href="#" class="delete label label-danger">تاریخ</a></td>
-			<td><a href="#" class="delete label label-danger">مبلغ پرداختی بیمار</a></td>
-			<td><a href="#" class="delete label label-danger">سهم بیمه</a></td>
-			<td><a href="#" class="delete label label-danger">سهم بیمه مکمل</a></td>
-			<td><a href="#" class="delete label label-danger">نوع خدمت</a></td>
-			<td><a href="#" class="delete label label-danger">کدگرافی خدمت</a></td>
-			<td><a href="#" class="delete label label-danger">نام بیمار</a></td>
-			<td><a href="#" class="delete label label-danger">کد ملی بیمار</a></td>
-		</tr>
-		</thead>
-		<tbody>
-		{% for factor in factors %}
-		<tr>
-			<td>{{ forloop.counter }}</td>
-			<td> {{factor.factor_date}} </td>
-			<td> {{ factor.total_fee}} </td>
-			<td> {{ factor.insurance_share }}</td>
-			<td> {{ factor.insurance_complementary_share }}</td>
-			<td> {{ factor.operation_type }}</td>
-			<td> {{ factor.operation_codeography }}</td>
-			<td> {{ factor.patient_first_name}} {{ factor.patient_last_name }}</td>
-			<td> {{factor.patient_national_code }} </td>
-		</tr>
-		{% endfor %}
-		</tbody>
-	</table>
+		<div id="collapseOne{{o.id}}" class="panel-collapse collapse">	
+			<div class="panel-body">	
+				<table class="table table-bordered table-condensed table-hover">
+					<thead>
+						<tr>
+							<th>تاریخ</th>
+							<th>خدمت</th>
+							<th>پرداختی بیمار</th>
+							<th>نام پزشک معالج</th>
+							<th>نام بیمار</th>
+						</tr>
+					</thead>
+					{% for factor in factors %}
+					{% ifequal factor.operation_codeography o.codeography%}
+					<tr>
+						<td> {{factor.factor_date}} </td>
+						<td> {{factor.operation_type}}-{{factor.operation_name}} </td>
+						<td> {{factor.patient_payable|floatformat:0}}</td>
+						<td> {{factor.therapist_first_name}} {{factor.therapist_last_name}}</td>
+						<td> {{factor.patient_first_name}} {{factor.patient_last_name}}</td>
+					</tr>
+					{% endifequal %}
+					{% endfor %}
+				</table>
+			</div>
+		</div>
 	</div>
-	<button id="factorsPrint">چاپ گزارش</button>
-	
+	{% endfor %}
+
 	{% endif %}
 {% endblock %}
