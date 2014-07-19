@@ -8,6 +8,7 @@ class Account(models.Model):
 
     def __unicode__(self):
         return "%04d%08d" % (self.serial, self.id)
+    
 
 
 class StaticAccount(models.Model):

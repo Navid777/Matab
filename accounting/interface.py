@@ -79,3 +79,15 @@ def initialize_static_accounts():
 
 def get_static_account(name):
     return StaticAccount.objects.get(key=name).account.id
+
+def get_static_account_income_by_date(name, start_date, end_date):
+    acc = get_static_account(name)
+    income = []
+    records = Record.objects.filter(account = acc,
+                                    document__time__gte=start_date,
+                                    document__time__lte=end_date,
+            )
+    for record in records:
+        income.append( (record.document.resource_id, record.credit) )
+    return income
+    

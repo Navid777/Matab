@@ -207,6 +207,8 @@ class Factor(models.Model):
         
     #Adds a discount to factor and returns the remaining amount of discount(if discount is more than factor payable amount
     def add_discount(self, discount):
+        if discount == 0:
+            return 
         if not self.discount :
             self.discount = 0
         if self.patient_payable < discount:
@@ -221,6 +223,8 @@ class Factor(models.Model):
         return discount
     
     def pay_factor(self, amount):
+        if amount == 0 :
+            return 
         if amount > self.patient_debt_amount():
             amount -= self.patient_debt_amount()
             accounting.move_credit(self.get_patient().account_id, accounting.get_static_account("office"), 

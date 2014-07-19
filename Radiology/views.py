@@ -4,6 +4,7 @@ from Radiology.forms import *
 from Radiology.models import *
 from accounting import interface as accounting
 from datetime import datetime, timedelta
+from django import template
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db.models.sql.datastructures import Date
@@ -350,6 +351,9 @@ def accounting_therapist(request):
     start_date = None
     end_date = None
     total_patient_payable = 0
+    patient_count = 0
+    factor_count = 0
+    operations = None
     if request.method == "POST":
         form = CalendarTestForm(request.POST)
         if form.is_valid():
@@ -485,6 +489,57 @@ def accounting_discount(request):
         'start_date': start_date,
         'end_date' : end_date,
     })
+    
+@user_logged_in
+@user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
+def accounting_income(request):
+    factors = []
+    start_date = None
+    end_date = None
+    total_paid = 0
+    patient_count = 0
+    factor_count = 0
+    incomes = dict()
+    income = None
+    factor_ids = []
+    if request.method == "POST":
+        form = CalendarTestForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            start_date = cd['start']
+            end_date = cd['end']
+            end_date = end_date + timedelta(days=1)
+            income = accounting.get_static_account_income_by_date("office", start_date, end_date)
+        else:
+            print request.POST
+            print form.errors
+    else:
+        form = CalendarTestForm()
+    if income:
+        for (factor_id, amount) in income:
+            factor_ids.append(factor_id)
+            if not factor_id in incomes:
+                incomes[factor_id] = 0
+            incomes[factor_id] += amount
+            total_paid += amount 
+            #total_patient_payable += factor.patient_payable
+            #total_discount += factor.discount
+        #codeographies = factors.values_list('operation_codeography', flat=True).distinct()
+        #operations = Operation.objects.filter(codeography__in=codeographies)
+        factors = Factor.objects.filter(id__in = factor_ids).distinct()
+        factor_count = len(factors)
+        patient_count = len(factors.values_list('patient_national_code', flat=True).distinct())
+    return render(request, 'accounting_income.html', {
+        'factors': factors,
+        'form':form,
+        'total_paid': total_paid,
+        'factor_count': factor_count,
+        'patient_count': patient_count,
+        'start_date': start_date,
+        'end_date' : end_date,
+        'incomes': incomes,
+    })
+
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])

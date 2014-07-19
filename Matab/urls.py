@@ -52,6 +52,7 @@ urlpatterns = patterns('',
     url(r'^accounting/complementary$', views.accounting_complementary),
     url(r'^accounting/therapist/$', views.accounting_therapist),
     url(r'^accounting/discount/$', views.accounting_discount),
+    url(r'^accounting/income/$', views.accounting_income),
     
     url(r'^appointment/$', views.appointment),
 

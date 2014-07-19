@@ -21,3 +21,7 @@ def active(context, pat_url):
 @register.filter
 def klass(ob):
     return ob.__class__.__name__
+
+@register.filter
+def get_value(d, key):
+    return d.get(key)
