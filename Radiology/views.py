@@ -200,7 +200,7 @@ def accounting_page(request):
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-@exists_in_session_or_redirect('personnel_id', reverse_lazy('Radiology.views.choose_personnel'))
+@exists_in_session_or_redirect('personnel_id', reverse_lazy('Radiology.views.choose_personnel'), reverse_lazy('Radiology.view.accounting_personnel'))
 def accounting_personnel(request):
     personnel = User.objects.get(id=request.session['personnel_id'])
     total_patient_payable = 0
@@ -249,7 +249,7 @@ def accounting_personnel(request):
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-@exists_in_session_or_redirect('insurance_id', reverse_lazy('Radiology.views.choose_insurance'))
+@exists_in_session_or_redirect('insurance_id', reverse_lazy('Radiology.views.choose_insurance'), reverse_lazy('Radiology.views.accounting_insurance'))
 def accounting_insurance(request):
     insurance = Insurance.objects.get(id=request.session['insurance_id'])
     factors = None
@@ -297,7 +297,7 @@ def accounting_insurance(request):
     
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-@exists_in_session_or_redirect('complementary_id', reverse_lazy('Radiology.views.choose_complementary'))
+@exists_in_session_or_redirect('complementary_id', reverse_lazy('Radiology.views.choose_complementary'), reverse_lazy('Radiology.views.accounting_complementary'))
 def accounting_complementary(request):
     complementary = ComplementaryInsurance.objects.get(id=request.session['complementary_id'])
     factors = None
@@ -344,7 +344,7 @@ def accounting_complementary(request):
     
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-@exists_in_session_or_redirect('therapist_id', reverse_lazy('Radiology.views.choose_therapist'))
+@exists_in_session_or_redirect('therapist_id', reverse_lazy('Radiology.views.choose_therapist'), reverse_lazy('Radiology.views.accounting_therapist'))
 def accounting_therapist(request):
     therapist = Therapist.objects.get(id=request.session['therapist_id'])
     factors = None
@@ -396,7 +396,7 @@ def accounting_therapist(request):
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-@exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.choose_patient'))
+@exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.choose_patient'), reverse_lazy('accounting_patient'))
 def accounting_patient(request):
     patient = Patient.objects.get(id=request.session['patient_id'])
     total_debt = 0
@@ -550,7 +550,8 @@ def choose_patient(request):
                                           first_name=request.POST['first_name'],
                                           last_name=request.POST['last_name'])
             request.session['patient_id'] = patient.id
-            return redirect(accounting_patient)
+            #return redirect(accounting_patient)
+            return redirect(request.GET['next'])
         except Patient.DoesNotExist:
             return redirect(choose_patient)
     return render(request, 'choose_patient.html')
@@ -561,7 +562,8 @@ def choose_operation(request):
     if request.method == "POST":
         if 'operation_id' in request.POST:
             request.session['operation_id'] = request.POST['operation_id']
-            return redirect(edit_operation)
+            #return redirect(edit_operation)
+            return redirect(request.GET['next'])
         else:
             return redirect(choose_operation)
     else:
@@ -650,7 +652,8 @@ def choose_personnel(request):
     if request.method == "POST":
         if 'personnel_id' in request.POST:
             request.session['personnel_id'] = request.POST['personnel_id']
-            return redirect(accounting_personnel)
+            #return redirect(accounting_personnel)
+            return redirect(request.GET['next'])
         else:
             return redirect(choose_personnel)
     else:
@@ -665,7 +668,8 @@ def choose_therapist(request):
     if request.method == "POST":
         if 'therapist_id' in request.POST:
             request.session['therapist_id'] = request.POST['therapist_id']
-            return redirect(accounting_therapist)
+            #return redirect(accounting_therapist)
+            return redirect(request.GET['next'])
         else:
             return redirect(choose_therapist)
     else:
@@ -681,7 +685,8 @@ def choose_insurance(request):
     if request.method == "POST":
         if 'insurance_id' in request.POST:
             request.session['insurance_id'] = request.POST['insurance_id']
-            return redirect(accounting_insurance)
+            #return redirect(accounting_insurance)
+            return redirect(request.GET['next'])
         else:
             return redirect(choose_insurance)
     else:
@@ -696,7 +701,8 @@ def choose_complementary(request):
     if request.method == "POST":
         if 'complementary_id' in request.POST:
             request.session['complementary_id'] = request.POST['complementary_id']
-            return redirect(accounting_complementary)
+            #return redirect(accounting_complementary)
+            return redirect(request.GET['next'])
         else:
             return redirect(choose_complementary)
     else:
@@ -1251,14 +1257,14 @@ def edit(request):
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-@exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.choose_patient'))
+@exists_in_session_or_redirect('patient_id', reverse_lazy('Radiology.views.choose_patient'), reverse_lazy('Radiology.views.edit_patient'))
 def edit_patient(request):
     patient = get_object_or_404(Patient,id=request.session['patient_id'])
     return render(request, 'edit_patient.html', {'patient':patient})
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-@exists_in_session_or_redirect('therapist_id', reverse_lazy('Radiology.views.choose_therapist'))
+@exists_in_session_or_redirect('therapist_id', reverse_lazy('Radiology.views.choose_therapist'), reverse_lazy('Radiology.views.edit_therapist'))
 def edit_therapist(request):
     therapist = get_object_or_404(Therapist, id=request.session['therapist_id'])
     return render(request, 'edit_therapist.html', {'therapist':therapist})
@@ -1270,21 +1276,21 @@ def edit_personnel(request):
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-@exists_in_session_or_redirect('insurance_id', reverse_lazy('Radiology.views.choose_insurance'))
+@exists_in_session_or_redirect('insurance_id', reverse_lazy('Radiology.views.choose_insurance'), reverse_lazy('Radiology.views.edit_insurance'))
 def edit_insurance(request):
     insurance = get_object_or_404(Insurance, id=request.session['insurance_id'])
     return render(request, 'edit_insurance.html', {'insurance':insurance})
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-@exists_in_session_or_redirect('complementary_id', reverse_lazy('Radiology.views.choose_complementary'))
+@exists_in_session_or_redirect('complementary_id', reverse_lazy('Radiology.views.choose_complementary'), reverse_lazy('Radiology.views.edit_complementary'))
 def edit_complementary(request):
     complementary = get_object_or_404(ComplementaryInsurance, id=request.session['complementary_id'])
     return render(request, 'edit_complementary.html', {'complementary':complementary})
 
 @user_logged_in
 @user_type_conforms_or_404(lambda t: t.type == UserType.TYPES['RECEPTOR'])
-@exists_in_session_or_redirect('operation_id', reverse_lazy('Radiology.views.choose_operation'))
+@exists_in_session_or_redirect('operation_id', reverse_lazy('Radiology.views.choose_operation'), reverse_lazy('Radiology.views.edit_operation'))
 def edit_operation(request):
     operation = get_object_or_404(Operation, id=request.session['operation_id'])
     film_types = Good.objects.all()

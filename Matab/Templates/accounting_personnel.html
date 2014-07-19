@@ -17,8 +17,10 @@
 {% endblock %}
 
 {% block content %}
-    
-    <a href="{% url "Radiology.views.choose_personnel" %}"><label class="label label-info">{{personnel.first_name}} {{personnel.last_name}}</label></a>
+	<label class="btn btn-info center-block">{{ personnel.first_name}} {{personnel.last_name}}</label>
+	<a href="{% url "Radiology.views.choose_personnel" %}?next={% url "Radiology.views.accounting_personnel" %}" class="btn btn-danger center-block">
+	انتخاب پرسنل دیگر
+	</a>
     <form action="" method="post">
         <div class="form-group">
             <div style="display: none;">{{ form.start }}</div>

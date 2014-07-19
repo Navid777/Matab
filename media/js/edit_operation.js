@@ -2,7 +2,6 @@ $(document).ready(function(){
 	$submit = $("#editOperationSubmit");
 	$form = $("#editOperationForm");
 	$submit.on('click', function(){
-		alert("s");
         $.ajax({
             type: 'POST',
             url: $form.attr('action'),

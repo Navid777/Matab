@@ -18,7 +18,10 @@
 {% endblock %}
 
 {% block content %}
-	<a href="{% url "Radiology.views.choose_complementary" %}"><label class="label label-info">{{ complementary.type}}</label></a>
+	<lable class="btn btn-info center-block">{{ complementary.type}}</lable>
+	<a href="{% url "Radiology.views.choose_complementary" %}?next={% url "Radiology.views.accounting_complementary" %}" class="btn btn-danger center-block">
+	انتخاب یک بیمه تکمیلی دیگر
+	</a>
     <form action="" method="post">
         <div class="form-group">
             <div style="display: none;">{{ form.start }}</div>
@@ -51,7 +54,8 @@
         {% csrf_token %}
         <input class="btn btn-primary" type="submit" value="ثبت"/>
     </form>
-	
+   </br>
+
 	{% if factors%}
 		<div class="panel panel-default">
 		<div class="panel panel-heading">
@@ -116,6 +120,7 @@
 	</table>
 	</div>
 	<button id="factorsPrint">چاپ گزارش</button>
+
 	{% endif %}
 {% endblock %}
 

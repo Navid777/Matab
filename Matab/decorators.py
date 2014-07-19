@@ -2,13 +2,13 @@ from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseRedirect, Http404
 
 
-def exists_in_session_or_redirect(key, url):
+def exists_in_session_or_redirect(key, url, next=""):
     def decorator(function):
         def wrap(request, *args, **kwargs):
             if key in request.session:
                 return function(request, *args, **kwargs)
             else:
-                return HttpResponseRedirect(url)
+                return HttpResponseRedirect(url+"?next="+str(next))
 
         return wrap
 
