@@ -10,7 +10,8 @@ $(document).ready(function(){
             success: function(data) {
             	//TODO: yek raveshte dorost peida shavad!
             	if(data.success){
-            		alert("تغییرات با موفقیت انجام شد.");
+            		//alert("تغییرات با موفقیت انجام شد.");
+            		window.location.replace($("#chooseLink").attr("href"));
             	}
             }
         });

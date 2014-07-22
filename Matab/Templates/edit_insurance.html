@@ -9,6 +9,10 @@
 {% endblock %}
 
 {% block content %}
+	<label class="btn btn-info center-block">{{ insurance.type}} {{ insurance.category }}</label>
+	<a id="chooseLink" href="{% url "Radiology.views.choose_insurance" %}?next={% url "Radiology.views.edit_insurance" %}" class="btn btn-danger center-block">
+	انتخاب یک بیمه دیگر
+	</a>
 	<form action="{% url 'Radiology.views.ajax_edit_insurance' %}"  id="editInsuranceForm" method="post">
 	{% csrf_token %}
 		<div class="form-group">

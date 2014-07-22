@@ -9,6 +9,10 @@
 {% endblock %}
 
 {% block content %}
+	<label class="btn btn-info center-block">{{ therapist.first_name }} {{ therapist.last_name }}</label>
+	<a id="chooseLink" href="{% url "Radiology.views.choose_therapist" %}?next={% url "Radiology.views.edit_therapist" %}" class="btn btn-danger center-block">
+	انتخاب یک پزشک معالج دیگر
+	</a>
 	<form action="{% url 'Radiology.views.ajax_edit_therapist' %}"  id="editTherapistForm" method="post">
 	{% csrf_token %}
 		<div class="form-group">
