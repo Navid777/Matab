@@ -179,7 +179,7 @@
                     <div class='form-group'>
                         <label for='operationNameSelect'>نام خدمت</label>
                         <select name="operation_id" multiple="multiple" class="form-control chosen-select multiselect"
-                                id="operationNameSelect">
+                                id="operationNameSelect" >
                             {% for o in operations %}
                             <option value="{{o.id}}">{{ o.type }} {{ o.name }}</option>
                             {% endfor %}

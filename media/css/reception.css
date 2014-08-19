@@ -1,5 +1,13 @@
+@font-face{
+	font-family: Droid Arabic;
+    src: url('/media/fonts/DroidNaskh-Regular.ttf');
+}
+@font-face{
+	font-family: BNazanin;
+    src: url('/media/fonts/BNazanin.ttf');
+}
 h3{
-    font-family: Tahoma;
+	font-family: BNazanin;
 }
 form{
     padding-top: 30px;
@@ -11,4 +19,8 @@ form{
 
 .row div{
     padding: 5px;
+}
+
+#s2id_operationNameSelect {
+	padding : 0;
 }

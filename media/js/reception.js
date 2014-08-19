@@ -205,6 +205,7 @@ $(document).ready(function() {
 	var $operationType = $("#operationTypeSelect");
 	var $operationCodeography = $("#operationCodeographyInput");
 	var $operationName = $("#operationNameSelect");
+	$operationName.select2();
 
 	$operationType.on('change', function() {
 		$operationName.html("<option value='' selected></option>");
