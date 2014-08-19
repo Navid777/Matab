@@ -57,13 +57,23 @@
 <table class="table">
 		<tr>
 		<th>نوع خدمت</th>
-		<th>مبلغ قابل پرداخت(تومان)</th>
+		<th>مبلغ کل</th>
+		<th>سهم بیمه</th>
+		{%if factors.0.insurance_has_complementary %}
+		<th>سهم بیمه تکمیلی</th>
+		{% endif %}
+		<th>مبلغ قابل پرداخت بیمار(تومان)</th>
 	</tr>
 {% for factor in factors%}
 
 	<input hidden="hidden" class="factorId" value="{{factor.id}}"/>
 	<tr>
 		<td>{{factor.operation_type}} - {{factor.operation_name}}</td>
+		<td>{{factor.total_amount}}</td>
+		<td>{{factor.insurance_share}}</td>
+		{% if factor.insurance_has_complementary %}
+		<td>{{factor.insurance_complementary_share}}</td>
+		{% endif %}
 		<td>{{factor.patient_payable|floatformat:0 }}</td>
 	</tr>
 {% endfor%}

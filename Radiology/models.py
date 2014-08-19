@@ -204,6 +204,9 @@ class Factor(models.Model):
         if self.patient_debt_amount():
             return False
         return True
+    
+    def total_amount(self):
+        return self.patient_payable + self.insurance_share + self.insurance_complementary_share
         
     #Adds a discount to factor and returns the remaining amount of discount(if discount is more than factor payable amount
     def add_discount(self, discount):
