@@ -181,7 +181,9 @@
                         <select name="operation_id" multiple="multiple" class="form-control chosen-select multiselect"
                                 id="operationNameSelect" >
                             {% for o in operations %}
-                            <option value="{{o.id}}">{{ o.type }} {{ o.name }}</option>
+                            <option value="{{o.id}}" governmental_fee="{{o.governmental_fee}}" individual_fee="{{ o.individual_fee }}" medical_fee="{{o.medical_fee}}">
+                            	{{ o.type }} {{ o.name }}
+                            	</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -191,6 +193,20 @@
                                id="operationClothCheckbox"/>
                     </div>
                 </div>
+            	<div class="panel panel-success">
+            		<div class="panel-heading">
+            			پنل قیمت
+            		</div>
+            		<div id="dashboard_governmental" class="panel-body">
+            			0
+            		</div>
+            		<div id="dashboard_individual" class="panel-body">
+            			0
+            		</div>
+            		<div id="dashboard_medical" class="panel-body">
+            			0
+            		</div>
+            	</div>
             </div>
         </div>
         <input type='submit' class='btn btn-primary btn-lg center-block' value="ثبت اطلاعات">
@@ -332,8 +348,15 @@
                             {% csrf_token %}
                             <div class="form-group">
                                 <label for="registerOperationTypeInput">نوع</label>
-                                <input type="text" name="type" class="form-control"
-                                        id="registerOperationTypeInput"/>
+                                <select  name="type" class="form-control"
+                                        id="registerOperationTypeInput">
+                                        <option value="MRI">MRI</option>
+                                        <option value="سونوگرافی"> سونوگرافی</option>
+                                        <option value="رادیولوژی" > رادیولوژی</option>
+                                        <option value="سی تی اسکن">سی تی اسکن</option>
+                                        <option value="دانسیتومتری"> دانسیتومتری</option>
+                                 </select>
+                                
                             </div>
                             <div class="form-group">
                                 <label for="registerOperationNameInput">نام</label>

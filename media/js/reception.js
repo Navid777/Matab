@@ -229,25 +229,59 @@ $(document).ready(function() {
 		});
 	});
 
-	$operationName.on('change', function() {
-		$operationCodeography.val("");
-		$.ajax({
-			type : "POST",
-			url : "/ajax/find_operations/",
-			data : {
-				name : $operationName.val()
-			},
-			dataType : 'json',
-			success : function(data) {
-				if (data.success) {
-					$operationCodeography.val(data.codeographies[0]);
-				} else {
-					//TODO
-				}
-			}
-		});
-
-	});
+	var map = $operationName.on("change",function(){
+	    var comp = $("#operationNameSelect option:selected").map(function() {
+	    		var result = {
+	    				id: $(this).attr('value'),
+	    				governmental: $(this).attr("governmental_fee"),
+	    				individual: $(this).attr("individual_fee"),
+	    				medical: $(this).attr("medical_fee")
+	    		};
+	            return result;
+	        }).get(),
+	        set1 = map.filter(function(i) {
+	            //return comp.indexOf(i) < 0;
+	            var result = true;
+	            for(j=0; j<comp.length; j++)
+	            {
+	            	if (i['id'] == comp[j]['id']) result=false;
+	            }
+	            return result;
+	        }),
+	        set2 = comp.filter(function(i) {
+	            //return map.indexOf(i) < 0;
+	            var result = true;
+	            for(j=0; j<map.length; j++)
+	            {
+	            	if (i['id'] == map[j]['id']) result=false;
+	            }
+	            return result;
+	        }),
+	    	last = (set1.length > set2.length ? set1 : set2)[0];
+	    map = comp;
+	    var current_governmental = $("#dashboard_governmental").text();
+	    var current_individual = $("#dashboard_individual").text();
+	    var current_medical = $("#dashboard_medical").text();
+	    if (set1.length > set2.length){
+	    	$("#dashboard_governmental").text(parseFloat(current_governmental)-parseFloat(last['governmental']));
+	    	$("#dashboard_individual").text(parseFloat(current_individual)-parseFloat(last['individual']));
+	    	$("#dashboard_medical").text(parseFloat(current_medical)-parseFloat(last['medical']));
+	    }
+	    else {
+	    	$("#dashboard_governmental").text(parseFloat(current_governmental)+parseFloat(last['governmental']));
+	    	$("#dashboard_individual").text(parseFloat(current_individual)+parseFloat(last['individual']));
+	    	$("#dashboard_medical").text(parseFloat(current_medical)+parseFloat(last['medical'])); 
+	    }
+	
+	    // "last" contains the last one selected /unselected
+	
+	}).find('option:selected').map(function() {var result = {
+						id: $(this).attr('value'),
+	    				governmental: $(this).attr("governmental_fee"),
+	    				individual: $(this).attr("individual_fee"),
+	    				medical: $(this).attr("medical_fee")
+	    		};
+	            return result;});
 
 	$operationCodeography.on('keypress', function(e) {
 		if (e.keyCode == 13) {
